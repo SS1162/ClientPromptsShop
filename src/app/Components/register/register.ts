@@ -10,4 +10,3 @@ import { ButtonModule } from 'primeng/button';
 export class Register {
 
 }
-gi
