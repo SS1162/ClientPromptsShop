@@ -1,1 +1,146 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #F6E8FE;
+    padding: 20px;
+    width: 100vw;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+}
 
+.border{
+    border: solid 1px #8139EB;
+}
+.titele{
+    font-size: 1.7rem;
+}
+/* הרווח בין השורות צומצם לחצי */
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; 
+    margin-top: 15px;
+}
+
+.names-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+}
+
+/* הכרטיס נשאר גבוה ומעוצב */
+::ng-deep .custom-card .p-card {
+    width: 30rem;
+    min-height: 500px; 
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 25px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+::ng-deep .custom-submit-btn {
+    width: 100% !important;
+    background: #9D58F5!important;
+    border: none !important;
+    padding: 15px !important;
+    font-size: 1.1rem !important;
+    border-radius: 10px !important;
+}
+
+
+
+/* צבעי פוקוס וסגול */
+::ng-deep .p-floatlabel label {
+    color: #9D58F5 !important;
+}
+
+::ng-deep .p-inputtext:focus {
+    border-color: #9D58F5 !important;
+    box-shadow: 0 0 0 1px#9D58F5 !important;
+}
+
+::ng-deep .p-floatlabel, ::ng-deep .p-inputtext, ::ng-deep p-password {
+    width: 100% !important;
+}
+
+/* --- עיצוב שדות הקלט - מסגרת סגולה תמיד --- */
+::ng-deep .p-inputtext {
+    border: 1px solid #9D58F5 !important; /* מסגרת סגולה דקה תמיד */
+    border-radius: 8px !important;
+    transition: all 0.2s ease; /* אנימציה חלקה לשינוי העובי */
+}
+
+/* --- בזמן לחיצה (Focus) - המסגרת נראית עבה יותר --- */
+::ng-deep .p-inputtext:enabled:focus {
+    border-color: #9D58F5 !important;
+    /* שימוש ב-box-shadow יוצר מראה עבה יותר בלי להזיז את האלמנטים בדף */
+    box-shadow: 0 0 0 2px #9D58F5 !important; 
+}
+
+/* --- הגדרה ספציפית לשדה סיסמה --- */
+::ng-deep p-password .p-inputtext {
+    border: 1px solid #9D58F5 !important;
+}
+
+::ng-deep p-password .p-inputtext:enabled:focus {
+    box-shadow: 0 0 0 2px #9D58F5 !important;
+}
+
+/* --- שאר הקוד שלך ללא שינוי --- */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #F6E8FE;
+    padding: 20px;
+    width: 100vw;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+}
+
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; 
+    margin-top: 15px;
+}
+
+
+
+/* 1. מסגרת סגולה דקה לשדה הסיסמה במצב רגיל */
+::ng-deep p-password .p-inputtext {
+    border: 1px solid #9D58F5 !important;
+    transition: all 0.1s ease-in-out;
+}
+
+/* 2. הגדרה של מסגרת דקה בזמן לחיצה (Focus) על הסיסמה */
+::ng-deep p-password .p-inputwrapper-focus .p-inputtext {
+    border-color: #9D58F5 !important;
+    /* עובי דק מאוד בזמן לחיצה */
+    box-shadow: 0 0 0 0.2px #9D58F5 !important; 
+    outline: none !important;
+}
+
+/* 3. ביטול שינוי הצבע במעבר עכבר על הסיסמה */
+::ng-deep p-password .p-inputtext:enabled:hover {
+    border-color: #9D58F5 !important;
+}
+
+.buttom{
+    margin-top: 18px;
+}
+
+.message{
+    color:  #9D58F5;
+}
+
+
+.message2{
+      color:  #9D58F5; 
+}

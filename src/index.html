@@ -1,6 +1,19 @@
 <!doctype html>
 <html lang="en">
 <head>
+
+<script src="https://accounts.google.com/gsi/client" onload="initGoogleSignIn()" async defer></script>
+
+
+<script>
+    // פונקציה גלובלית פשוטה שגוגל תזהה
+    function handleCredentialResponse(response) {
+      // שליחת האירוע לאנגולר (הקומפוננטה תאזין לזה)
+      const event = new CustomEvent('google-login-success', { detail: response });
+      window.dispatchEvent(event);
+    }
+  </script>
+
   <meta charset="utf-8">
   <title>Client</title>
   <base href="/">

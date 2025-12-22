@@ -1,2 +1,67 @@
-<p>register works!</p>
-<p-button label="Check" />
+<div class="register-container">
+    <p-card class="custom-card border">
+        <ng-template #title>
+            <div class="text-center font-bold text-2xl text-slate-800 titele"><b>Create Account</b></div>
+        </ng-template>
+        <ng-template #subtitle>
+            <div class="text-center text-slate-500 mb-6">Join us by filling out the details below</div>
+        </ng-template>
+        <form [formGroup]="RegisterForm">
+            <div class="form-grid">
+                <p-floatlabel variant="on" class="w-full">
+                    <input pInputText id="email" formControlName="email" autocomplete="off" class="w-full" />
+                    <label for="email">Email Address</label>
+                </p-floatlabel>
+                @if (RegisterForm.get('email')?.invalid) {
+                <p-message class="message" severity="error" size="small" variant="simple">The email address is required
+                    and must be a valid email.</p-message>}
+                <div class="names-row">
+                    <p-floatlabel variant="on">
+                        <input pInputText id="fname" formControlName="firstName" autocomplete="off" class="w-full" />
+                        <label for="fname">First Name</label>
+                    </p-floatlabel>
+                    <p-floatlabel variant="on">
+                        <input pInputText id="lname" formControlName="secondName" autocomplete="off" class="w-full" />
+                        <label for="lname">Last Name</label>
+                    </p-floatlabel>
+                </div>
+
+                <p-floatlabel variant="on" class="w-full">
+                    <input pInputText id="phone" formControlName="Phone" autocomplete="off" class="w-full" />
+                    <label for="phone">Phone Number</label>
+
+                </p-floatlabel>
+                @if (RegisterForm.get('phone')?.invalid) {
+                <p-message class="message" severity="error" size="small" variant="simple">The phone number must be a
+                    valid phone number.</p-message>}
+
+                <p-floatlabel variant="on" class="w-full">
+                    <p-password formControlName="password" inputId="pass" [toggleMask]="true" styleClass="w-full"
+                        inputStyleClass="w-full" />
+                    <label for="pass">Password</label>
+                </p-floatlabel>
+                @if (RegisterForm.get('password')?.invalid) {
+                <p-message class="message" severity="error" size="small" variant="simple">The password is required
+                </p-message>}
+
+                <p-floatlabel variant="on" class="w-full">
+                    <p-password formControlName="verificationPassword" inputId="pass" [toggleMask]="true"
+                        styleClass="w-full" inputStyleClass="w-full" />
+                    <label for="verificationPass"> Verification Password</label>
+                </p-floatlabel>
+
+                @if (RegisterForm.get('verificationPassword')?.invalid) {
+                <p-message class="message" severity="error" size="small" variant="simple">The password is required and
+                    must be identical to the original password.</p-message>}
+            </div>
+            <div class="buttom">
+                <p-button label="Register Now" styleClass="w-full custom-submit-btn" [disabled]="!RegisterForm.valid"
+                    (click)="onSubmit()"></p-button>
+            </div>
+        </form>
+        <ng-template #footer>
+
+        </ng-template>
+
+    </p-card>
+</div>

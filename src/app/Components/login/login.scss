@@ -1,0 +1,105 @@
+
+.border{
+    border: solid 1px #8139EB;
+}
+
+/* מכולה ראשית */
+.login-page-wrapper {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #F6E8FE;
+    font-family: 'Inter', sans-serif;
+}
+
+/* רווח קטן מאוד בין השורות */
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* צמצום הרווח בין האימייל לסיסמה */
+    margin-top: 5px;
+}
+
+/* כותרות */
+.login-title {
+    text-align: left;
+    font-weight: bold;
+    font-size: 1.8rem;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.login-subtitle {
+    text-align: left;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+/* עיצוב הכרטיס */
+::ng-deep .custom-login-card .p-card {
+    width: 25rem;
+    border-radius: 15px;
+    padding: 10px !important;
+}
+
+/* הבטחת רוחב מלא לכל האלמנטים */
+::ng-deep .p-floatlabel, 
+::ng-deep .p-inputtext, 
+::ng-deep p-password,
+::ng-deep .p-password-input {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* עיצוב הכפתור - לכל הרוחב */
+::ng-deep .custom-login-btn {
+    width: 100% !important;
+    background: #9D58F5 !important;
+    border: none !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    margin-top: 5px; /* רווח קטן מעל הכפתור */
+}
+
+/* --- תיקון החלק של המסגרת בלבד --- */
+
+/* 1. הגדרת מסגרת סגולה קבועה (במקום האפור שהיה קודם) */
+::ng-deep .p-inputtext,
+::ng-deep p-password .p-inputtext {
+    color: #9D58F5 !important;
+    border: 1px solid #9D58F5 !important; /* שונה לאותו סגול של הכפתור */
+    transition: all 0.1s ease-in-out;
+}
+
+/* 2. עיבוי המסגרת בזמן לחיצה (Focus) */
+::ng-deep .p-inputtext:enabled:focus,
+::ng-deep p-password .p-inputwrapper-focus .p-inputtext {
+    /* הוספת צל של 1px יוצרת מראה של קו עבה יותר (סה"כ 2px) */
+    box-shadow: 0 0 0 1px #9D58F5 !important;
+    outline: none !important;
+}
+
+::ng-deep .p-floatlabel label {
+    color: #9D58F5 !important;
+}
+
+.link-wrapper {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.create-account-link {
+    color: #9D58F5;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.message{
+    color: #9D58F5;
+}
+
+.space{
+    height: 15px;
+    width: 100%;
+}

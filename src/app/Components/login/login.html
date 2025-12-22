@@ -1,0 +1,64 @@
+
+
+<div class="login-page-wrapper ">
+    <p-card class="custom-login-card border">
+        <ng-template #title>
+            <div class="login-title">Log In</div>
+        </ng-template>
+        <ng-template #subtitle>
+            <div class="login-subtitle">Join us by filling out the details below</div>
+        </ng-template>
+        <form  [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="form-grid">
+
+                <p-floatlabel variant="on" class="w-full">
+                    <input pInputText id="email" formControlName="email" autocomplete="off" class="w-full" />
+                    <label for="email">Email Address</label>
+                </p-floatlabel>
+               @if (loginForm.get('email')?.invalid) {
+                <p-message class="message" severity="error" size="small" variant="simple">The email address is required and must be a valid email.</p-message>}
+
+                <p-floatlabel variant="on" class="w-full">
+                    <p-password formControlName="password" inputId="pass" [toggleMask]="true" [feedback]="false"
+                        styleClass="w-full" inputStyleClass="w-full" />
+                    <label for="pass">Password</label>
+                </p-floatlabel>
+
+                     @if (loginForm.get('password')?.invalid) {
+                <p-message   class="message"severity="error" size="small" variant="simple">The password is required </p-message>}
+            </div>
+              <p-button label="Log In Now" class="w-full" styleClass="w-full custom-login-btn" (click)="onSubmit()"  [disabled]="loginForm.invalid"></p-button>
+  </form>
+
+  <div class="space"></div>
+
+<div id="g_id_onload"
+     [attr.data-client_id]="googleClientId"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-size="large"
+     data-theme="outline"
+     data-text="signin_with"
+     data-shape="rectangular"
+     data-logo_alignment="left">
+</div>
+
+
+
+
+            <ng-template #footer>
+                <div class="footer-container">
+                  
+                    <div class="link-wrapper">
+                        <a class="create-account-link"><u>Create an Account</u></a>
+                    </div>
+                </div>
+            </ng-template>
+      
+
+    </p-card>
+</div> 
