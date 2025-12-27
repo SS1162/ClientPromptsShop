@@ -1,18 +1,16 @@
-<div class="register-container">
+<<div class="register-container">
     <p-card class="custom-card border">
         <ng-template #title>
-            <div class="text-center font-bold text-2xl text-slate-800 titele"><b>Create Account</b></div>
+            <div class="text-center font-bold text-2xl text-slate-800 titele"><b>Update Detiles</b></div>
         </ng-template>
-        <ng-template #subtitle>
-            <div class="text-center text-slate-500 mb-6">Join us by filling out the details below</div>
-        </ng-template>
-        <form [formGroup]="RegisterForm">
+       
+        <form [formGroup]="UpdateForm">
             <div class="form-grid">
                 <p-floatlabel variant="on" class="w-full">
-                    <input pInputText id="email" formControlName="email" autocomplete="off" class="w-full" />
+                    <input pInputText id="email" formControlName="email" autocomplete="off" class="w-full"  [disabled]="false"/>
                     <label for="email">Email Address</label>
                 </p-floatlabel>
-                @if (RegisterForm.get('email')?.invalid) {
+                @if (UpdateForm.get('email')?.invalid) {
                 <p-message class="message" severity="error" size="small" variant="simple">The email address is required
                     and must be a valid email.</p-message>}
                 <div class="names-row">
@@ -27,11 +25,11 @@
                 </div>
 
                 <p-floatlabel variant="on" class="w-full">
-                    <input pInputText id="phone" formControlName="Phone" autocomplete="off" class="w-full" />
+                    <input pInputText id="phone" formControlName="Phone" autocomplete="off" class="w-full" type="tel" />
                     <label for="phone">Phone Number</label>
 
                 </p-floatlabel>
-                @if (RegisterForm.get('phone')?.invalid) {
+                @if (UpdateForm.get('phone')?.invalid) {
                 <p-message class="message" severity="error" size="small" variant="simple">The phone number must be a
                     valid phone number.</p-message>}
 
@@ -40,23 +38,23 @@
                         inputStyleClass="w-full" [feedback]="false"/>
                     <label for="pass">Password</label>
                 </p-floatlabel>
-                @if (RegisterForm.get('password')?.invalid) {
+                @if (UpdateForm.get('password')?.invalid) {
                 <p-message class="message" severity="error" size="small" variant="simple">The password is required
                 </p-message>}
                 
-                  <progress class="bur" max=4 [value]="passordStrength" ></progress>
+                  <progress class="bur w-full" max=4 [value]="passordStrength"></progress>
                 <p-floatlabel variant="on" class="w-full">
                     <p-password formControlName="verificationPassword" inputId="verificationPassword" [toggleMask]="true" 
                         styleClass="w-full" inputStyleClass="w-full" [feedback]="false"/>
                     <label for="verificationPass"> Verification Password</label>
                 </p-floatlabel>
 
-                @if (RegisterForm.get('verificationPassword')?.invalid||RegisterForm.get('verificationPassword')!==RegisterForm.get('password')) {
+                @if (UpdateForm.get('verificationPassword')?.invalid||UpdateForm.get('verificationPassword')!==UpdateForm.get('password')) {
                 <p-message class="message" severity="error" size="small" variant="simple">The password is required and
                     must be identical to the original password.</p-message>}
             </div>
             <div class="buttom">
-                <p-button label="Register Now" styleClass="w-full custom-submit-btn" [disabled]="!RegisterForm.valid"
+                <p-button label="Update Now" styleClass="w-full custom-submit-btn" [disabled]="!UpdateForm.valid"
                     (click)="onSubmit()"></p-button>
             </div>
         </form>

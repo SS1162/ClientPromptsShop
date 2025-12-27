@@ -1,0 +1,46 @@
+
+.box_content {
+width: 99vw;
+padding: 1%;
+min-height: 100vh;
+font-family: 'Inter', sans-serif;
+font-size: 1.2rem;
+}
+
+
+:host ::ng-deep .col-span-12 {
+    display: block;
+    width: 100%;
+}
+
+
+:host ::ng-deep .product-item-wrapper {
+    border-top: 1px solid #e5e7eb !important;
+    padding: 1.5rem;
+}
+
+
+:host ::ng-deep .col-span-12:first-child .product-item-wrapper {
+    border-top: none !important;
+}
+
+
+:host ::ng-deep .p-checkbox-checked .p-checkbox-box {
+    border-color: #C4B6FD !important;
+    background: #C4B6FD !important;
+}
+
+
+:host ::ng-deep .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
+    border-color: #9D58F5 !important;
+}
+
+
+:host ::ng-deep .p-button:hover {
+    background: #8236f1 !important; 
+    border-color: #8236f1 !important;
+}
+.space{
+    height: 10px;
+    width: 1px;
+}

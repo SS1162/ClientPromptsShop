@@ -1,0 +1,47 @@
+<div class="page">
+
+
+    <div class="product flex flex-wrap justify-center gap-4">
+        <div class="top">
+        <div class="card flex justify-center "   [style]="{ maxWidth: '12rem'}">
+            <p-cascadeselect [(ngModel)]="selectedOrder" [options]=" orderByArray"
+                [style]="{ minWidth: '12rem',border: '1px solid #9D58F5' }" placeholder="Sort By" />
+           </div>
+
+            <div class="card flex flex-wrap justify-center gap-4" >
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input type="text" pInputText placeholder="Search" [ngModel]="searchTerm"
+                    [style]="{border: '1px solid #9D58F5' }" />
+                </p-iconfield>
+            </div>
+        </div>
+
+        @for(category of categoryModel; track category.categoryID) {
+        <div class="mb-4">
+            <p-card [style]="{ width: '18rem', overflow: 'hidden', height: '25rem' }"
+                styleClass="p-0 flex flex-col custom-card">
+
+                <ng-template #header>
+                    <img alt="Card" class="w-full" src="{{ category.imgUrl }}" />
+                </ng-template>
+
+                <ng-template #title>
+                    <div class="px-4 pt-2">{{ category.categoryName }}</div>
+                </ng-template>
+
+                <div class="px-4 flex-grow overflow-hidden">
+                    <p class="m-0 text-sm">
+                        {{ category.categoryDescreption }}
+                    </p>
+                </div>
+
+                <ng-template #footer>
+                    <p-button label="Add To Cart 🛒" severity="secondary" [outlined]="true"
+                        styleClass="w-full border-none py-4 m-0" class="w-full mt-auto" />
+                </ng-template>
+            </p-card>
+        </div>
+        }
+    </div>
+</div>

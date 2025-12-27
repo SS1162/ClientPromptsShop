@@ -1,0 +1,52 @@
+.product {
+    padding-top: 20%;
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 1%;
+  font-family: 'Inter', sans-serif;
+    width: 99vw;
+    gap: 1rem;
+    box-sizing: border-box;
+}
+:host ::ng-deep .p-card .p-card-footer {
+    padding: 0 !important;
+}
+
+:host ::ng-deep .p-card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-bottom: 0 !important;
+    
+}
+:host ::ng-deep .p-button.w-full {
+    border-radius:7px; 
+    width: 100%;
+    color: #9D58F5;
+    border: solid #9D58F5 2px;
+    
+}
+:host ::ng-deep .custom-card .p-button:hover {
+    background-color: #9D58F5 !important; 
+    color: #ffffff !important; 
+    border-color: #ffffff !important;
+}
+
+
+.card{
+    width: 100%;
+}
+
+
+.top {
+    width: 100%;
+    display: flex;
+    justify-content: start; 
+    align-items: center; 
+    gap: 3%;
+  
+}
+
+
+
+

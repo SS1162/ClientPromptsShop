@@ -28,6 +28,9 @@
                 <p-message   class="message"severity="error" size="small" variant="simple">The password is required </p-message>}
             </div>
               <p-button label="Log In Now" class="w-full" styleClass="w-full custom-login-btn" (click)="onSubmit()"  [disabled]="loginForm.invalid"></p-button>
+
+                       @if (!isproper ) {
+                <p-message   class="message"severity="error" size="small" variant="simple">The password or the email is incorrect.</p-message>}
   </form>
 
   <div class="space"></div>

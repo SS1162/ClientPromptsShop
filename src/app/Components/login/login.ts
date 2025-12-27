@@ -14,11 +14,11 @@ import { TextareaModule } from 'primeng/textarea';
 import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { loginModel } from '../../Models/loginModel';
-
 import { environment } from '../../../environments/environment';
-
 import { OnInit, NgZone } from '@angular/core';
+
+import { LoginModel } from '../../Models/LoginModel';
+import { UserServise } from '../../Servises/UserServise/User-servise';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -35,7 +35,7 @@ export class Login {
 
   constructor(private ngZone: NgZone) { }
 
-    public googleClientId = environment.googleClientId;
+  public googleClientId = environment.googleClientId;
 
   ngOnInit() {
 
@@ -59,7 +59,6 @@ export class Login {
 
   }
 
-
   onSignIn(response: any) {
 
     const payload = JSON.parse(atob(response.credential.split('.')[1]));
@@ -70,22 +69,35 @@ export class Login {
   }
 
 
-
-
-
-
-
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required])
   })
-  loginUser: loginModel = new loginModel();
+
+  loginUser: LoginModel = new LoginModel();
   messageService = inject(MessageService);
+  userServise = inject(UserServise);
+  isproper: boolean = true;
   onSubmit() {
     if (this.loginForm.valid) {
+      this.isproper = true;
+      this.loginUser.userName = this.loginForm.value.email || ''
+      this.loginUser.userPassward = this.loginForm.value.password || ''
+      this.userServise.LoginUser(this.loginUser).subscribe( {
+        next:(response)=>{
+          sessionStorage.setItem('user', JSON.stringify(response.body))
+          alert(`Login successful: ${response.body}`)
+          this.loginForm.reset()
+        },
+        error:(err)=>{
+        console.log(err);
+          this.isproper = false
+          this.loginForm.reset()
+        }
+      });
+      //לחזור לקומפוננטה הקודמת
 
-      this.messageService.add({ severity: 'success', summary: 'Login Successful', detail: 'Welcome back!' });
-      this.loginForm.reset();
+
     }
   }
 

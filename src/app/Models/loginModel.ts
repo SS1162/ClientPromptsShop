@@ -1,5 +1,5 @@
-export class loginModel {
-    email!: string;
-    password!: string;
+export class LoginModel {
+    userName!: string
+    userPassward!: string
 
 }

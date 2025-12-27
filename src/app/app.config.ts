@@ -5,6 +5,8 @@ import Aura from '@primeuix/themes/aura';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
 
 
 
@@ -17,10 +19,15 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    providePrimeNG({
-      theme: {
-        preset: Aura
-      }
-    }),
+    provideHttpClient(),
+    provideAnimationsAsync(),
+        providePrimeNG({ 
+            theme: {
+                preset: Aura,
+                options: {
+                    darkModeSelector: false // מבטל מצב כהה אוטומטי
+                }
+            }
+        })
   ]
 };

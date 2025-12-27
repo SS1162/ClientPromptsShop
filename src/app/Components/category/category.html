@@ -1,0 +1,49 @@
+
+<div class="box_content">
+    <div class="card w-full">
+        <img alt="{{categoryModel.categoryName}}" class="w-full" src="{{categoryModel.imgUrl}}" />
+        <h1>{{categoryModel.categoryName}}</h1>
+        <h3>{{categoryModel.categoryDescreption}}</h3>
+        <p-dataview #dv [value]="productModel">
+            <ng-template #list let-items>
+                <div class="grid grid-cols-12 gap-4 grid-nogutter">
+                    <div class="col-span-12" *ngFor="let item of items; let first = first; let i = index">
+                        <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
+                             [style.border-top]="'1px solid #dee2e6'" [style.width]="'100%'">
+                            
+                            <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
+                                <div class="flex flex-row md:flex-col justify-between items-start gap-2">
+                                    <div>
+                                        <div class="text-lg font-medium text-surface-900 mt-2">
+                                            {{ item.ProductsName }}
+                                        </div>
+                                    </div>
+                                    <div class="bg-surface-100 p-1" style="border-radius: 30px">
+                                        <div class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
+                                             style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04)">
+                                            <i class="pi pi-star-fill text-yellow-500"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col md:items-end gap-8">
+                                    <span class="text-xl font-semibold">{{ '$' + item.Price }}</span>
+                                </div>
+
+                                <div class="card flex justify-center">
+                                    <p-checkbox [(ngModel)]="chosenProducts[i]" [binary]="true" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+<div class="space"></div>
+                <div class="flex flex-row-reverse md:flex-row gap-2 p-4">
+                    <p-button icon="pi pi-shopping-cart" 
+                              label="Buy Now" 
+                              [style]="{'background-color': '#9D58F5', 'border-color': '#9D58F5'}" />
+                </div>
+            </ng-template>
+        </p-dataview>
+    </div>
+</div>
