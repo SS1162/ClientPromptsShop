@@ -19,19 +19,19 @@
 
         @for(category of categoryModel; track category.categoryID) {
         <div class="mb-4">
-            <p-card [style]="{ width: '18rem', overflow: 'hidden', height: '25rem' }"
+            <p-card [style]="{ width: '17rem', overflow: 'hidden', height: '27rem' }"
                 styleClass="p-0 flex flex-col custom-card">
 
                 <ng-template #header>
-                    <img alt="Card" class="w-full" src="{{ category.imgUrl }}" />
+                    <img alt="Card" class="w-full" src="{{ category.imgUrl }}" [style]="{ height: '14rem' }" />
                 </ng-template>
 
                 <ng-template #title>
                     <div class="px-4 pt-2">{{ category.categoryName }}</div>
                 </ng-template>
 
-                <div class="px-4 flex-grow overflow-hidden">
-                    <p class="m-0 text-sm">
+                <div class="px-4 flex-grow overflow-hidden"  [style]="{ height: '4rem' }">
+                    <p class="m-0 text-sm"    >
                         {{ category.categoryDescreption }}
                     </p>
                 </div>

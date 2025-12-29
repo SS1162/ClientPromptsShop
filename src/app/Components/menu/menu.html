@@ -1,0 +1,45 @@
+<div class="box_content">
+
+    <div class="card">
+
+        <p-megamenu [model]="items"
+            [style]="{ 'border-radius': '3rem', display: 'flex' ,border: '2px solid #C64BF1',color:' #C64BF1'}"
+            class="p-4 bg-surface-0 dark:bg-surface-900 ">
+            <ng-template #start>
+                <img src="assets/images/logo.png" alt="logo"
+                    style="height: 80px; width: auto; margin-right: 15px; cursor: pointer; border-radius: 50%;">
+
+            </ng-template>
+            <ng-template #item let-item>
+                <a *ngIf="item.root" pRipple
+                    class="flex items-center cursor-pointer px-4 py-2 overflow-hidden relative font-semibold text-lg uppercase"
+                    style="border-radius: 2rem">
+                    <i [ngClass]="item.icon"></i>
+                    <span class="ml-2" style="color: #C64BF1; font-size: 1.5rem;">{{ item.label }}</span>
+                </a>
+                <a *ngIf="!item.root && !item.image" class="flex items-center p-4 cursor-pointer mb-2 gap-2 ">
+                    <span
+                        class="inline-flex items-center justify-center rounded-full bg-primary text-primary-contrast w-12 h-12">
+                        <i [ngClass]="item.icon + ' text-lg'"></i>
+                    </span>
+                    <span class="inline-flex flex-col gap-1">
+                        <span class="font-medium text-lg text-surface-900 dark:text-surface-0">{{ item.label }}</span>
+                    </span>
+                </a>
+                <ng-template #end>
+                    <p-menu #menu [model]="itemsForProfile" [popup]="true" appendTo="body"></p-menu>
+
+                    <p-avatar image="assets/images/profil.png" shape="circle" (click)="menu.toggle($event)" [style]="{
+            'height': '60px', 
+            'width': '60px', 
+            'margin-right': '15px', 
+            'cursor': 'pointer', 
+            'border': '2px solid #ddd'
+        }" />
+
+                    <div class="user_prof"></div>
+                </ng-template>
+            </ng-template>
+        </p-megamenu>
+    </div>
+</div>

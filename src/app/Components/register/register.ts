@@ -55,9 +55,11 @@ export class Register {
        this.userServise.RegisterUser(this.registerUser).subscribe({
         next: (respone) => {
           sessionStorage.setItem('user', JSON.stringify(respone.body))
+          this.RegisterForm.reset();
         }
         , error: (err) => {
           alert("error accuard ")
+          this.RegisterForm.reset()
         }
       })
 

@@ -44,7 +44,7 @@
                 <p-message class="message" severity="error" size="small" variant="simple">The password is required
                 </p-message>}
                 
-                  <progress class="bur" max=4 [value]="passordStrength" ></progress>
+                  <progress class="bur" max=4 [value]="passordStrength" [ngStyle]="{'color':'#9D58F5'}"></progress>
                 <p-floatlabel variant="on" class="w-full">
                     <p-password formControlName="verificationPassword" inputId="verificationPassword" [toggleMask]="true" 
                         styleClass="w-full" inputStyleClass="w-full" [feedback]="false"/>
