@@ -43,10 +43,25 @@
     display: flex;
     justify-content: start; 
     align-items: center; 
-    gap: 7%;
+    gap: 0%;
   
 }
 
+.message-container {
+    display: flex;
+    justify-content: center;  
+    width: 100%;           
+    margin: 20px 0;        
+}
 
+::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight):hover {
+    background-color: #f3e5f5 !important; 
+    color: #9D58F5 !important;
+    border: solid 1px  #9D58F5 ;
+}
 
+::ng-deep .p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight) {
+   color: #ffffff;
+    background-color: #9D58F5 !important; 
+}
 

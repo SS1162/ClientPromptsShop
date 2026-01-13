@@ -3,35 +3,51 @@
 
     <div class="product flex flex-wrap justify-center gap-4">
         <div class="top">
-        <div class="card flex justify-center "   [style]="{ maxWidth: '12rem'}">
+
+
+
+            <!-- <div class="card flex justify-center "   [style]="{ maxWidth: '12rem'}">
             <p-cascadeselect [(ngModel)]="selectedOrder" [options]=" orderByArray"
                 [style]="{ minWidth: '12rem',border: '1px solid #9D58F5' }" placeholder="Sort By" />
-           </div>
+           </div> -->
 
-            <div class="card flex flex-wrap justify-center gap-4" >
+            <div class="card flex flex-wrap justify-center gap-4">
                 <p-iconfield>
                     <p-inputicon styleClass="pi pi-search" />
-                    <input type="text" pInputText placeholder="Search" [ngModel]="searchTerm"
-                    [style]="{border: '1px solid #9D58F5' }" />
+                    <input type="text" pInputText placeholder="Search" (blur)="changeSearch()" [(ngModel)]="searchTerm"
+                        [style]="{border: '1px solid #9D58F5' }" />
                 </p-iconfield>
             </div>
         </div>
 
+        <div class=message-container>
+            @if(errorMessegeStatus200!==""){
+            <p-message severity="error" variant="simple" size="small">{{errorMessegeStatus200}}</p-message>
+            }
+
+            @if(errorMessegeBadRequest!=="")
+            {
+            <p-message severity="error" variant="simple">{{errorMessegeBadRequest}}</p-message>
+            }
+
+
+        </div>
         @for(category of categoryModel; track category.categoryID) {
         <div class="mb-4">
-            <p-card [style]="{ width: '17rem', overflow: 'hidden', height: '27rem' }"
+            <p-card [style]="{ width: '17rem', overflow: 'hidden', height: '30rem' }"
                 styleClass="p-0 flex flex-col custom-card">
 
                 <ng-template #header>
-                    <img alt="Card" class="w-full" src="{{ category.imgUrl }}" [style]="{ height: '14rem' }" />
+                    <img alt="Card" class="w-full" src="{{staticFilesURL+category.imgUrl }}"
+                        [style]="{ height: '17rem' }" />
                 </ng-template>
 
                 <ng-template #title>
                     <div class="px-4 pt-2">{{ category.categoryName }}</div>
                 </ng-template>
 
-                <div class="px-4 flex-grow overflow-hidden"  [style]="{ height: '4rem' }">
-                    <p class="m-0 text-sm"    >
+                <div class="px-4 flex-grow overflow-hidden" [style]="{ height: '4rem' }">
+                    <p class="m-0 text-sm">
                         {{ category.categoryDescreption }}
                     </p>
                 </div>
@@ -43,5 +59,9 @@
             </p-card>
         </div>
         }
+        
+<div class="card flex justify-center">
+    <p-paginator (onPageChange)="onPageChange($event)" [first]="numberOfPages" [rows]="pageSize" [totalRecords]="totalRecords" [style]="{backgroundColor:'#F6E8FE'}" />
+</div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { MegaMenuModule } from 'primeng/megamenu';
 import { OnInit } from '@angular/core';
 import { MegaMenuItem } from 'primeng/api';
@@ -10,6 +10,8 @@ import { MainCategoriesModel } from '../../Models/MainCategoriesModel';
 import { MainCategoryServise } from '../../Servises/MainCategoriesServise/main-category';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
+import { UserServise } from '../../Servises/UserServise/User-servise';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-menu',
@@ -25,19 +27,25 @@ export class Menu implements OnInit {
     { label: 'Review', root: true },
     { label: 'Contact', root: true }
   ]
-
+private DestroyRef=inject(DestroyRef)
   private mainCategoryServise = inject(MainCategoryServise)
   mainCategories: MainCategoriesModel[] | null = []
-
-
+  userServise = inject(UserServise)
   itemsForProfile: MenuItem[] | undefined;
   ngOnInit() {
-
-    this.mainCategoryServise.getMainCategory().subscribe({
-      next: (respone) => {
-        console.log(this.mainCategories)
-        this.mainCategories = respone.body
-        for (let i = 0; i < (this.mainCategories?.length ?? 0); i++) {
+    this.mainCategoryServise.getMainCategory()
+    this.mainCategoryServise.mainCategories$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data=>{
+      if(data!==null)
+      {
+         this.mainCategories=data
+         this.items=[
+    { label: 'Home', root: true },
+    { label: 'BasicSite', root: true },
+    { label: 'Products', root: true, items: [[{ items: [] }]] },
+    { label: 'Review', root: true },
+    { label: 'Contact', root: true }
+  ]
+         for (let i = 0; i < (this.mainCategories?.length ?? 0); i++) {
           this.items[2].items![0][0].items!.push({ label: this.mainCategories![i].mainCategoryName, icon: 'pi pi-star', id: this.mainCategories![i].mainCategoryID as unknown as string })
         }
         console.log(this.items)
@@ -45,15 +53,16 @@ export class Menu implements OnInit {
         this.items = [...this.items]
       }
 
-      ,
-      error: (error) => {
-        console.log(error)
-      }
+     
+    })
 
+this.mainCategoryServise.error$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data=>{
+  if(data!==null)
+  {
+    console.log(data)
+  }
 
-    }
-
-    );
+})
 
     this.itemsForProfile = [
       {
@@ -88,4 +97,7 @@ export class Menu implements OnInit {
       }
     ];
   }
+  logOut(){
+  this.userServise.LogOut()
+}
 }

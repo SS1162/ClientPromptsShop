@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserModel } from '../../Models/UserModel';
 import { environment } from '../../../environments/environment';
 import { LoginModel } from '../../Models/LoginModel';
@@ -13,26 +13,84 @@ import { RegisterUserModel } from '../../Models/RegisterUserModel';
   providedIn: 'root',
 })
 export class UserServise {
-//  loginUser:LoginModel=new LoginModel();
+  //  loginUser:LoginModel=new LoginModel();
 
-http:HttpClient=inject(HttpClient);
-BASIC_URL:string=`${environment.apiUrl}/users`;
+  http: HttpClient = inject(HttpClient);
+  BASIC_URL: string = `${environment.apiUrl}/users`;
+  private userSubject = new BehaviorSubject<UserModel | null>(null)
+  public user$:Observable<UserModel|null>=this.userSubject.asObservable()
+  private errorSubject = new BehaviorSubject<HttpErrorResponse | null>(null)
+  public error$:Observable<HttpErrorResponse|null>=this.errorSubject.asObservable()
 
-  LoginUser(loginData:LoginModel):Observable<HttpResponse<UserModel>>{
-    
-    return this.http.post<UserModel>(`${this.BASIC_URL}/loginFunction`,loginData,{observe:'response'});
+  constructor(){
+    const temp=sessionStorage.getItem('user')
+    if(temp!==null)
+    {
+      this.user$=JSON.parse(temp)
+    }
+  }
+  LoginUser(loginData: LoginModel) {
+    this.http.post<UserModel>(`${this.BASIC_URL}/loginFunction`, loginData)
+    .subscribe({
+      next: (data) => {
+        this.userSubject.next(data)
+        this.errorSubject.next(null)
+         sessionStorage.setItem('user', JSON.stringify(data))
+      }
+      ,
+      error: (err) => {
+        this.errorSubject.next(err)
+      }
+    })
+
+  }
+
+GetByID(id:number){
+  this.http.get<UserModel>(`${this.BASIC_URL}/${id}`)
+  .subscribe({
+      next: (data) => {
+        this.userSubject.next(data)
+        this.errorSubject.next(null)
+      }
+      ,
+      error: (err) => {
+        this.errorSubject.next(err)
+      }
+    })
+}
+
+LogOut(){
+  this.userSubject.next(null)
+}
+
+  RegisterUser(registerData: RegisterUserModel){
+
+     this.http.post<UserModel>(`${this.BASIC_URL}`, registerData)
+      .subscribe({
+      next: (data) => {
+        this.userSubject.next(data)
+        this.errorSubject.next(null)
+      }
+      ,
+      error: (err) => {
+        this.errorSubject.next(err)
+      }
+    })
   }
 
 
-    RegisterUser(registerData:RegisterUserModel):Observable<HttpResponse<UserModel>>{
-
-    return this.http.post<UserModel>(`${this.BASIC_URL}`,registerData,{observe:'response'});
-  }
-
-
-    UpdaterUser(registerData:UpdateUserModel,id:number):Observable<HttpResponse<void>>{
-
-    return this.http.put<void>(`${this.BASIC_URL}/${id}`,registerData,{observe:'response'});
+  UpdaterUser(registerData: UpdateUserModel, id: number)
+  {
+     this.http.put<void>(`${this.BASIC_URL}/${id}`, registerData)
+        .subscribe({
+      next: () => {
+        this.errorSubject.next(null)
+      }
+      ,
+      error: (err) => {
+        this.errorSubject.next(err)
+      }})
+      this.GetByID(id)
   }
 }
 

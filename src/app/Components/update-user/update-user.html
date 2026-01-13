@@ -52,10 +52,14 @@
                 @if (UpdateForm.get('verificationPassword')?.invalid||UpdateForm.get('verificationPassword')!==UpdateForm.get('password')) {
                 <p-message class="message" severity="error" size="small" variant="simple">The password is required and
                     must be identical to the original password.</p-message>}
+                
             </div>
+                     <p-message class="message" severity="error" size="small" variant="simple"> {{errorMessege}}
+                </p-message>   
             <div class="buttom">
                 <p-button label="Update Now" styleClass="w-full custom-submit-btn" [disabled]="!UpdateForm.valid"
                     (click)="onSubmit()"></p-button>
+                
             </div>
         </form>
         <ng-template #footer>

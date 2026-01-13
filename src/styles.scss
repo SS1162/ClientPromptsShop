@@ -1,5 +1,35 @@
 @import "primeicons/primeicons.css";
+ *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+ }
 
 
+html {
 
+    scrollbar-color: #C64BF1 #f0f0f0; 
+ 
+}
+
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+
+::-webkit-scrollbar-track {
+    background: #f0f0f0; 
+}
+
+
+::-webkit-scrollbar-thumb {
+    background-color: #C64BF1; 
+    border-radius: 20px;     
+    border: 3px solid #f0f0f0; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color:#9D58F5; 
+}
 

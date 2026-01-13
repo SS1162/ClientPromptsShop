@@ -12,62 +12,72 @@ import { ButtonModule } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
 import { CheckboxModule } from 'primeng/checkbox';
+import { CategoryServise } from '../../Servises/categoryServise/category-servise';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-category',
-  imports: [SplitterModule, CurrencyPipe, FormsModule, Checkbox,DataView, ButtonModule, Tag, CommonModule,CheckboxModule],
+  imports: [SplitterModule, CurrencyPipe, FormsModule, Checkbox, DataView, ButtonModule, Tag, CommonModule, CheckboxModule],
   templateUrl: './category.html',
   styleUrl: './category.scss',
 })
 export class Category {
-  productModel: ProductModel[]= [
-  {
-    ProductsID: 1,
-    CategoryID: 101,
-    ProductsName: 'מחשב נייד עוצמתי',
-    CategoryName: 'אלקטרוניקה',
-    ImgUrl: 'https://primefaces.org/cdn/primeng/images/demo/product/bamboo-watch.jpg', // לינק זמני לבדיקה
-    Price: 3500
-  },
-  {
-    ProductsID: 2,
-    CategoryID: 101,
-    ProductsName: 'עכבר אלחוטי',
-    CategoryName: 'אלקטרוניקה',
-    ImgUrl: 'https://primefaces.org/cdn/primeng/images/demo/product/blue-band.jpg',
-    Price: 150
-  },
-  {
-    ProductsID: 3,
-    CategoryID: 102,
-    ProductsName: 'שולחן כתיבה מעץ',
-    CategoryName: 'ריהוט',
-    ImgUrl: 'https://primefaces.org/cdn/primeng/images/demo/product/game-controller.jpg',
-    Price: 850
-  },
-  {
-    ProductsID: 4,
-    CategoryID: 102,
-    ProductsName: 'כיסא ארגונומי',
-    CategoryName: 'ריהוט',
-    ImgUrl: 'https://primefaces.org/cdn/primeng/images/demo/product/gold-phone-case.jpg',
-    Price: 1200
-  }
-];;
-  productService!: ProductServise;
+  productModel!: ProductModel[] 
+  productService: ProductServise = inject(ProductServise)
+  categoryService: CategoryServise = inject(CategoryServise)
   sum: number = 0;
   chosenProducts: boolean[] = [];
 
-  categoryModel: CategoryModel = {
-    categoryID: 3,
-    mainCategoryID: 20,
-    categoryName: 'אחסון וזיכרון',
-    imgUrl: 'https://primefaces.org/cdn/primeng/images/demo/product/blue-band.jpg',
-    categoryDescreption: 'כונני SSD מהירים וכרטיסי זיכרון בנפחים גדולים לשמירה על המידע שלך.'
-  }
+  categoryModel!: CategoryModel 
 
-
+  categoryID: number=100//למחוק שמבצעים ניטוב
+  numOfPages: number = 1
+  PageSize: number = 24
+  search?: string
+  minPrice?: number
+  MaxPrice?: number
+  orderByPrice?: boolean
+  desc?: boolean
+errorMessegeBadRequest:string=''
+errorMessegeStatuse200:string=''
+staticFilesURL:string=environment.staticFilesUrl
   ngOnInit() {
+    this.categoryService.getCategoryByID(this.categoryID).subscribe({
+      next:(data=>{
+        if(data.body===null)
+        {
+          this.errorMessegeBadRequest="faild to load try again later"
+            console.log("faild load");
+        }else{
+            this.categoryModel=data.body
+        }
+    
+      }),
+      error:(err) =>{
+         this.errorMessegeBadRequest="faild to load try again later"
+        console.log(err);
+       
+      }
+    })
+
+//לבדוק אם הפריט ריק ואם כן ליצור עמוד מיוחד שך פריטים רייקים
+    this.productService.getProduct(this.categoryID, this.numOfPages,  this.PageSize).subscribe({
+      next:(data)=>{
+if(data.body?.data===null)
+{
+  this.errorMessegeStatuse200="no items match to your search"
+  this.productModel=[]
+}
+else{
+  this.productModel=data.body?.data??[]
+}
+      },
+      error:(err)=>{
+  this.productModel=[]
+    this.errorMessegeBadRequest="faild to load try again later"
+      }
+    })
+
     for (let i = 0; i < this.productModel.length; i++) {
       this.chosenProducts.push(false);
     }

@@ -11,13 +11,6 @@
 }
 
 :host ::ng-deep {
-    // צבע המעבר על הפריטים הראשיים (Home, Products וכו')
-    // .p-megamenu-root-list > .p-menuitem > .p-menuitem-content:hover {
-    //     background: #7baa1d !important; // סגול בהיר מאוד לרקע
-    //     // color: #ffffff !important;      // סגול כהה לטקסט
-    // }
-
-    // צבע המעבר על הפריטים בתוך התפריט הנפתח
     .p-megamenu-item-content:hover {
         background: #f3e5f5 !important;
         color: #8d0a86 !important;

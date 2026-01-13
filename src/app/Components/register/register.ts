@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormGroup, FormsModule, Validators } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -21,7 +21,9 @@ import { PasswardModel } from '../../Models/PasswardModel';
 import { UserServise } from '../../Servises/UserServise/User-servise';
 import { CheckVertifictionPassword } from '../../Validators/passwords';
 import { checkIfThePhoneValid } from '../../Validators/phone';
-
+import { UserModel } from '../../Models/UserModel';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-register',
   imports: [FormsModule, InputTextModule, FloatLabel, PasswordModule, IftaLabelModule, CardModule, CommonModule, ReactiveFormsModule,
@@ -31,7 +33,35 @@ import { checkIfThePhoneValid } from '../../Validators/phone';
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })
-export class Register {
+export class Register implements OnInit {
+  userServise:UserServise=inject(UserServise)
+private destroyRef=inject(DestroyRef)
+  user$?:UserModel|null
+  error$?:HttpErrorResponse|null
+  errorMessege:string=""
+  ngOnInit(){
+this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data=>{
+this.user$=data
+if(data!==null)
+{
+alert(`Register successful: ${data}`)
+}
+   
+})
+
+this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data=>{
+  this.error$=data
+    if(data===null)
+  {
+     this.errorMessege=''
+  }
+  else{
+  this.errorMessege=data.error
+  }
+})
+
+
+  }
 
   passwordServise: PasswordServise = inject(PasswordServise);
   RegisterForm = new FormGroup({
@@ -41,10 +71,11 @@ export class Register {
     verificationPassword: new FormControl(null, [Validators.required]),
     firstName: new FormControl(null),
     secondName: new FormControl(null),
-  },{validators:CheckVertifictionPassword})
-  userServise:UserServise=inject(UserServise)
+  },{validators:CheckVertifictionPassword}) 
+
   messageService = inject(MessageService);
   registerUser: RegisterUserModel = new RegisterUserModel();
+
   onSubmit() {
     if (this.RegisterForm.valid) {
       this.registerUser.userPassword = this.RegisterForm.get('password')?.value || '';
@@ -52,18 +83,9 @@ export class Register {
       this.registerUser.firstName = this.RegisterForm.get('firstName')?.value || '';
       this.registerUser.lastName = this.RegisterForm.get('secondName')?.value || '';
       this.registerUser.phone = this.RegisterForm.get('Phone')?.value || '';
-       this.userServise.RegisterUser(this.registerUser).subscribe({
-        next: (respone) => {
-          sessionStorage.setItem('user', JSON.stringify(respone.body))
-          this.RegisterForm.reset();
-        }
-        , error: (err) => {
-          alert("error accuard ")
-          this.RegisterForm.reset()
-        }
-      })
-
+      this.RegisterForm.reset()
     }
+    
   }
  password :  PasswardModel  = new PasswardModel()
  passordStrength:number=0

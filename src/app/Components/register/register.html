@@ -55,10 +55,15 @@
                 <p-message class="message" severity="error" size="small" variant="simple">The password is required and
                     must be identical to the original password.</p-message>}
             </div>
+                <p-message class="message" severity="error" size="small" variant="simple"> {{errorMessege}}
+                </p-message>
             <div class="buttom">
                 <p-button label="Register Now" styleClass="w-full custom-submit-btn" [disabled]="!RegisterForm.valid"
                     (click)="onSubmit()"></p-button>
+                
+                  
             </div>
+            
         </form>
         <ng-template #footer>
 

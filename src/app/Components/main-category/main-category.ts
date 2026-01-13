@@ -6,8 +6,6 @@ import { ButtonModule } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { signal } from '@angular/core';
-import { DataViewModule } from 'primeng/dataview';
 import { CategoryModel } from '../../Models/categoryModel';
 import { CategoryServise } from '../../Servises/categoryServise/category-servise';
 import { CardModule } from 'primeng/card';
@@ -17,40 +15,120 @@ import { IconField } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { Message } from 'primeng/message';
+import { InputMaskModule } from 'primeng/inputmask';
+import { environment } from '../../../environments/environment';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
-
-@Component({ 
+@Component({
   selector: 'app-main-category',
-  imports: [  DataView,
-      Tag,
-      Rating,
-      ButtonModule,
-      CardModule, 
-      CommonModule,
-      SelectButton,
-      FormsModule,
-    CascadeSelect,InputIcon, IconField, InputTextModule, IconFieldModule, InputIconModule],
-      providers: [CategoryServise],
+  imports: [DataView,
+    Tag,
+    Rating,
+    ButtonModule,
+    CardModule,
+    CommonModule,
+    SelectButton,
+    FormsModule,
+    Message,
+    InputMaskModule,
+    PaginatorModule,
+    CascadeSelect, InputIcon, IconField, InputTextModule, IconFieldModule, InputIconModule],
+  providers: [CategoryServise],
   templateUrl: './main-category.html',
-  styleUrl: './main-category.scss',})
+  styleUrl: './main-category.scss',
+})
 
 export class MainCategory {
- orderByArray: string[] =['name','description'];
- selectedOrder: any;
-categoryServise=inject(CategoryServise)
- layout: 'list' | 'grid' = 'list';
-options = ['list', 'grid'];
- categoryModel?:CategoryModel[]=[]
-searchTerm:string='';
-  async ngOnInit() {
-       this.categoryModel=await this.categoryServise.getcategory()
+  //  orderByArray: string[] =['name','description'];
+  //  selectedOrder: any;
+  categoryServise = inject(CategoryServise)
+  //  layout: 'list' | 'grid' = 'list';
+  // options = ['list', 'grid'];
+  categoryModel?: CategoryModel[] = []
+  searchTerm?: string 
+  numberOfPages: number =1
+  mainCategoryID!: number//לקבל באתחול ש הקומפוננטה
+  pageSize: number = 24
+  totalRecords!:number
+  errorMessegeStatus200: string = ''
+  errorMessegeBadRequest: string = ''
+ staticFilesURL:string=environment.staticFilesUrl
+  ngOnInit() {
+    this.mainCategoryID=100//למחוק אותה
+    this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize).subscribe({
+      next: (data) => {
+        if (data.status===204) {
+           this.categoryModel=[]
+          this.errorMessegeStatus200 = "no items match to your search"
+  this.totalRecords=0
+        }
+        else {
+          this.categoryModel = data.body?.data;
+          console.log(this.categoryModel)
+           this.totalRecords=data.body?.totalItems??0
+        }
+      }
+      , error: (error) => {
+        this.categoryModel=[]
+        this.errorMessegeBadRequest = "faild to load product try again later"
+        console.log(error)
+      }
+
+    })
+  }
+
+  changeSearch() {
+    if(this.searchTerm==="")
+      this.searchTerm=undefined
+ this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize,this.searchTerm).subscribe({
+      next: (data) => {
+        if (data.status===204) {
+          this.categoryModel=[]
+          this.errorMessegeStatus200 = "no items match to your search"
+          this.totalRecords=0
+        }
+        else {
+          this.totalRecords=data.body?.totalItems??0
+          this.categoryModel = data.body?.data;
+        }
+      }
+      , error: (error) => {
+        this.categoryModel=[]
+        this.errorMessegeBadRequest = "faild to load product try again later"
+        console.log(error)
+      }
+
+    })
+
+
+   }
+    onPageChange(event: PaginatorState) {
+    this.numberOfPages= this.numberOfPages+1
+    if(this.searchTerm ==="")
+      this.searchTerm=undefined
+ this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize,this.searchTerm).subscribe({
+      next: (data) => {
+        if (data.status===204) {
+          this.categoryModel=[]
+          this.errorMessegeStatus200 = "no items match to your search"
+          this.totalRecords=0
+        }
+        else {
+          this.totalRecords=data.body?.totalItems??0
+          this.categoryModel = data.body?.data;
+        }
+      }
+      , error: (error) => {
+        this.categoryModel=[]
+        this.errorMessegeBadRequest = "faild to load product try again later"
+        console.log(error)
+      }
+
+    })
 }
 
-
-
-}
-
-
+  }
 
 
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormGroup, FormsModule, Validators } from '@angular/forms';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -16,9 +16,11 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../../environments/environment';
 import { OnInit, NgZone } from '@angular/core';
-
 import { LoginModel } from '../../Models/LoginModel';
 import { UserServise } from '../../Servises/UserServise/User-servise';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UserModel } from '../../Models/UserModel';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -31,13 +33,39 @@ import { UserServise } from '../../Servises/UserServise/User-servise';
 })
 
 
-export class Login {
-
+export class Login implements OnInit{
+     userServise:UserServise=inject(UserServise)
+     private destroyRef=inject(DestroyRef)
+     messageService = inject(MessageService);
+     user$?:UserModel|null
+     error$?:HttpErrorResponse|null
+     errorMessege:string=''
+ 
   constructor(private ngZone: NgZone) { }
 
   public googleClientId = environment.googleClientId;
 
   ngOnInit() {
+    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data=>{
+   this.user$=data
+   if(data!==null){
+ alert(`Login successful: ${data}`)
+   }
+  
+})
+
+this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data=>{
+  this.error$=data
+  if(data===null)
+  {
+     this.errorMessege=''
+  }
+  else{
+  this.errorMessege=data.error
+  }
+ 
+})
+
 
     window.addEventListener('google-login-success', (event: any) => {
       this.ngZone.run(() => {
@@ -75,29 +103,17 @@ export class Login {
   })
 
   loginUser: LoginModel = new LoginModel();
-  messageService = inject(MessageService);
-  userServise = inject(UserServise);
+
+
   isproper: boolean = true;
   onSubmit() {
     if (this.loginForm.valid) {
       this.isproper = true;
       this.loginUser.userName = this.loginForm.value.email || ''
       this.loginUser.userPassward = this.loginForm.value.password || ''
-      this.userServise.LoginUser(this.loginUser).subscribe( {
-        next:(response)=>{
-          sessionStorage.setItem('user', JSON.stringify(response.body))
-          alert(`Login successful: ${response.body}`)
-          this.loginForm.reset()
-        },
-        error:(err)=>{
-        console.log(err);
-          this.isproper = false
-          this.loginForm.reset()
-        }
-      });
-      //לחזור לקומפוננטה הקודמת
-
-
+      this.userServise.LoginUser(this.loginUser)
+      this.loginForm.reset()
+      
     }
   }
 
