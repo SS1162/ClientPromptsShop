@@ -4,9 +4,10 @@
     flex-wrap: wrap;
     padding-left: 1%;
   font-family: 'Inter', sans-serif;
-    width: 97vw;
+    width: 99vw;
     gap: 1rem;
     box-sizing: border-box;
+    background-color: #F6E8FE ;
 }
 :host ::ng-deep .p-card .p-card-footer {
     padding: 0 !important;

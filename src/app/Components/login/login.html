@@ -38,7 +38,7 @@
 
   <div class="space"></div>
 
-<div id="g_id_onload"
+<!-- <div id="g_id_onload"
      [attr.data-client_id]="googleClientId"
      data-callback="handleCredentialResponse"
      data-auto_prompt="false">
@@ -51,7 +51,13 @@
      data-text="signin_with"
      data-shape="rectangular"
      data-logo_alignment="left">
-</div>
+</div> -->
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+   </form>
+
+<div class="space"></div>
+
+<div id="googleBtn" class="g_id_signin"></div>
 
 
 

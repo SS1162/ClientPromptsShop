@@ -8,6 +8,7 @@
 .box_content{
     background-color:#F6E8FE ;
     width: 97vw;
+    
 }
 
 :host ::ng-deep {
@@ -17,3 +18,14 @@
     }
 }
 
+:host ::ng-deep {
+    a {
+        text-decoration: none !important;
+        box-shadow: none !important;   
+        color: inherit;                  
+    }
+
+    .p-megamenu-item-link:hover {
+        text-decoration: none !important;
+    }
+}

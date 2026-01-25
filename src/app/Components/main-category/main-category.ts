@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { DataView } from 'primeng/dataview';
 import { Tag } from 'primeng/tag';
 import { Rating } from 'primeng/rating';
 import { ButtonModule } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoryModel } from '../../Models/categoryModel';
 import { CategoryServise } from '../../Servises/categoryServise/category-servise';
@@ -19,6 +19,7 @@ import { Message } from 'primeng/message';
 import { InputMaskModule } from 'primeng/inputmask';
 import { environment } from '../../../environments/environment';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-main-category',
@@ -33,7 +34,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
     Message,
     InputMaskModule,
     PaginatorModule,
-    CascadeSelect, InputIcon, IconField, InputTextModule, IconFieldModule, InputIconModule],
+    CascadeSelect, InputIcon, IconField, InputTextModule, IconFieldModule, InputIconModule,RouterLink,AsyncPipe],
   providers: [CategoryServise],
   templateUrl: './main-category.html',
   styleUrl: './main-category.scss',
@@ -48,15 +49,22 @@ export class MainCategory {
   categoryModel?: CategoryModel[] = []
   searchTerm?: string 
   numberOfPages: number =1
-  mainCategoryID!: number//לקבל באתחול ש הקומפוננטה
+  private mainCategoryID!:number
+  @Input() set id(value:number)
+  {
+    this.mainCategoryID=value;
+    this.getCategories()
+  }
+ 
+ 
   pageSize: number = 24
   totalRecords!:number
   errorMessegeStatus200: string = ''
   errorMessegeBadRequest: string = ''
  staticFilesURL:string=environment.staticFilesUrl
-  ngOnInit() {
-    this.mainCategoryID=100//למחוק אותה
-    this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize).subscribe({
+
+ getCategories(){
+   this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize).subscribe({
       next: (data) => {
         if (data.status===204) {
            this.categoryModel=[]
@@ -76,8 +84,8 @@ export class MainCategory {
       }
 
     })
-  }
-
+ }
+ 
   changeSearch() {
     if(this.searchTerm==="")
       this.searchTerm=undefined
@@ -115,6 +123,8 @@ export class MainCategory {
           this.totalRecords=0
         }
         else {
+          this.errorMessegeStatus200=""
+          this.errorMessegeBadRequest=""
           this.totalRecords=data.body?.totalItems??0
           this.categoryModel = data.body?.data;
         }

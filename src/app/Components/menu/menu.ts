@@ -12,10 +12,12 @@ import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { UserServise } from '../../Servises/UserServise/User-servise';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
+import { routes } from '../../app.routes';
 
 @Component({
   selector: 'app-menu',
-  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule],
+  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule,RouterLink],
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
 })
@@ -33,6 +35,42 @@ private DestroyRef=inject(DestroyRef)
   userServise = inject(UserServise)
   itemsForProfile: MenuItem[] | undefined;
   ngOnInit() {
+     this.itemsForProfile = [
+      {
+        label: 'Options',
+        items: [
+          {
+            label: 'login',
+            icon: 'pi pi-sign-in',
+            routerLink:['/login']
+            
+          },
+           {
+            label: 'update ditels',
+            icon: 'pi pi-pencil', 
+            routerLink:['/update']
+          },
+          {
+            label: 'register',
+            icon: 'pi pi-user',
+            routerLink:['/register']
+          },
+           {
+            label: 'log out',
+            icon: 'pi pi-sign-out'
+          },
+           {
+            label: 'cart',
+            icon: 'pi pi-shopping-cart'
+          },
+           {
+            label: 'orders',
+            icon: 'pi pi-briefcase'
+          },
+
+        ]
+      }
+    ];
     this.mainCategoryServise.getMainCategory()
     this.mainCategoryServise.mainCategories$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data=>{
       if(data!==null)
@@ -64,38 +102,7 @@ this.mainCategoryServise.error$.pipe(takeUntilDestroyed(this.DestroyRef)).subscr
 
 })
 
-    this.itemsForProfile = [
-      {
-        label: 'Options',
-        items: [
-          {
-            label: 'login',
-            icon: 'pi pi-sign-in'
-          },
-           {
-            label: 'update ditels',
-            icon: 'pi pi-pencil'
-          },
-          {
-            label: 'register',
-            icon: 'pi pi-user'
-          },
-           {
-            label: 'log out',
-            icon: 'pi pi-sign-out'
-          },
-           {
-            label: 'cart',
-            icon: 'pi pi-shopping-cart'
-          },
-           {
-            label: 'orders',
-            icon: 'pi pi-briefcase'
-          },
-
-        ]
-      }
-    ];
+   
   }
   logOut(){
   this.userServise.LogOut()

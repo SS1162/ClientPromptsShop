@@ -1,10 +1,10 @@
 
 .box_content {
-width: 98vw;
+width: 99vw;
 padding: 1%;
 min-height: 100vh;
 font-family: 'Inter', sans-serif;
-font-size: 1.2rem;
+
 }
 
 
@@ -12,8 +12,30 @@ font-size: 1.2rem;
     display: block;
     width: 100%;
 }
+.priceconteiner{
+    display: flex;
+    gap: 10%;
+    width: 15rem;
+    height: 3.5rem;
+    justify-content: center;
+    align-items: center;
+}
 
+/* צביעת האייקון בסגול באופן קבוע */
+:host ::ng-deep .p-iconfield .p-inputicon {
+    color: #8236f1 !important;
+}
 
+/* צביעת הטקסט של ה-Placeholder (הטקסט "Search") */
+:host ::ng-deep .p-inputtext::placeholder {
+    color: #8236f1;
+    opacity: 0.7; /* שקיפות קלה כדי להבדיל בין placeholder לטקסט חי */
+}
+
+/* הבטחת צבע הטקסט שהמשתמש מקליד */
+:host ::ng-deep .p-inputtext {
+    color: #8236f1 !important;
+}
 :host ::ng-deep .product-item-wrapper {
     border-top: 1px solid #e5e7eb !important;
     padding: 1.5rem;
@@ -34,8 +56,15 @@ font-size: 1.2rem;
 :host ::ng-deep .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
     border-color: #9D58F5 !important;
 }
+.myStyle{
+    display: flex;
+    gap: 1%;
+    color: #8236f1;
+}
 
-
+::ng-deep .p-slider .p-slider-range {
+    background: #8236f1; 
+}
 :host ::ng-deep .p-button:hover {
     background: #8236f1 !important; 
     border-color: #8236f1 !important;
@@ -44,4 +73,71 @@ font-size: 1.2rem;
     height: 10px;
     width: 100%;
     background-color:#F6E8FE;
+}
+.space2{
+    width: 1px;
+    height: 25px;
+}
+
+:host ::ng-deep {
+
+    .p-select {
+     
+        .p-select-label {
+            color: #8236f1 !important; 
+    
+        }
+
+     
+        &.p-focus {
+            border-color:#8236f1 !important; 
+            border-width: 3px !important;   
+            box-shadow: none !important;
+        }
+        
+
+        &:not(.p-disabled):hover {
+            border-color: #8236f1 !important;
+        }
+    }
+
+   
+    .p-floatlabel {
+     
+        label {
+            color:#8236f1 !important; 
+            font-weight: 500;
+        }
+        
+   
+        &:has(.p-focus) label,
+        &.p-floatlabel-active label {
+            color: #8236f1 !important;
+        }
+    }
+
+  
+    .p-select-overlay {
+        border-color:#8236f1 !important; 
+
+        .p-select-option {
+           
+            &:not(.p-select-option-selected):not(.p-disabled):hover {
+                background: #f3e5f5 !important; 
+                color:#8236f1 !important;      
+            }
+
+          
+            &.p-select-option-selected {
+                background:#8236f1 !important; 
+                color: #ffffff !important;     
+            }
+            
+        
+            &.p-focus {
+                background: #f3e5f5 !important;
+                color: #8236f1 !important;
+            }
+        }
+    }
 }

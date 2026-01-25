@@ -12,12 +12,14 @@
             </ng-template>
             <ng-template #item let-item>
                 <a *ngIf="item.root" pRipple
+              
                     class="flex items-center cursor-pointer px-4 py-2 overflow-hidden relative font-semibold text-lg uppercase"
                     style="border-radius: 2rem">
                     <i [ngClass]="item.icon"></i>
                     <span class="ml-2" style="color: #C64BF1; font-size: 1.5rem;">{{ item.label }}</span>
                 </a>
-                <a *ngIf="!item.root && !item.image" class="flex items-center p-4 cursor-pointer mb-2 gap-2 ">
+                <a *ngIf="!item.root && !item.image" class="flex items-center p-4 cursor-pointer mb-2 gap-2 "
+                  [routerLink]="['/mainCategory',item.id]">
                     <span
                         class="inline-flex items-center justify-center rounded-full bg-primary text-primary-contrast w-12 h-12">
                         <i [ngClass]="item.icon + ' text-lg'"></i>

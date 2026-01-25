@@ -1,37 +1,65 @@
-
 <div class="box_content" [style]="{backgroundColor:'#F6E8FE'}">
+    <div class="myStyle">
+        <div class="priceconteiner">
+        {{rangeValues[0]}}
+        <div class="card flex justify-center " [style]="{'width':'10rem'}">
+            <p-slider [(ngModel)]="rangeValues" [range]="true" class="w-56" (onSlideEnd)="loadOnFilter()" />
+        </div>
+        {{rangeValues[1]}}
+    </div>
+        <p-floatlabel class="w-full md:w-56" variant="in" [style]="{'width':'15rem'}">
+            <p-select [(ngModel)]="selectedSorted" inputId="sortBy" [options]="optionForSorting"  (onChange)="loadOnFilter()" class="w-full"
+                variant="filled"
+                [style]="{'width':'15rem','border':'2px solid #8236f1 ','background-color':'white','max-height':'3.5rem','color':'#8236f1'}" />
+            <label for="in_label">sort by</label>
+        </p-floatlabel>
+        <div class="card flex flex-wrap justify-center gap-4">
+            <p-iconfield>
+                <p-inputicon class="pi pi-search" />
+                <input type="text" [(ngModel)]="search" pInputText placeholder="Search" (blur)="loadOnFilter()" [style]="{'width':'15rem','border':'2px solid #8236f1 ','background-color':'white','height':'3.3rem','color':'#8236f1'}"/>
+            </p-iconfield>
+        </div>
+    </div>
+
+    <div class="space2"></div>
     <div class="card w-full" [style]="{backgroundColor:'#F6E8FE'}">
-        <img alt="{{categoryModel.categoryName}}" class="w-full" src="{{staticFilesURL+categoryModel.imgUrl}}"  [style]="{ height: '17rem' }" />
+        <img alt="{{categoryModel.categoryName}}" class="w-full" src="{{staticFilesURL+categoryModel.imgUrl}}"
+            [style]="{ height: '17rem' }" />
         <h1 [style]="{ color: '#8236f1' }">{{categoryModel.categoryName}}</h1>
         <h3 [style]="{ color: '#8236f1' }">{{categoryModel.categoryDescreption}}</h3>
         <p-dataview #dv [value]="productModel">
+
             <ng-template #list let-items>
+
                 <div class="grid grid-cols-12 gap-4 grid-nogutter">
                     <div class="col-span-12" *ngFor="let item of items; let first = first; let i = index">
-                       
-
+                        @if(item.productsName!=="Empty")
+                        {
                         <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
-                             [style.border-top]="'1px solid #dee2e6'" [style.width]="'100%'" [style]="{backgroundColor:'#F6E8FE'}">
-                            
+                            [style.border-top]="'1px solid #dee2e6'" [style.width]="'100%'"
+                            [style]="{backgroundColor:'#F6E8FE'}">
+
                             <div class="flex flex-col md:flex-row justify-between md:items-center flex-1 gap-6">
                                 <div class="flex flex-row md:flex-col justify-between items-start gap-2">
                                     <div>
                                         <span class="text-lg font-medium text-surface-900 mt-2">
-                                             <i class="pi pi-star-fill text-yellow-500"></i>
-                                            {{ item.ProductsName }}
+                                            <i class="pi pi-star-fill text-yellow-500"></i>
+                                            {{ item.productsName }}
                                         </span>
                                     </div>
                                     <div class="bg-surface-100 p-1" style="border-radius: 30px">
                                         <div class="bg-surface-0 flex items-center gap-2 justify-center py-1 px-2"
-                                             style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04)">
-                                           
+                                            style="border-radius: 30px; box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.04)">
+
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="flex flex-col md:items-end gap-8">
-                                 
-                                    <span class="text-xl font-semibold">{{  item.Price| currency:'USD':'symbol':'1.2-2' }}</span>
+
+                                    <span class="text-xl font-semibold">{{ item.price|
+                                        currency:'USD':'symbol':'1.2-2'
+                                        }}</span>
                                 </div>
 
                                 <div class="card flex justify-center" [style]="{backgroundColor:'#F6E8FE'}">
@@ -39,15 +67,21 @@
                                 </div>
                             </div>
                         </div>
+                        }
+
+
                     </div>
+                    
+
                 </div>
-<div class="space" ></div>
-                <div class="flex flex-row-reverse md:flex-row gap-2 p-4" [style]="{backgroundColor:'#F6E8FE'}" >
-                    <p-button icon="pi pi-shopping-cart" 
-                              label="Buy Now" 
-                              [style]="{'background-color': '#9D58F5', 'border-color': '#9D58F5'}" />
-                </div>
+
+   <app-empty-product [id]="emptyProductId"></app-empty-product>           
             </ng-template>
         </p-dataview>
+          <div class="space"></div>
+                <div class="flex flex-row-reverse md:flex-row gap-2 p-4" [style]="{backgroundColor:'#F6E8FE'}">
+                    <p-button icon="pi pi-shopping-cart" label="Buy Now"
+                        [style]="{'background-color': '#9D58F5', 'border-color': '#9D58F5'}" />
+                </div>
     </div>
 </div>
