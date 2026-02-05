@@ -25,7 +25,7 @@ import { EmptyProduct } from '../empty-product/empty-product';
 @Component({
   selector: 'app-category',
   imports: [SplitterModule, CurrencyPipe, FormsModule, Checkbox, DataView, ButtonModule,
-     Tag, CommonModule, CheckboxModule,SliderModule,SelectModule, FloatLabelModule,
+     CommonModule, CheckboxModule,SliderModule,SelectModule, FloatLabelModule,
     IconFieldModule, InputIconModule, InputTextModule,EmptyProduct],
   templateUrl: './category.html',
   styleUrl: './category.scss',

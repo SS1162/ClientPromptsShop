@@ -6,11 +6,12 @@ import { MainCategory } from './Components/main-category/main-category';
 import { Category } from './Components/category/category';
 import { UpdateUser } from './Components/update-user/update-user';
 import { Menu } from './Components/menu/menu';
+import { ButtomNevigation } from './Components/buttom-nevigation/buttom-nevigation';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,Register,Login,MainCategory,Category,UpdateUser,Menu],
+  imports: [RouterOutlet,Menu,ButtomNevigation],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

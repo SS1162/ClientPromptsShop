@@ -23,18 +23,16 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-main-category',
-  imports: [DataView,
-    Tag,
-    Rating,
+  imports: [
     ButtonModule,
     CardModule,
     CommonModule,
-    SelectButton,
+
     FormsModule,
     Message,
     InputMaskModule,
     PaginatorModule,
-    CascadeSelect, InputIcon, IconField, InputTextModule, IconFieldModule, InputIconModule,RouterLink,AsyncPipe],
+     InputIcon, IconField, InputTextModule, IconFieldModule, InputIconModule,RouterLink],
   providers: [CategoryServise],
   templateUrl: './main-category.html',
   styleUrl: './main-category.scss',

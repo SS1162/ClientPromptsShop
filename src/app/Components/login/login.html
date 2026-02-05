@@ -38,20 +38,7 @@
 
   <div class="space"></div>
 
-<!-- <div id="g_id_onload"
-     [attr.data-client_id]="googleClientId"
-     data-callback="handleCredentialResponse"
-     data-auto_prompt="false">
-</div>
 
-<div class="g_id_signin"
-     data-type="standard"
-     data-size="large"
-     data-theme="outline"
-     data-text="signin_with"
-     data-shape="rectangular"
-     data-logo_alignment="left">
-</div> -->
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
    </form>
 
@@ -66,7 +53,7 @@
                 <div class="footer-container">
                   
                     <div class="link-wrapper">
-                        <a class="create-account-link"><u>Create an Account</u></a>
+                        <a class="create-account-link" routerLink="/register" style="color:  #8139EB; text-decoration: none;"><u>Create an Account</u></a>
                     </div>
                 </div>
             </ng-template>

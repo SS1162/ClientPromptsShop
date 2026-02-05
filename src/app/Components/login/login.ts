@@ -147,6 +147,7 @@ import { UserServise } from '../../Servises/UserServise/User-servise';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserModel } from '../../Models/UserModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 declare var google: any;
 
@@ -154,7 +155,7 @@ declare var google: any;
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule, InputTextModule, FloatLabel, PasswordModule, IftaLabelModule, CardModule, CommonModule, ReactiveFormsModule,
-    TextareaModule, ButtonModule, MessageModule, ToastModule
+    TextareaModule, ButtonModule, MessageModule, ToastModule,RouterLink
   ],
   providers: [MessageService],
   templateUrl: './login.html',
