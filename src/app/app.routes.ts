@@ -13,6 +13,9 @@ import { PrivacyPolicy } from './Components/privacy-policy/privacy-policy';
 import { Accessibility } from './Components/accessibility/accessibility';
 import { RefundPolicy } from './Components/refund-policy/refund-policy';
 import { TermsofService } from './Components/termsof-service/termsof-service';
+import { Home } from './Components/home/home';
+import { BasicSite } from './Components/basic-site/basic-site';
+import { Reviews } from './Components/reviews/reviews';
 
 
 export const routes: Routes = [
@@ -20,7 +23,6 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'login', component: Login },
   { path: 'update', component: UpdateUser },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },//change to home later
   { path: 'mainCategory/:id', component: MainCategory },
   { path: 'category/:id', component: Category },
   { path: 'platformGuides', component: PlatformGuides },
@@ -30,6 +32,11 @@ export const routes: Routes = [
   { path: 'privacyPolicy', component: PrivacyPolicy },
   { path: 'accessibility', component: Accessibility },
   { path: 'refundPolicy', component: RefundPolicy },
-  { path: 'termsofService', component: TermsofService }
+  { path: 'termsofService', component: TermsofService },
+  { path: 'home', component: Home },
+  { path: 'basicSite', component: BasicSite },
+    { path: 'reviews', component: Reviews },
+  { path: '',redirectTo:'home',pathMatch:'full'}
+ 
 
 ];

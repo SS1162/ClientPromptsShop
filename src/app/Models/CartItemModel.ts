@@ -1,6 +1,7 @@
 export class CartItemModel {
     cartID!: number
     productsName!: string
+    productID!:number
     price!: number
     categoryName!: string
     imgUrl!: string

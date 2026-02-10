@@ -6,6 +6,8 @@
         <ng-template #subtitle>
             <div class="text-center text-slate-500 mb-6">Join us by filling out the details below</div>
         </ng-template>
+        {{this.RegisterForm.get('password')?.value}}
+        {{this.RegisterForm.get('verificationPassword')?.value}}
         <form [formGroup]="RegisterForm">
             <div class="form-grid">
                 <p-floatlabel variant="on" class="w-full">
@@ -31,7 +33,7 @@
                     <label for="phone">Phone Number</label>
 
                 </p-floatlabel>
-                @if (RegisterForm.get('phone')?.invalid) {
+                @if (RegisterForm.get('Phone')?.invalid) {
                 <p-message class="message" severity="error" size="small" variant="simple">The phone number must be a
                     valid phone number.</p-message>}
 
@@ -51,13 +53,15 @@
                     <label for="verificationPass"> Verification Password</label>
                 </p-floatlabel>
 
-                @if (RegisterForm.get('verificationPassword')?.invalid||RegisterForm.get('verificationPassword')!==RegisterForm.get('password')) {
+                @if (RegisterForm.get('verificationPassword')?.invalid||RegisterForm.get('verificationPassword')?.value!==RegisterForm.get('password')?.value) {
                 <p-message class="message" severity="error" size="small" variant="simple">The password is required and
                     must be identical to the original password.</p-message>}
             </div>
                 <p-message class="message" severity="error" size="small" variant="simple"> {{errorMessege}}
                 </p-message>
             <div class="buttom">
+
+
                 <p-button label="Register Now" styleClass="w-full custom-submit-btn" [disabled]="!RegisterForm.valid"
                     (click)="onSubmit()"></p-button>
                 

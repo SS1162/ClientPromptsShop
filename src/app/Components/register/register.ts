@@ -24,6 +24,7 @@ import { checkIfThePhoneValid } from '../../Validators/phone';
 import { UserModel } from '../../Models/UserModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   imports: [FormsModule, InputTextModule, FloatLabel, PasswordModule, IftaLabelModule, CardModule, CommonModule, ReactiveFormsModule,
@@ -34,32 +35,40 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './register.scss',
 })
 export class Register implements OnInit {
-  userServise:UserServise=inject(UserServise)
-private destroyRef=inject(DestroyRef)
-  user$?:UserModel|null
-  error$?:HttpErrorResponse|null
-  errorMessege:string=""
-  ngOnInit(){
-this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data=>{
-this.user$=data
-if(data!==null)
+  userServise: UserServise = inject(UserServise)
+  private destroyRef = inject(DestroyRef)
+  user$?: UserModel | null
+  error$?: HttpErrorResponse | null
+  router: Router = inject(Router)
+  errorMessege: string = ""
+  ngOnInit() {
+    
+
+    this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+      this.error$ = data
+      if (data === null) {
+        this.errorMessege = ''
+      }
+      else {
+        this.errorMessege = "An error occurred. Please try again later "
+        this.showError()
+      }
+    })
+
+this.userServise.sucssesToRegister.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+  next:(data)=>{
+if(data===true)
 {
-alert(`Register successful: ${data}`)
+   this.router.navigate(['/login'])
 }
-   
-})
-
-this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data=>{
-  this.error$=data
-    if(data===null)
-  {
-     this.errorMessege=''
+ 
+  },
+  error:()=>{
+     this.errorMessege = "An error occurred. Please try again later "
+     this.showError()
   }
-  else{
-  this.errorMessege=data.error
-  }
-})
 
+})
 
   }
 
@@ -71,7 +80,7 @@ this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data
     verificationPassword: new FormControl(null, [Validators.required]),
     firstName: new FormControl(null),
     secondName: new FormControl(null),
-  },{validators:CheckVertifictionPassword}) 
+  }, { validators: CheckVertifictionPassword })
 
   messageService = inject(MessageService);
   registerUser: RegisterUserModel = new RegisterUserModel();
@@ -84,21 +93,31 @@ this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data
       this.registerUser.lastName = this.RegisterForm.get('secondName')?.value || '';
       this.registerUser.phone = this.RegisterForm.get('Phone')?.value || '';
       this.RegisterForm.reset()
+      this.userServise.RegisterUser(this.registerUser)
+      
+
+      
     }
-    
+
   }
- password :  PasswardModel  = new PasswardModel()
- passordStrength:number=0
+   showError() {
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: this.errorMessege });
+  }
+  password: PasswardModel = new PasswardModel()
+  passordStrength: number = 0
   checkPasswordStrength() {
     this.password.UserPassward = this.RegisterForm.get('password')?.value || '';
-    if(this.password.UserPassward!=='')
-    {
-    this.passwordServise.postPassword(this.password).subscribe({
-      next: (response) => {
-      this.passordStrength=response.body||0
-}
-,error:(err)=>{
-console.log(err)
-}})}
+    if (this.password.UserPassward !== '') {
+      this.passwordServise.postPassword(this.password).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (response) => {
+          this.passordStrength = response.body || 0
+        }
+        , error: (err) => {
+          console.log(err)
+        }
+      })
+    }
+
+  }
  
-}}
+}

@@ -40,16 +40,18 @@ export class UpdateUser implements OnInit {
 
   userServise: UserServise = inject(UserServise)
   private destroyRef = inject(DestroyRef)
-  user$: UserModel | null=null
-  error$: HttpErrorResponse | null=null
+  user$: UserModel | null = null
+  error$: HttpErrorResponse | null = null
   errorMessege: string = ''
   ngOnInit() {
     this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.user$ = data
-      if(data!==null){
-  alert(`Update successful: ${data}`)
-      }
-    
+
+      this.UpdateForm.patchValue({
+        email: this.user$?.userName
+      });
+      console.log(this.user$)
+      console.log(this.user$?.userName)
     })
 
     this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
@@ -64,7 +66,7 @@ export class UpdateUser implements OnInit {
   }
   passwordServise: PasswordServise = inject(PasswordServise);
   UpdateForm = new FormGroup({
-    email: new FormControl({ value: `${this.user$?.userID}`, disabled: true }, Validators.required),
+    email: new FormControl({ value: `${this.user$?.userName}`, disabled: true }, Validators.required),
     password: new FormControl(null, [Validators.required]),
     Phone: new FormControl(null, [checkIfThePhoneValid]),
     verificationPassword: new FormControl(null, [Validators.required]),
@@ -79,13 +81,13 @@ export class UpdateUser implements OnInit {
         this.errorMessege = "You must login before update ditels"
       }
       else {
-        this.updateUser.userId = this.user$.userID
+        this.updateUser.userID = this.user$.userID
         this.updateUser.userName = this.user$.userName
         this.updateUser.password = this.UpdateForm.get('password')?.value || '';
         this.updateUser.firstName = this.UpdateForm.get('firstName')?.value || '';
         this.updateUser.lastName = this.UpdateForm.get('secondName')?.value || '';
         this.updateUser.phone = this.UpdateForm.get('Phone')?.value || '';
-        this.userServise.UpdaterUser(this.updateUser,this.user$.userID)
+        this.userServise.UpdaterUser(this.updateUser, this.user$.userID)
       }
 
     }

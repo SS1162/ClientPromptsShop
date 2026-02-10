@@ -1,1 +1,177 @@
-<p>full-screen-cart works!</p>
+<div class="orders-wrapper" dir="ltr">
+
+    <section class="orders-header">
+        <h1>My Cart</h1>
+        <p>Great selection! You're just one step away from turning your ideas into reality.</p>
+        <div class="underline"></div>
+    </section>
+
+
+    <div class="content">
+        <div class="for-paing">
+            <div class="summary-container">
+                <p-card styleClass="custom-summary-card">
+                    <ng-template #title>
+                        <div class="card-title">Order Summary</div>
+                    </ng-template>
+
+                    <ng-template #subtitle>
+                        <div class="summary-content">
+                            <div class="summary-row">
+                                <span>Items:</span>
+                                <span class="value">cartItems.length</span>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="summary-row total-row">
+                                <span>Total Amount:</span>
+                                <span class="value highlight">$totalPrice</span>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template #footer>
+                        <div class="button-row">
+                            <p-button label="Complete Purchase" class="summary-btn" styleClass="btn-checkout"
+                                icon="pi pi-credit-card" [disabled]="user.BasicID!==null" />
+                            <p-button label="Update Details" class="summary-btn" [outlined]="true"
+                                icon="pi pi-user-edit" styleClass="btn-update" [routerLink]="['/update']" />
+                        </div>
+                    </ng-template>
+                </p-card>
+            </div>
+        </div>
+        <div class="for-pading">
+            <div class="cart-list">
+       
+<div class="foundation-container">
+  @if (basicSite) {
+    <div class="premium-foundation-card">
+      <div class="side-accent"></div>
+      
+      <div class="card-main-content">
+        <div class="header-row">
+          <div class="site-identity">
+            <span class="platform-text-header">{{ basicSite.platformName }}</span>
+            <h1 class="premium-title">{{ basicSite.siteName }}</h1>
+          </div>
+          
+          <button class="primary-edit-btn" [routerLink]="['/basicSite']">
+            <i class="pi pi-pencil"></i>
+            <span>Edit Settings</span>
+          </button>
+        </div>
+
+        <div class="description-area">
+          @if (basicSite.userDescreption) {
+            <p class="main-desc">{{ basicSite.userDescreption }}</p>
+          } @else {
+            <div class="type-info-block">
+              <span class="type-tag">{{ basicSite.siteTypeName }}</span>
+              <p class="type-desc">{{ basicSite.siteTypeDescreption }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+ <div class="foundation-card error-site">
+      <div class="error-content">
+        <div class="icon-container">
+          <i class="pi pi-exclamation-triangle pulse"></i>
+        </div>
+        <h2 class="error-title-large">Action Required: Site Foundation Missing</h2>
+        <p class="error-text-large">
+          You cannot proceed to purchase or checkout because your site's foundation has not been established yet.
+        </p>
+        
+        <button class="setup-btn-large" [routerLink]="['/basicSite']">
+          <i class="pi pi-cog"></i> Initialize Site Base
+        </button>
+      </div>
+    </div>
+
+  }
+</div>
+
+
+
+
+                @for (item of cartItems; track item.cartID) {
+
+                <div class="cart-item glass-panel">
+
+                    <div class="cart-item-visual">
+
+                        <img [src]="item.imgUrl" class="car-item-img" alt="product Preview">
+
+                    </div>
+
+                    <div class="cart-item-content">
+                        <div class="content-header">
+                            <div class="title-section">
+                                <a [routerLink]="['/category',item.productID]" style=" text-decoration: none;">
+                                    <h3>{{ item.productsName }}</h3>
+                                </a>
+                                <span class="site-type truncate-text">
+                                    @if(item.categoryDescreption!==null)
+                                    {
+                                    {{item.userDescription}}
+                                    }
+                                    @else{
+                                    {{item.categoryDescreption}}
+                                    }
+                                </span>
+                            </div>
+                            <div class="price-section">
+                                <span class="price-value">${{item.price }}</span>
+                            </div>
+                        </div>
+
+                        <div class="meta-row">
+                            @if(item.valid)
+                            {
+
+                            <span><i class="pi pi-bookmark-fill" [style]="{'color':'#8139eb'}"
+                                    (click)="changeProductToInValid(item.cartID)"> Included in Order</i></span>
+
+                            }
+                            @else{
+
+                            <span>
+
+                                <i class="pi pi-bookmark" [style]="{'color':'#8139eb'}"
+                                    (click)="changeProductToValid(item.cartID)">Not included in Order</i>
+                            </span>
+
+                            }
+                            <br><br>
+                            <span class="pi pi-cog" [style]="{'color':'#8139eb'}">{{item.platformName
+                                }}</span>
+
+                        </div>
+
+                        <div class="cart-actions">
+                            <p-button label="Remove Product" icon="pi pi-trash" [outlined]="true"
+                                (click)="removeProduct(item.cartID)" styleClass="p-button-sm" severity="help">
+                            </p-button>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+                } @empty {
+                <div class="empty-state">
+                    <i class="pi pi-folder-open"></i>
+                    {{noItems}}
+                    <br>
+                    <p-button label="Begin to create" icon="pi pi-code"
+                        [style]="{'backgroundColor':'#8139eb','color':'white','border':'none'}"
+                        [routerLink]="['/basicSite']"></p-button>
+                </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

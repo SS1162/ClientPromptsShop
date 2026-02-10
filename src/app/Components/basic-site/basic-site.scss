@@ -135,6 +135,28 @@ background-color:#F6E8FE;
       color: $text-dark;
       margin-bottom: 2rem;
     }
+
+    .site-type-description {
+      background: linear-gradient(135deg, rgba($primary-purple, 0.05) 0%, rgba($primary-purple, 0.02) 100%);
+      border: 2px solid $light-purple;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      animation: slideIn 0.3s ease-out;
+
+      h3 {
+        color: $primary-purple;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+      }
+
+      p {
+        color: $text-dark;
+        margin: 0;
+        line-height: 1.6;
+      }
+    }
   }
 
   ::ng-deep .contact-form {
@@ -157,32 +179,121 @@ background-color:#F6E8FE;
       flex-direction: column;
       gap: 0.5rem;
       margin-top: 10px;
-    }
+      position: relative;
 
-    .p-floatlabel {
-      width: 100%;
+      label {
+        position: absolute;
+        top: -8px;
+        left: 14px;
+        background: white;
+        padding: 0 6px;
+        font-size: 0.85rem;
+        color: #999;
+        transition: all 0.3s ease;
+        pointer-events: none;
+      }
 
-      input:focus~label,
-      input.p-filled~label,
-      textarea:focus~label,
-      textarea.p-filled~label {
+      label.filled {
+        color: $primary-purple !important;
+        font-weight: 700;
+      }
+
+      .custom-select:focus ~ label {
         color: $primary-purple !important;
         font-weight: 700;
       }
     }
 
+    .p-floatlabel {
+      width: 100%;
+      position: relative;
+
+      label {
+        position: absolute;
+        left: 16px;
+        top: 16px;
+        transition: all 0.3s ease;
+        color: #999;
+        font-size: 1rem;
+        pointer-events: none;
+        background: white;
+        padding: 0 4px;
+      }
+
+      input:focus ~ label,
+      input.p-filled ~ label {
+        top: 8px;
+        font-size: 0.75rem;
+        color: $primary-purple !important;
+        font-weight: 700;
+      }
+
+      input:focus,
+      input.p-filled {
+        border-color: $primary-purple !important;
+      }
+
+      textarea:focus ~ label,
+      textarea.p-filled ~ label {
+        top: 8px;
+        font-size: 0.75rem;
+        color: $primary-purple !important;
+        font-weight: 700;
+      }
+
+      textarea:focus,
+      textarea.p-filled {
+        border-color: $primary-purple !important;
+      }
+    }
+
     .custom-input,
-    .custom-textarea {
+    .custom-textarea,
+    .custom-select {
       border: 2px solid $accent-purple !important;
       border-radius: 12px !important;
       padding: 14px !important;
       width: 100%;
       transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      color: $text-dark;
+      background-color: white;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 20px;
+      padding-right: 40px;
 
       &:focus {
         border-color: $primary-purple !important;
         box-shadow: 0 0 0 4px $shadow-color !important;
         outline: none;
+      }
+
+      &:hover {
+        border-color: $primary-purple !important;
+      }
+
+      option {
+        padding: 10px;
+        color: $text-dark;
+        background-color: white;
+        background: white;
+
+        &:checked {
+          background: linear-gradient($primary-purple, $primary-purple);
+          background-color: $primary-purple !important;
+          color: white !important;
+        }
+
+        &:hover {
+          background: linear-gradient($primary-purple, $primary-purple);
+          background-color: $primary-purple !important;
+          color: white !important;
+        }
       }
     }
 
@@ -229,5 +340,17 @@ background-color:#F6E8FE;
 
   100% {
     transform: translateX(-60px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

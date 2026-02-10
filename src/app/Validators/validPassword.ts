@@ -1,10 +1,10 @@
 import { AbstractControl, ValidationErrors } from "@angular/forms";
 
-export function VerificationPassword(password:AbstractControl,VerificationPassword:AbstractControl):null|ValidationErrors
+export function VerificationPassword(group:AbstractControl):null|ValidationErrors
 {
-  const passwordString:string =password.value as string
-  const VerificationPasswordSreing:string=VerificationPassword.value as string
-  if(passwordString===VerificationPasswordSreing)
+  const passwordString:string =group.get('password')?.value as string
+  const VerificationPasswordString:string=group.get('verificationPassword')?.value as string
+  if(passwordString===VerificationPasswordString)
     return null
 return {'diffrentPasswords':true}
 }

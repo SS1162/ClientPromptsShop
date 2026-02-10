@@ -12,23 +12,24 @@ import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { UserServise } from '../../Servises/UserServise/User-servise';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink ,RouterModule} from '@angular/router';
 import { routes } from '../../app.routes';
 
 @Component({
   selector: 'app-menu',
-  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule,RouterLink],
+  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule,RouterLink,RouterModule],
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
 })
 export class Menu implements OnInit {
   items: MegaMenuItem[] = [
     { label: 'Home', root: true },
-    { label: 'BasicSite', root: true },
+    { label: 'Basic Site', root: true},
     { label: 'Products', root: true, items: [[{ items: [] }]] },
     { label: 'Review', root: true },
     { label: 'Contact', root: true }
   ]
+  private router = inject(Router);
 private DestroyRef=inject(DestroyRef)
   private mainCategoryServise = inject(MainCategoryServise)
   mainCategories: MainCategoriesModel[] | null = []
@@ -61,7 +62,8 @@ private DestroyRef=inject(DestroyRef)
           },
            {
             label: 'cart',
-            icon: 'pi pi-shopping-cart'
+            icon: 'pi pi-shopping-cart',
+            routerLink:['/fullScreenCart']
           },
            {
             label: 'orders',
@@ -77,11 +79,11 @@ private DestroyRef=inject(DestroyRef)
       {
          this.mainCategories=data
          this.items=[
-    { label: 'Home', root: true },
-    { label: 'BasicSite', root: true },
+    { label: 'Home', root: true ,command: () => { this.router.navigate(['/home'])} },
+    { label: 'Basic Site', root: true ,command: () => { this.router.navigate(['/basicSite'])} },
     { label: 'Products', root: true, items: [[{ items: [] }]] },
-    { label: 'Review', root: true },
-    { label: 'Contact', root: true }
+    { label: 'Review', root: true ,command: () => { this.router.navigate(['/reviews'])}},
+    { label: 'Contact', root: true ,command: () => { this.router.navigate(['/contactUs'])}}
   ]
          for (let i = 0; i < (this.mainCategories?.length ?? 0); i++) {
           this.items[2].items![0][0].items!.push({ label: this.mainCategories![i].mainCategoryName, icon: 'pi pi-star', id: this.mainCategories![i].mainCategoryID as unknown as string })

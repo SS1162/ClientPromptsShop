@@ -4,4 +4,5 @@ export class RegisterUserModel {
     firstName?: string
     lastName?: string
     phone?: string
+    GoogleId?:string
 }

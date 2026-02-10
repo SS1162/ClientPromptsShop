@@ -1,0 +1,701 @@
+$light-purple: #F6E8FE;
+$text-dark: #312639;
+$hover-purple: #6a2ecb;
+$bg-color: #F6E8FE;
+$primary-purple: #8139eb;
+$accent-purple: #F6E8FE;
+$shadow-color: rgba(157, 88, 245, 0.2);
+$grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
+
+/* עיצוב הדיאלוג */
+::ng-deep .custom-dialog {
+  .p-dialog-header {
+    background: $light-purple;
+    color: $primary-purple;
+    border-bottom: 1px solid $bg-color;
+  }
+
+  .review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 10px;
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      label {
+        font-weight: 600;
+        color: #444;
+      }
+    }
+  }
+
+  .p-rating {
+    .p-rating-icon {
+      color: $primary-purple;
+    }
+  }
+
+  .custom-textarea {
+    border: 2px solid $accent-purple !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    transition: border-color 0.3s;
+
+    &:focus {
+      border-color: $primary-purple !important;
+      box-shadow: 0 0 0 2px $shadow-color !important;
+      outline: none;
+    }
+  }
+
+  .p-floatlabel {
+
+    textarea:focus~label,
+    textarea.p-filled~label {
+      color: $primary-purple !important;
+
+    }
+  }
+
+  .p-fileupload-basic {
+    .p-button {
+      background: $light-purple;
+      color: $primary-purple;
+      border: 1px solid $primary-purple;
+
+      &:hover {
+        background: #efe5ff;
+      }
+    }
+  }
+
+  .content {
+    display: flex;
+  }
+
+  /* כפתור שליחה סגול */
+  .submit-btn {
+    width: 100%;
+    background: $primary-purple !important;
+    border: none !important;
+    padding: 12px !important;
+    font-weight: bold !important;
+    border-radius: 10px !important;
+
+    &:hover {
+      background: $hover-purple !important;
+    }
+  }
+}
+
+p {
+  padding: 5px;
+}
+
+.orders-wrapper {
+  background-color: $bg-color;
+  min-height: 100vh;
+
+  .orders-header {
+    text-align: center;
+    margin-bottom: 40px;
+
+    h1 {
+      color: $primary-purple;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #636e72;
+      font-size: 1.1rem;
+    }
+
+    .underline {
+      width: 60px;
+      height: 4px;
+      background: $grad;
+      margin: 20px auto;
+      border-radius: 10px;
+      animation: moveLeftRight 3s ease-in-out infinite;
+    }
+
+    @keyframes moveLeftRight {
+      0% {
+        transform: translateX(-60px);
+      }
+
+      50% {
+        transform: translateX(60px);
+      }
+
+      100% {
+        transform: translateX(-60px);
+      }
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  margin-top: 100px;
+
+  i {
+    font-size: 4rem;
+    background: $grad;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+  }
+
+  .p-button {
+    background: $primary-purple !important;
+    border: none !important;
+
+    &:hover {
+      background: $hover-purple !important;
+    }
+  }
+}
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 85%;
+  margin: 0;
+
+
+  .cart-item {
+    display: flex;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    min-height: 180px;
+
+    &:hover {
+      transform: scale(1.01);
+      box-shadow: 0 10px 30px $shadow-color;
+    }
+  }
+
+  .cart-item-visual {
+    width: 220px;
+    background: #f0f0f0;
+
+    .car-item-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .placeholder-gradient {
+      height: 100%;
+      background: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      i {
+        color: white;
+        font-size: 3rem;
+      }
+    }
+  }
+
+  .truncate-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cart-item-content {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+
+      h3 {
+        margin: 0;
+        color: $text-dark;
+        font-size: 1.4rem;
+      }
+
+      .site-type {
+        color: $primary-purple;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .price-section {
+        text-align: left;
+      }
+
+      .price-label {
+        font-size: 0.8rem;
+        color: #888;
+        display: block;
+      }
+
+      .price-value {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: $text-dark;
+      }
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 25px;
+      margin-bottom: 20px;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+
+      i {
+        color: $primary-purple;
+        margin-left: 6px;
+      }
+    }
+
+    .cart-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .items-summary {
+      margin-top: 20px;
+      padding: 15px;
+      background: $light-purple;
+      border-radius: 12px;
+      animation: fadeIn 0.4s ease;
+
+      .summary-title {
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: $primary-purple;
+      }
+
+      .items-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          display: flex;
+          gap: 10px;
+          padding: 6px 0;
+          border-bottom: 1px dashed #dcdde1;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .item-name {
+            flex: 1;
+            font-weight: 500;
+          }
+
+          .item-price {
+            color: #8139eb;
+            font-weight: bold;
+          }
+
+          .item-platform {
+            color: #95a5a6;
+            font-size: 0.8rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.content {
+  display: flex;
+  width: 99vw;
+  padding: 2%;
+}
+
+.for-paing {
+  max-width: 40%;
+
+}
+
+.for-pading {
+  width: 70%;
+  display: flex;
+
+  justify-content: end;
+  padding: 0;
+  direction: ltr;
+}
+
+
+
+$primary-purple: #8139eb;
+$grad: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
+$light-purple: #F6E8FE;
+
+::ng-deep .custom-summary-card {
+
+
+  .button-row {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    margin-top: 15px;
+
+    .summary-btn {
+      flex: 1;
+
+      .p-button {
+        width: 100% !important;
+        padding: 0.9rem !important;
+        border-radius: 10px !important;
+        font-weight: bold !important;
+        white-space: nowrap;
+        font-size: 0.95rem;
+      }
+    }
+
+    .btn-checkout {
+      background: $grad !important;
+      border: none !important;
+      color: white !important;
+    }
+
+    .btn-update {
+      border: 1px solid $primary-purple !important;
+      color: $primary-purple !important;
+      background: transparent !important;
+
+      &:hover {
+        background: $light-purple !important;
+      }
+    }
+  }
+}
+
+
+$primary-purple: #8139eb;
+$grad: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
+$light-purple: #F6E8FE;
+$text-dark: #312639;
+
+::ng-deep .custom-summary-card {
+  background: white !important;
+  border-radius: 20px !important;
+  border: 1px solid #eee !important;
+  box-shadow: 0 10px 30px rgba(129, 57, 235, 0.1) !important;
+
+  .p-card-body {
+    padding: 2rem !important;
+  }
+
+  .card-title {
+    color: $primary-purple;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .summary-content {
+    margin-top: 1rem;
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #666;
+      font-size: 1.1rem;
+
+      &.total-row {
+        font-weight: bold;
+        color: $text-dark;
+        font-size: 1.4rem;
+
+        .highlight {
+          color: $primary-purple;
+        }
+      }
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+  }
+
+
+  .button-grid {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    margin-top: 10px;
+
+    .summary-btn {
+      flex: 1;
+    }
+
+    .btn-checkout {
+      background: $grad !important;
+      border: none !important;
+      color: white !important;
+      padding: 0.8rem !important;
+      font-weight: bold !important;
+    }
+
+    .btn-update {
+      border-color: $primary-purple !important;
+      color: $primary-purple !important;
+      padding: 0.8rem !important;
+      font-weight: bold !important;
+
+      &:hover {
+        background: $light-purple !important;
+      }
+    }
+  }
+}
+
+.summary-container {
+  width: 35rem;
+  margin: 0 auto;
+}
+
+
+
+
+
+$purp-main: #8139eb;
+$purp-dark: #2d004d; // סגול עמוק מאוד לטקסט
+$text-black: #1a1a1a; // שחור כמעט מוחלט
+
+.foundation-container {
+
+  /* גובה זהה לחלק התשלום */
+  margin-bottom: 30px;
+  zoom: 0.8;
+}
+
+.platform-text-header {
+  color: #8139eb;
+  font-size: 1.3rem;
+}
+
+.premium-foundation-card {
+  display: flex;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(129, 57, 235, 0.15);
+  border: 1px solid $purp-main;
+  overflow: hidden;
+  zoom: 1.2;
+
+  .side-accent {
+    width: 8px;
+    background: linear-gradient(to bottom, $purp-main, #bd00cb);
+  }
+
+  .card-main-content {
+    flex: 1;
+    padding: 30px;
+  }
+
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+  }
+
+  .platform-badge {
+    background: $purp-main;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .premium-title {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: $text-black;
+    /* סגול עמוק */
+    margin: 0;
+  }
+
+  /* כפתור עריכה בולט */
+  .primary-edit-btn {
+    background: white;
+    border: 2px solid $purp-main;
+    color: $purp-main;
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $purp-main;
+      color: white;
+    }
+  }
+
+  /* שינוי צבעי הטקסט מאפור לשחור/סגול */
+  .main-desc {
+    font-size: 1.3rem;
+    line-height: 1.5;
+    color: $text-black;
+    /* שחור בולט */
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .type-info-block {
+    .type-tag {
+      background: $purp-dark;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .type-desc {
+      font-size: 1.1rem;
+      color: $purp-dark;
+      /* סגול במקום אפור */
+      margin-top: 10px;
+    }
+  }
+}
+
+
+
+$purple-deep: #4b1fb1;
+$purple-main: #8139eb;
+$purple-light: #f3ebff;
+$purple-border: #d8b4fe;
+
+.foundation-wrapper {
+  margin-top: 50px; // הנמכת ה-div מהחלק העליון
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.foundation-card {
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 15px 35px rgba(129, 57, 235, 0.1);
+  transition: all 0.3s ease;
+  font-size: 2rem;
+  // או לחלופין, אם את רוצה שהגובה יהיה קבוע:
+  height: 350px;
+  zoom: 0.9;
+  // חשוב להקטין גם את ה-padding הפנימי כדי שהתוכן לא יחרוג:
+  padding: 20px 40px !important;
+
+ 
+
+  // עיצוב כרטיס השגיאה המוגדל
+  &.error-site {
+    background-color: #ffffff;
+    border: 3px solid $purple-main;
+    text-align: center;
+
+    .error-title-large {
+      font-size: 2.2rem; // כתב גדול לכותרת
+      color: #312639;
+      margin: 20px 0;
+      font-weight: 900;
+    }
+
+    .error-text-large {
+      font-size: 1.4rem; // כתב גדול להודעה
+      color: #555;
+      max-width: 700px;
+      margin: 0 auto 30px auto;
+      line-height: 1.5;
+    }
+
+    .icon-container i {
+      font-size: 4rem;
+      color: $hover-purple;
+    }
+
+    .setup-btn-large {
+      background: linear-gradient(135deg, $purple-main 0%, #bd00cb 100%);
+      color: white;
+      border: none;
+      padding: 18px 45px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(129, 57, 235, 0.3);
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+// אנימציה קטנה לאייקון האזהרה
+.pulse {
+  color: $hover-purple;
+  animation: pulse-warn 2s infinite;
+}
+
+@keyframes pulse-warn {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

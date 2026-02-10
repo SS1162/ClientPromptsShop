@@ -1,0 +1,73 @@
+<p-toast></p-toast>
+
+<div class="contact-page-wrapper" dir="ltr">
+    <header class="contact-header">
+        <div class="container">
+            <h1>Ignition Point</h1>
+            <div class="underline"></div>
+            <p>
+                Define your site's name and type to establish the precise foundation for generating your custom prompts.
+            </p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <div class="form-container">
+            <div class="form-card">
+                <h2>Create Your Basic Site</h2>
+
+                <div *ngIf="isLoading" class="loading-message">
+                    <p>Loading platforms and site types...</p>
+                </div>
+
+                <form (ngSubmit)="handleSubmit()" #basicSiteForm="ngForm" class="contact-form" *ngIf="!isLoading">
+                    <div class="field">
+                        <p-floatlabel variant="on">
+                            <input pInputText id="name" name="name" [(ngModel)]="formData.siteName" required
+                                class="custom-input" />
+                            <label for="name">Site Name</label>
+                        </p-floatlabel>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="field">
+                            <select id="platform" name="platform" [(ngModel)]="formData.platformID" 
+                              (change)="onPlatformChange()"
+                              required class="custom-select">
+                                <option value="" disabled selected hidden>Select a Platform</option>
+                                <option *ngFor="let platform of platforms" [value]="platform.platformID">
+                                    {{ platform.platformName }}
+                                </option>
+                            </select>
+                            <label for="platform" [class.filled]="formData.platformID">Platform *</label>
+                        </div>
+
+                        <div class="field">
+                            <select id="siteType" name="siteType" [(ngModel)]="formData.siteTypeID"
+                              (change)="onSiteTypeChange()"
+                              required class="custom-select">
+                                <option value="" disabled selected hidden>Select a Site Type</option>
+                                <option *ngFor="let siteType of siteTypes" [value]="siteType.siteTypeID">
+                                    {{ siteType.siteTypeName }}
+                                </option>
+                            </select>
+                            <label for="siteType" [class.filled]="formData.siteTypeID">Site Type *</label>
+                        </div>
+                    </div>
+
+                    <div *ngIf="selectedSiteTypeDescription" class="site-type-description">
+                        <h3>Site Type Description</h3>
+                        <p>{{ selectedSiteTypeDescription }}</p>
+                    </div>
+
+                    <p-button type="submit" [disabled]="basicSiteForm.invalid || isSubmitting"
+                        [label]="isSubmitting ? 'Creating...' : 'Create Site'" icon="pi pi-check"
+                        styleClass="submit-btn-gradient">
+                    </p-button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+</div>
