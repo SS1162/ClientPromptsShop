@@ -1,4 +1,4 @@
-import { Component, Input,OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { SplitterModule } from 'primeng/splitter';
 import { ProductModel } from '../../Models/ProductModel';
 import { ProductServise } from '../../Servises/ProductServise/product-servise';
@@ -21,12 +21,14 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { EmptyProduct } from '../empty-product/empty-product';
+import { PlatformsModel } from '../../Models/PlatformsModel';
+import { PlatformServise } from '../../Servises/PlatformServise/platform-servise';
 
 @Component({
   selector: 'app-category',
   imports: [SplitterModule, CurrencyPipe, FormsModule, Checkbox, DataView, ButtonModule,
-     CommonModule, CheckboxModule,SliderModule,SelectModule, FloatLabelModule,
-    IconFieldModule, InputIconModule, InputTextModule,EmptyProduct],
+    CommonModule, CheckboxModule, SliderModule, SelectModule, FloatLabelModule,
+    IconFieldModule, InputIconModule, InputTextModule, EmptyProduct],
   templateUrl: './category.html',
   styleUrl: './category.scss',
 })
@@ -44,6 +46,8 @@ export class Category implements OnInit {
 
   categoryID!: number
 
+  selctedPlatform?: PlatformsModel
+
   @Input() set id(value: number) {
     this.categoryID = value
     this.loadPage()
@@ -59,18 +63,28 @@ export class Category implements OnInit {
   errorMessegeBadRequest: string = ''
   errorMessegeStatuse200: string = ''
   staticFilesURL: string = environment.staticFilesUrl
-  emptyProductId!:number
+  emptyProductId!: number
   rangeValues: number[] = [0, 100];
- 
-optionForSorting: string[] | undefined;
-selectedSorted: string | undefined;
-ngOnInit() {
-       this.optionForSorting = [
-           'price from low to high',
-           'price from high to low'
-        ];
+  platforms: PlatformsModel[] | null = null
+  optionForSorting: string[] | undefined;
+  selectedSorted: string | undefined;
+  platformServise: PlatformServise = inject(PlatformServise)
+  ngOnInit() {
+    this.optionForSorting = [
+      'price from low to high',
+      'price from high to low'
+    ];
 
+
+    this.platformServise.platforms$.subscribe({
+      next: (data) => {
+        this.platforms = data
+      },
+      error: (err) => {
+        console.log(err)
       }
+    })
+  }
 
   loadPage() {
     this.categoryService.getCategoryByID(this.categoryID).subscribe({
@@ -90,7 +104,7 @@ ngOnInit() {
       }
     })
 
-    
+
     this.productService.getProduct(this.categoryID, this.numOfPages, this.PageSize).subscribe({
       next: (data) => {
         if (data.body?.data === null) {
@@ -107,14 +121,14 @@ ngOnInit() {
           const emptyOne = this.productModel.find(obj => {
             obj.ProductsName = "Empty"
           })
-          this.emptyProductId=emptyOne!.ProductsID
+          this.emptyProductId = emptyOne!.ProductsID
         }
-   
+
       },
       error: (err) => {
         this.productModel = []
         this.errorMessegeBadRequest = "faild to load try again later"
-      
+
       }
 
     })
@@ -122,22 +136,20 @@ ngOnInit() {
 
   }
 
-  loadOnFilter(){
-    this.MaxPrice=this.rangeValues[1]
-    this.minPrice=this.rangeValues[0]
-    this.desc=false
-    this.orderByPrice=false
-if(this.selectedSorted!==undefined)
-{
-  this.orderByPrice=true
-  if(this.selectedSorted==='price from high to low')
-  {
-   this.desc=true
-  }
-}
+  loadOnFilter() {
+    this.MaxPrice = this.rangeValues[1]
+    this.minPrice = this.rangeValues[0]
+    this.desc = false
+    this.orderByPrice = false
+    if (this.selectedSorted !== undefined) {
+      this.orderByPrice = true
+      if (this.selectedSorted === 'price from high to low') {
+        this.desc = true
+      }
+    }
 
 
-    this.productService.getProduct(this.categoryID, this.numOfPages, this.PageSize,this.search,this.minPrice,this.MaxPrice,this.orderByPrice,this.desc).subscribe({
+    this.productService.getProduct(this.categoryID, this.numOfPages, this.PageSize, this.search, this.minPrice, this.MaxPrice, this.orderByPrice, this.desc).subscribe({
       next: (data) => {
         if (data.body?.data === null) {
           this.errorMessegeStatuse200 = "no items match to your search"
@@ -153,15 +165,16 @@ if(this.selectedSorted!==undefined)
           const emptyOne = this.productModel.find(obj => {
             obj.ProductsName = "Empty"
           })
-          this.emptyProductId=emptyOne!.ProductsID
+          this.emptyProductId = emptyOne!.ProductsID
         }
-   
+
       },
       error: (err) => {
         this.productModel = []
         this.errorMessegeBadRequest = "faild to load try again later"
-      
+
       }
+
 
     })
 

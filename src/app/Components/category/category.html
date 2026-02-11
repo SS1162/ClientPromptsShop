@@ -27,12 +27,19 @@
             [style]="{ height: '17rem' }" />
         <h1 [style]="{ color: '#8236f1' }">{{categoryModel.categoryName}}</h1>
         <h3 [style]="{ color: '#8236f1' }">{{categoryModel.categoryDescreption}}</h3>
+          <p-floatlabel class="w-full md:w-56" variant="in" [style]="{'width':'15rem'}">
+            <p-select [(ngModel)]="selctedPlatform" inputId="sortBy" [options]="optionForSorting"  (onChange)="loadOnFilter()" class="w-full"
+                variant="filled"
+                [style]="{'width':'15rem','border':'2px solid #8236f1 ','background-color':'white','max-height':'3.5rem','color':'#8236f1'}" />
+            <label for="in_label">sort by</label>
+        </p-floatlabel>
         <p-dataview #dv [value]="productModel">
 
             <ng-template #list let-items>
 
                 <div class="grid grid-cols-12 gap-4 grid-nogutter">
                     <div class="col-span-12" *ngFor="let item of items; let first = first; let i = index">
+
                         @if(item.productsName!=="Empty")
                         {
                         <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"

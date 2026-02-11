@@ -12,8 +12,8 @@ export class BasicSiteService {
   http: HttpClient = inject(HttpClient);
   BASIC_URL: string = `${environment.apiUrl}/BasicSite`;
 
-  private basicSitesSubject = new BehaviorSubject<BasicSiteModel[] | null>(null);
-  public basicSites$: Observable<BasicSiteModel[] | null> = this.basicSitesSubject.asObservable();
+  private basicSitesSubject = new BehaviorSubject<BasicSiteModel | null>(null);
+  public basicSites$: Observable<BasicSiteModel | null> = this.basicSitesSubject.asObservable();
 
   private errorSubject = new BehaviorSubject<HttpErrorResponse | null>(null);
   public error$: Observable<HttpErrorResponse | null> = this.errorSubject.asObservable();
@@ -34,8 +34,8 @@ export class BasicSiteService {
     });
   }
 
-  getBasicSites(): void {
-    this.http.get<BasicSiteModel[]>(this.BASIC_URL).subscribe({
+  getBasicSites(basicSiteId:number): void {
+    this.http.get<BasicSiteModel>(`${this.BASIC_URL}/${basicSiteId}`).subscribe({
       next: (basicSites) => {
         this.basicSitesSubject.next(basicSites);
         this.errorSubject.next(null);

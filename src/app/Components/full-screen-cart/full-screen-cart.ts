@@ -17,6 +17,7 @@ import { CartItemModel } from '../../Models/CartItemModel';
 import { CardModule } from 'primeng/card';
 import { UserModel } from '../../Models/UserModel';
 import { BasicSiteModel } from '../../Models/BasicSiteModel';
+import { BasicSiteService } from '../../Servises/BasicSiteServise/basic-site.service';
 @Component({
   selector: 'app-full-screen-cart',
   imports: [
@@ -39,8 +40,8 @@ export class FullScreenCart implements OnInit {
   user!:UserModel
   error: string = ""
   noItems: string = ""
-   basicSite?:BasicSiteModel
-
+  basicSite?:BasicSiteModel
+ basicSiteServise:BasicSiteService=inject(BasicSiteService)
   ngOnInit() {
 
     this.userServise.user$.subscribe({
@@ -61,6 +62,25 @@ export class FullScreenCart implements OnInit {
         this.showError()
       }
     })
+
+if(this.user.BasicID)
+{
+     this.basicSiteServise.getBasicSites(this.user.BasicID)
+     this.basicSiteServise.basicSites$.subscribe({
+      next:(data)=>
+      {
+        if(data)
+        {
+           this.basicSite=data  
+        }
+   
+      },
+      error:()=>{
+         this.error = "An error occurred while trying to load the product. Please try again later"
+        this.showError()
+      }
+     })
+}
 
 
     this.cartServise.error$.subscribe({

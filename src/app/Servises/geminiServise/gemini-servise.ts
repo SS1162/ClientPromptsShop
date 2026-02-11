@@ -20,6 +20,10 @@ addNewProduct(productId:number,userRequest:string):Observable<HttpResponse<gemin
 return this.http.get<geminiPromptModel>(this.BASIC_URL+"getUserProduct",{params:params,observe:'response'})
 
 }
+deletePrompt(promptID:number){
+ this.http.delete<void>(this.BASIC_URL+promptID)
+}
+
 
 updateProductPrompt(promptId:number,userRequest:string):Observable<HttpResponse<geminiPromptModel>>{
 return this.http.put<void>(`${this.BASIC_URL}/${promptId}`,userRequest,{observe:'response'})

@@ -1,9 +1,17 @@
- <p>Bring your ideas to life with Gemini</p> 
-<!-- <input [(ngModel)]="input">
-<button (click)="sentGemini()">submit</button>
- {{geminiRes|async}}  -->
-<!-- @if(flag===true)
+<div class="box-content">
+
+<p>Bring your ideas to life with Gemini</p>
+<input [(ngModel)]="input">
+@if(flag!==true)
 {
-    <button (click)="sentFather()">confrime</button>
-    <button (click)="tryAgain()">try again</button>
-}  -->
+<button (click)="sentGemini()">submit</button>
+}
+
+
+@if(flag===true)
+{ {{prompt.prompt}}
+<button (click)="sentFather()">confrime</button>
+<button (click)="sentGemini()">built again</button>
+<button (click)="Cancel()">Cancel</button>
+}
+</div>
