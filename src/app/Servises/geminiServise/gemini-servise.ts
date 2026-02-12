@@ -17,7 +17,7 @@ addNewProduct(productId:number,userRequest:string):Observable<HttpResponse<gemin
   .set('productId',productId)
    .set('userRequest',userRequest)
 
-return this.http.get<geminiPromptModel>(this.BASIC_URL+"getUserProduct",{params:params,observe:'response'})
+return this.http.get<geminiPromptModel>(this.BASIC_URL+"ProductPrompt",{params:params,observe:'response'})
 
 }
 deletePrompt(promptID:number){
@@ -26,7 +26,34 @@ deletePrompt(promptID:number){
 
 
 updateProductPrompt(promptId:number,userRequest:string):Observable<HttpResponse<geminiPromptModel>>{
-return this.http.put<void>(`${this.BASIC_URL}/${promptId}`,userRequest,{observe:'response'})
+return this.http.put<void>(`${this.BASIC_URL}/ProductPrompt/${promptId}`,userRequest,{observe:'response'})
+.pipe(switchMap(()=>{
+return this.http.get<geminiPromptModel>(`${this.BASIC_URL}/${promptId}`,{observe:'response'})
+}
+))
+}
+
+
+AddBasicSitePrompt(userRequest:string):Observable<HttpResponse<geminiPromptModel>>{
+  return this.http.get<geminiPromptModel>(this.BASIC_URL+"BasicSite",{observe:'response'})
+}
+
+updateBasicSitePrompt(promptId:number,userRequest:string):Observable<HttpResponse<geminiPromptModel>>{
+return this.http.put<void>(`${this.BASIC_URL}/BasicSite/${promptId}`,userRequest,{observe:'response'})
+.pipe(switchMap(()=>{
+return this.http.get<geminiPromptModel>(`${this.BASIC_URL}/${promptId}`,{observe:'response'})
+}
+))
+}
+
+
+AddCategoryPrompt(userRequest:string):Observable<HttpResponse<geminiPromptModel>>{
+  return this.http.get<geminiPromptModel>(this.BASIC_URL+"Category",{observe:'response'})
+}
+
+
+updateCategoryPrompt(promptId:number,userRequest:string):Observable<HttpResponse<geminiPromptModel>>{
+return this.http.put<void>(`${this.BASIC_URL}/Category/${promptId}`,userRequest,{observe:'response'})
 .pipe(switchMap(()=>{
 return this.http.get<geminiPromptModel>(`${this.BASIC_URL}/${promptId}`,{observe:'response'})
 }
