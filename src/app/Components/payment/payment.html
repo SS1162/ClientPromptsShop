@@ -1,0 +1,136 @@
+<p-toast></p-toast>
+
+<div class="payment-wrapper" dir="ltr">
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="payment-header" [class.header-visible]="loaded">
+    <div class="container">
+      <h1 class="header-title">Complete Your Order</h1>
+      <div class="underline"></div>
+      <p>You're almost there — review your order and choose a payment method.</p>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ═══ -->
+  <main class="container payment-grid">
+
+    <!-- ── ORDER SUMMARY (left) ── -->
+    <aside class="summary-side" [class.slide-in-left]="loaded">
+
+      <div class="summary-card">
+        <h2><i class="pi pi-shopping-cart"></i> Order Summary</h2>
+
+        <div class="item-list">
+          @for (item of validItems; track item.cartID; let i = $index) {
+            <div class="order-item" [class.item-in]="loaded" [style.animation-delay]="i * 80 + 'ms'">
+              <div class="item-img-wrap">
+                @if (item.imgUrl) {
+                  <img [src]="item.imgUrl" alt="{{ item.productsName }}" />
+                } @else {
+                  <div class="img-placeholder"><i class="pi pi-box"></i></div>
+                }
+              </div>
+              <div class="item-info">
+                <span class="item-name">{{ item.productsName }}</span>
+                <span class="item-platform">{{ item.platformName }}</span>
+              </div>
+              <span class="item-price">{{ item.price | currency:'USD' }}</span>
+            </div>
+          }
+
+          @empty {
+            <div class="no-items">
+              <i class="pi pi-inbox"></i>
+              <p>No items selected for this order.</p>
+              <button class="back-btn" [routerLink]="['/fullScreenCart']">
+                <i class="pi pi-arrow-left"></i> Back to Cart
+              </button>
+            </div>
+          }
+        </div>
+
+        @if (validItems.length > 0) {
+          <div class="summary-footer">
+            <div class="summary-row">
+              <span>Items ({{ validItems.length }})</span>
+              <span>{{ totalPrice | currency:'USD' }}</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-row total-row">
+              <span>Total</span>
+              <span class="total-amount">{{ totalPrice | currency:'USD' }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+    </aside>
+
+    <!-- ── PAYMENT METHODS (right) ── -->
+    <section class="payment-side" [class.slide-up-in]="loaded" style="animation-delay: 200ms">
+
+      <div class="payment-card">
+        <h2><i class="pi pi-lock"></i> Secure Payment</h2>
+        <p class="secure-note"><i class="pi pi-shield"></i> All transactions are encrypted and secure.</p>
+
+        <!-- PayPal -->
+        <div class="payment-method paypal-section">
+          <div class="method-header">
+            <div class="method-icon paypal-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" height="28">
+                <path fill="#003087" d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c1.379 3.354-.528 7.21-5.65 7.21H13.29l-1.165 7.387h3.053c.46 0 .851-.332.922-.785l.038-.196.733-4.646.047-.256a.932.932 0 0 1 .921-.784h.581c3.755 0 6.694-1.527 7.552-5.94.36-1.847.173-3.389-.75-4.449z"/>
+              </svg>
+              <span>PayPal</span>
+            </div>
+            <span class="recommended-badge">Recommended</span>
+          </div>
+          <p class="method-desc">Pay safely with your PayPal account. Fast, secure, and no card details needed.</p>
+          <button
+            class="paypal-btn"
+            (click)="payWithPayPal()"
+            [disabled]="isProcessing || validItems.length === 0"
+          >
+            @if (isProcessing) {
+              <i class="pi pi-spin pi-spinner"></i> Processing...
+            } @else {
+              <svg viewBox="0 0 101 32" xmlns="http://www.w3.org/2000/svg" height="22" style="margin-right:8px">
+                <path fill="#003087" d="M12.237 2.8C11.356.968 9.816 0 7.66 0H2.495C1.87 0 1.34.46 1.24 1.078L0 9.266a.75.75 0 0 0 .74.864h3.25l-.318 2.016a.655.655 0 0 0 .647.756h2.846c.548 0 1.014-.4 1.1-.942l.045-.236.602-3.823.039-.21a1.113 1.113 0 0 1 1.099-.941h.692c4.49 0 8.006-1.823 9.03-7.097.429-2.204.207-4.046-.928-5.342a4.43 4.43 0 0 0-1.247-.877"/>
+                <path fill="#009cde" d="M39.925 2.8C39.044.968 37.504 0 35.348 0h-5.165c-.625 0-1.155.46-1.254 1.078l-1.24 8.188a.75.75 0 0 0 .74.864h3.562l.893-5.664a1.113 1.113 0 0 1 1.099-.941h.692c4.49 0 8.006-1.823 9.03-7.097.429-2.204.207-4.046-.928-5.342"/>
+              </svg>
+              Pay {{ totalPrice | currency:'USD' }} with PayPal
+            }
+          </button>
+        </div>
+
+        <div class="separator">
+          <span>or pay with card</span>
+        </div>
+
+        <!-- Credit card placeholder -->
+        <div class="payment-method card-section">
+          <div class="method-header">
+            <div class="method-icon card-icon">
+              <i class="pi pi-credit-card"></i>
+              <span>Credit / Debit Card</span>
+            </div>
+          </div>
+          <p class="method-desc">Pay securely with Visa, Mastercard, or American Express.</p>
+          <button class="card-btn" disabled>
+            <i class="pi pi-credit-card"></i> Coming Soon
+          </button>
+          <div class="card-icons">
+            <span class="card-badge visa">VISA</span>
+            <span class="card-badge mc">MC</span>
+            <span class="card-badge amex">AMEX</span>
+          </div>
+        </div>
+
+        <a [routerLink]="['/fullScreenCart']" class="back-link">
+          <i class="pi pi-arrow-left"></i> Back to Cart
+        </a>
+      </div>
+
+    </section>
+
+  </main>
+</div>

@@ -19,19 +19,20 @@
                         <div class="summary-content">
                             <div class="summary-row">
                                 <span>Items:</span>
-                                <span class="value">cartItems.length</span>
+                                <span class="value">{{cartItems.length}}</span>
                             </div>
                             <div class="divider"></div>
                             <div class="summary-row total-row">
                                 <span>Total Amount:</span>
-                                <span class="value highlight">$totalPrice</span>
+                                <span class="value highlight">{{totalPrice | currency:'USD'}}</span>
                             </div>
                         </div>
                     </ng-template>
                     <ng-template #footer>
                         <div class="button-row">
                             <p-button label="Complete Purchase" class="summary-btn" styleClass="btn-checkout"
-                                icon="pi pi-credit-card" [disabled]="user.BasicID!==null" />
+                                icon="pi pi-credit-card" [disabled]="!basicSite"
+                                [routerLink]="['/payment']" />
                             <p-button label="Update Details" class="summary-btn" [outlined]="true"
                                 icon="pi pi-user-edit" styleClass="btn-update" [routerLink]="['/update']" />
                         </div>

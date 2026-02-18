@@ -12,7 +12,6 @@
     </header>
 
     <main class="container">
-
         <div class="form-container">
             <div class="form-card">
                 <h2>Create Your Basic Site</h2>
@@ -22,6 +21,7 @@
                 </div>
 
                 <form (ngSubmit)="handleSubmit()" #basicSiteForm="ngForm" class="contact-form" *ngIf="!isLoading">
+
                     <div class="field">
                         <p-floatlabel variant="on">
                             <input pInputText id="name" name="name" [(ngModel)]="formData.siteName" required
@@ -32,33 +32,61 @@
 
                     <div class="form-row">
                         <div class="field">
-                            <select id="platform" name="platform" [(ngModel)]="formData.platformID" 
-                              (change)="onPlatformChange()"
-                              required class="custom-select">
-                                <option value="" disabled selected hidden>Select a Platform</option>
-                                <option *ngFor="let platform of platforms" [value]="platform.platformID">
-                                    {{ platform.platformName }}
-                                </option>
-                            </select>
-                            <label for="platform" [class.filled]="formData.platformID">Platform *</label>
+                            <p-floatlabel variant="on">
+                                <p-select [options]="platforms" [(ngModel)]="formData.platformID" [showClear]="true"
+                                    optionLabel="platformName" optionValue="platformID" name="platform" id="platform"
+                                    (onChange)="onPlatformChange()" required class="custom-select-prime"
+                                    placeholder="Select a Platform">
+                                </p-select>
+                                <label for="platform">Platform *</label>
+                            </p-floatlabel>
                         </div>
 
                         <div class="field">
-                            <select id="siteType" name="siteType" [(ngModel)]="formData.siteTypeID"
-                              (change)="onSiteTypeChange()"
-                              required class="custom-select">
-                                <option value="" disabled selected hidden>Select a Site Type</option>
-                                <option *ngFor="let siteType of siteTypes" [value]="siteType.siteTypeID">
-                                    {{ siteType.siteTypeName }}
-                                </option>
-                            </select>
-                            <label for="siteType" [class.filled]="formData.siteTypeID">Site Type *</label>
+                            <p-floatlabel variant="on">
+                                <p-select [options]="siteTypes" [(ngModel)]="formData.siteTypeID" [showClear]="true"
+                                    optionLabel="siteTypeName" optionValue="siteTypeID" name="siteType" id="siteType"
+                                    (onChange)="onSiteTypeChange()" required class="custom-select-prime"
+                                    placeholder="Select a Site Type">
+                                </p-select>
+                                <label for="siteType">Site Type *</label>
+                            </p-floatlabel>
                         </div>
                     </div>
 
-                    <div *ngIf="selectedSiteTypeDescription" class="site-type-description">
-                        <h3>Site Type Description</h3>
-                        <p>{{ selectedSiteTypeDescription }}</p>
+                    <div class="gemini-integration-wrapper">
+                        <div class="form-card">
+                            <h2>AI Assistance</h2>
+
+                            <div class="ai-input-row">
+                                <div class="field input-container">
+
+                                    <p-floatlabel variant="on">
+                                        <input pInputText id="aiPrompt" name="aiPrompt" [(ngModel)]="aiData"
+                                            class="custom-input" />
+                                        <label for="aiPrompt">Describe your unique vision here. Our AI will handle the
+                                            rest.</label>
+                                    </p-floatlabel>
+                                </div>
+
+                                <div class="buttons-container">
+                                    <p-button *ngIf="!isSubmitted" (onClick)="handleAiSubmit()" label="Generate"
+                                        icon="pi pi-sparkles" styleClass="submit-btn-gradient ai-btn"
+                                        [disabled]="!aiData.trim()">
+                                    </p-button>
+
+                                    <div *ngIf="isSubmitted" class="action-group">
+                                        <p-button (onClick)="handleEdit()" label="Update Vision" icon="pi pi-sync"
+                                            styleClass="p-button-outlined p-button-secondary update-btn-custom">
+                                        </p-button>
+
+                                        <p-button (onClick)="handleDelete()" icon="pi pi-trash" pTooltip="Delete"
+                                            styleClass="p-button-rounded p-button-danger p-button-text delete-btn">
+                                        </p-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <p-button type="submit" [disabled]="basicSiteForm.invalid || isSubmitting"
@@ -68,6 +96,5 @@
                 </form>
             </div>
         </div>
-
     </main>
 </div>

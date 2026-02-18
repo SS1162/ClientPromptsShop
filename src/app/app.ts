@@ -7,11 +7,12 @@ import { Category } from './Components/category/category';
 import { UpdateUser } from './Components/update-user/update-user';
 import { Menu } from './Components/menu/menu';
 import { ButtomNevigation } from './Components/buttom-nevigation/buttom-nevigation';
+import { ChatBot } from './Components/chat-bot/chat-bot';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,Menu,ButtomNevigation],
+  imports: [RouterOutlet, Menu, ButtomNevigation, ChatBot],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -16,6 +16,7 @@ import { TermsofService } from './Components/termsof-service/termsof-service';
 import { Home } from './Components/home/home';
 import { BasicSite } from './Components/basic-site/basic-site';
 import { Reviews } from './Components/reviews/reviews';
+import { Payment } from './Components/payment/payment';
 
 
 export const routes: Routes = [
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'home', component: Home },
   { path: 'basicSite', component: BasicSite },
     { path: 'reviews', component: Reviews },
+  { path: 'payment', component: Payment },
   { path: '',redirectTo:'home',pathMatch:'full'}
  
 

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class ReviewServise {
   http: HttpClient = inject(HttpClient);
-  BASIC_URL: string = `${environment.apiUrl}/reviews`;
+  BASIC_URL: string = `${environment.apiUrl}/Review`;
   private reviewSubject = new BehaviorSubject<ReviewModel[] | null>(null)
   public review$: Observable<ReviewModel[] | null> = this.reviewSubject.asObservable()
   private errorSubject = new BehaviorSubject<HttpErrorResponse | null>(null)

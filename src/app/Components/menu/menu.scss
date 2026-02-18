@@ -11,11 +11,57 @@
     
 }
 
+.cart-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: scale(1.15);
+    }
+
+    .cart-icon {
+        font-size: 1.6rem;
+        color:  #C64BF1;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #bd00cb;
+        }
+    }
+
+    .cart-badge {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        background: #bd00cb;
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #F6E8FE;
+        line-height: 1;
+        padding: 0 3px;
+        pointer-events: none;
+    }
+}
+
 :host ::ng-deep {
     .p-megamenu-item-content:hover {
         background: #f3e5f5 !important;
         color: #8d0a86 !important;
     }
+
+
 }
 
 :host ::ng-deep {

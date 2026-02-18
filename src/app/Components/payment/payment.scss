@@ -1,0 +1,455 @@
+$primary-purple: #8139eb;
+$grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
+$light-purple: #F6E8FE;
+$bg-color: #F6E8FE;
+$text-dark: #312639;
+$shadow-color: rgba(157, 88, 245, 0.2);
+$hover-purple: #6a2ecb;
+
+// ══ Animations ══
+@keyframes moveLeftRight {
+  0%   { transform: translateX(-60px); }
+  50%  { transform: translateX(60px); }
+  100% { transform: translateX(-60px); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideUpIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes itemIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+// ══ Page wrapper ══
+.payment-wrapper {
+  background-color: $bg-color;
+  min-height: 100vh;
+  padding: 40px 20px 80px;
+  font-family: 'Inter', sans-serif;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+// ══ Header ══
+.payment-header {
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 2rem 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+
+  &.header-visible {
+    opacity: 1;
+
+    .header-title {
+      animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    p {
+      animation: slideUpIn 0.6s ease 0.25s both;
+    }
+  }
+
+  .header-title {
+    color: $primary-purple;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    opacity: 0;
+  }
+
+  p {
+    color: #636e72;
+    font-size: 1.1rem;
+    max-width: 560px;
+    margin: 0 auto;
+    opacity: 0;
+  }
+
+  .underline {
+    width: 60px;
+    height: 4px;
+    background: $grad;
+    margin: 20px auto;
+    border-radius: 10px;
+    animation: moveLeftRight 3s ease-in-out infinite;
+  }
+}
+
+// ══ Grid ══
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+// ══ Summary side ══
+.summary-side {
+  opacity: 0;
+
+  &.slide-in-left {
+    animation: slideInLeft 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+}
+
+.summary-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+
+  h2 {
+    color: $text-dark;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .pi { color: $primary-purple; }
+  }
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 1.5rem;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #f0e8ff;
+  background: #faf6ff;
+  opacity: 0;
+  transition: box-shadow 0.2s;
+
+  &.item-in {
+    animation: itemIn 0.45s ease forwards;
+  }
+
+  &:hover { box-shadow: 0 4px 14px $shadow-color; }
+
+  .item-img-wrap {
+    width: 54px;
+    height: 54px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: $light-purple;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .img-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: $grad;
+      .pi { color: white; font-size: 1.3rem; }
+    }
+  }
+
+  .item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    .item-name {
+      font-weight: 600;
+      color: $text-dark;
+      font-size: 0.9rem;
+    }
+
+    .item-platform {
+      font-size: 0.78rem;
+      color: $primary-purple;
+    }
+  }
+
+  .item-price {
+    font-weight: 800;
+    color: $text-dark;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+}
+
+.no-items {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+
+  .pi { font-size: 3rem; display: block; margin-bottom: 12px; }
+  p { margin-bottom: 16px; }
+}
+
+.back-btn {
+  background: $grad;
+  border: none;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.2s;
+  &:hover { opacity: 0.88; }
+}
+
+.summary-footer {
+  padding-top: 1rem;
+  border-top: 2px dashed #f0e8ff;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 8px;
+
+  &.total-row {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: $text-dark;
+
+    .total-amount {
+      background: $grad;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+}
+
+.summary-divider {
+  height: 1px;
+  background: #eee;
+  margin: 12px 0;
+}
+
+// ══ Payment side ══
+.payment-side {
+  opacity: 0;
+
+  &.slide-up-in {
+    animation: slideUpIn 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+}
+
+.payment-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+
+  h2 {
+    color: $text-dark;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .pi { color: $primary-purple; }
+  }
+
+  .secure-note {
+    font-size: 0.82rem;
+    color: #27ae60;
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+// ── Payment method block ──
+.payment-method {
+  background: #faf6ff;
+  border: 1px solid #e8d5ff;
+  border-radius: 16px;
+  padding: 1.4rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s;
+
+  &:hover { box-shadow: 0 4px 16px $shadow-color; }
+}
+
+.method-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.method-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: $text-dark;
+  font-size: 1rem;
+
+  &.paypal-icon svg { display: block; }
+
+  &.card-icon .pi {
+    font-size: 1.4rem;
+    color: $primary-purple;
+  }
+}
+
+.recommended-badge {
+  background: $grad;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.method-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+// ── PayPal button ──
+.paypal-btn {
+  width: 100%;
+  background: #ffc439;
+  border: 2px solid #f0aa00;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #003087;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 14px rgba(255, 196, 57, 0.45);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 8px 24px rgba(255, 196, 57, 0.6);
+    background: #ffca45;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .pi-spin { margin-right: 6px; }
+}
+
+// ── Separator ──
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #aaa;
+  font-size: 0.82rem;
+  margin: 18px 0;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #eee;
+  }
+}
+
+// ── Card button ──
+.card-btn {
+  width: 100%;
+  background: $light-purple;
+  border: 2px solid #d8b4fe;
+  border-radius: 12px;
+  padding: 13px 20px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #aaa;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.card-icons {
+  display: flex;
+  gap: 8px;
+}
+
+.card-badge {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+
+  &.visa  { background: #1434cb; color: white; }
+  &.mc    { background: #eb001b; color: white; }
+  &.amex  { background: #007bc1; color: white; }
+}
+
+// ── Back link ──
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $primary-purple;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-top: 1.2rem;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.75; }
+}

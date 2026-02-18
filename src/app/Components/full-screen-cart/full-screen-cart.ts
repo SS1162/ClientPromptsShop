@@ -40,6 +40,7 @@ export class FullScreenCart implements OnInit {
   user!:UserModel
   error: string = ""
   noItems: string = ""
+  totalPrice: number = 0  
   basicSite?:BasicSiteModel
  basicSiteServise:BasicSiteService=inject(BasicSiteService)
   ngOnInit() {
@@ -107,6 +108,10 @@ if(this.user.BasicID)
         else{
           this.noItems=""
           this.cartItems=data
+          for(let item of this.cartItems)
+          {
+            this.totalPrice += item.price
+          }
         }
       },
       error: () => {

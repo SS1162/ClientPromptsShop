@@ -1,1 +1,99 @@
-<p>reviews works!</p>
+<p-toast></p-toast>
+
+<div class="reviews-page-wrapper" dir="ltr">
+
+
+  <header class="reviews-header" [class.header-visible]="loaded">
+    <div class="container">
+      <div class="floating-icon">
+        <i class="pi pi-star-fill"></i>
+      </div>
+      <h1 class="header-title">What Our Customers Say</h1>
+      <div class="underline"></div>
+      <p class="header-sub">Honest reviews from verified buyers of our AI prompts.</p>
+    </div>
+  </header>
+
+
+  <main class="container body-grid">
+
+  
+    <aside class="info-sidebar">
+
+      <div class="info-card" [class.slide-in-left]="loaded" style="animation-delay: 0ms">
+        <div class="icon-box bg-violet">
+          <i class="pi pi-users"></i>
+        </div>
+        <h3>Total Reviews</h3>
+        <p>From verified customers</p>
+        <span class="stat-number">{{ reviews.length }}</span>
+      </div>
+
+      <div class="info-card" [class.slide-in-left]="loaded" style="animation-delay: 150ms">
+        <div class="icon-box bg-fuchsia">
+          <i class="pi pi-star-fill"></i>
+        </div>
+        <h3>Average Score</h3>
+        <p>Overall satisfaction</p>
+        <span class="stat-number">{{ averageScore }} / 5</span>
+      </div>
+
+    </aside>
+
+
+    <section class="review-list">
+
+      @for (review of reviews; track review.reviewId; let i = $index) {
+        <div
+          class="review-item"
+          [class.slide-up-fade]="loaded"
+          [style.animation-delay]="i * 120 + 'ms'"
+        >
+         
+          <div class="review-visual">
+            @if (review.reviewImg) {
+              <img [src]="IMG_URL + review.reviewImg" class="review-img" alt="Review image" />
+            } @else {
+              <div class="placeholder-gradient">
+                <i class="pi pi-star-fill"></i>
+              </div>
+            }
+          </div>
+
+  
+          <div class="review-content">
+            <div class="content-header">
+              <div class="title-section">
+              <h3>What Our Customers Say</h3>
+                <span class="order-tag">Verified Purchase</span>
+              </div>
+              <div class="score-badge">
+                <span class="score-number">{{ review.stars }}</span>
+                <span class="score-max">/5</span>
+              </div>
+            </div>
+
+            <div class="rating-row">
+              <p-rating [(ngModel)]="review.stars" [readonly]="true" />
+            </div>
+
+            @if (review.reviewText) {
+              <p class="review-note">{{ review.reviewText }}</p>
+            } @else {
+              <p class="review-note no-note">No written comment provided.</p>
+            }
+          </div>
+        </div>
+      }
+
+      @empty {
+        <div class="empty-state" [class.slide-up-fade]="loaded">
+          <i class="pi pi-star pulse-star"></i>
+          <p>No reviews yet. Be the first to share your experience!</p>
+        </div>
+      }
+
+    </section>
+
+  </main>
+</div>

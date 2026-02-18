@@ -11,13 +11,14 @@ import { MainCategoryServise } from '../../Servises/MainCategoriesServise/main-c
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { UserServise } from '../../Servises/UserServise/User-servise';
+import { CartServise } from '../../Servises/cartServise/cart-servise';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink ,RouterModule} from '@angular/router';
 import { routes } from '../../app.routes';
 
 @Component({
   selector: 'app-menu',
-  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule,RouterLink,RouterModule],
+  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule, RouterLink, RouterModule],
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
 })
@@ -30,10 +31,12 @@ export class Menu implements OnInit {
     { label: 'Contact', root: true }
   ]
   private router = inject(Router);
-private DestroyRef=inject(DestroyRef)
-  private mainCategoryServise = inject(MainCategoryServise)
-  mainCategories: MainCategoriesModel[] | null = []
-  userServise = inject(UserServise)
+  private DestroyRef = inject(DestroyRef);
+  private mainCategoryServise = inject(MainCategoryServise);
+  private cartServise = inject(CartServise);
+  mainCategories: MainCategoriesModel[] | null = [];
+  userServise = inject(UserServise);
+  cartCount = 0;
   itemsForProfile: MenuItem[] | undefined;
   ngOnInit() {
      this.itemsForProfile = [
@@ -73,8 +76,16 @@ private DestroyRef=inject(DestroyRef)
         ]
       }
     ];
-    this.mainCategoryServise.getMainCategory()
-    this.mainCategoryServise.mainCategories$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data=>{
+    this.cartServise.cartItems$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(items => {
+      this.cartCount = items ? items.length : 0;
+    });
+
+    this.userServise.user$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(user => {
+      if (user) this.cartServise.getUserCart(user.userID);
+    });
+
+    this.mainCategoryServise.getMainCategory();
+    this.mainCategoryServise.mainCategories$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data => {
       if(data!==null)
       {
          this.mainCategories=data

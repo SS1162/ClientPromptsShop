@@ -1,3 +1,7 @@
+
+
+
+// Variables
 $light-purple: #F6E8FE;
 $text-dark: #312639;
 $hover-purple: #6a2ecb;
@@ -8,7 +12,7 @@ $shadow-color: rgba(157, 88, 245, 0.2);
 $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
 
 .contact-page-wrapper {
-background-color:#F6E8FE;
+  background-color: #F6E8FE;
   min-height: 100vh;
   padding: 40px 20px;
   font-family: 'Inter', sans-serif;
@@ -45,80 +49,6 @@ background-color:#F6E8FE;
       margin: 20px auto;
       border-radius: 10px;
       animation: moveLeftRight 3s ease-in-out infinite;
-    }
-  }
-
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 30px;
-
-    @media (min-width: 1024px) {
-      grid-template-columns: 350px 1fr;
-    }
-  }
-
-  .info-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-
-    .info-card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 1.5rem;
-      border: 1px solid #eee;
-      transition: all 0.3s ease;
-      text-align: center;
-
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px $shadow-color;
-      }
-
-      .icon-box {
-        width: 60px;
-        height: 60px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin: 0 auto 15px;
-
-        &.bg-violet {
-          background-color: #f5f3ff;
-          color: #7c3aed;
-        }
-
-        &.bg-fuchsia {
-          background-color: #fdf4ff;
-          color: #c026d3;
-        }
-      }
-
-      h3 {
-        font-weight: 700;
-        color: $text-dark;
-        margin: 0.5rem 0;
-      }
-
-      p {
-        font-size: 0.9rem;
-        color: #64748b;
-      }
-
-      a {
-        color: $primary-purple;
-        font-weight: 600;
-        text-decoration: none;
-      }
-
-      .coming-soon {
-        color: #94a3b8;
-        font-size: 0.8rem;
-        font-style: italic;
-      }
     }
   }
 
@@ -159,198 +89,175 @@ background-color:#F6E8FE;
     }
   }
 
-  ::ng-deep .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-
-      @media (min-width: 768px) {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .field {
+  // PrimeNG Components Customization
+  ::ng-deep {
+    .contact-form {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      margin-top: 10px;
-      position: relative;
+      gap: 2rem;
 
-      label {
-        position: absolute;
-        top: -8px;
-        left: 14px;
-        background: white;
-        padding: 0 6px;
-        font-size: 0.85rem;
-        color: #999;
-        transition: all 0.3s ease;
-        pointer-events: none;
-      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
 
-      label.filled {
-        color: $primary-purple !important;
-        font-weight: 700;
-      }
-
-      .custom-select:focus ~ label {
-        color: $primary-purple !important;
-        font-weight: 700;
-      }
-    }
-
-    .p-floatlabel {
-      width: 100%;
-      position: relative;
-
-      label {
-        position: absolute;
-        left: 16px;
-        top: 16px;
-        transition: all 0.3s ease;
-        color: #999;
-        font-size: 1rem;
-        pointer-events: none;
-        background: white;
-        padding: 0 4px;
-      }
-
-      input:focus ~ label,
-      input.p-filled ~ label {
-        top: 8px;
-        font-size: 0.75rem;
-        color: $primary-purple !important;
-        font-weight: 700;
-      }
-
-      input:focus,
-      input.p-filled {
-        border-color: $primary-purple !important;
-      }
-
-      textarea:focus ~ label,
-      textarea.p-filled ~ label {
-        top: 8px;
-        font-size: 0.75rem;
-        color: $primary-purple !important;
-        font-weight: 700;
-      }
-
-      textarea:focus,
-      textarea.p-filled {
-        border-color: $primary-purple !important;
-      }
-    }
-
-    .custom-input,
-    .custom-textarea,
-    .custom-select {
-      border: 2px solid $accent-purple !important;
-      border-radius: 12px !important;
-      padding: 14px !important;
-      width: 100%;
-      transition: all 0.3s ease;
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem;
-      color: $text-dark;
-      background-color: white;
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 20px;
-      padding-right: 40px;
-
-      &:focus {
-        border-color: $primary-purple !important;
-        box-shadow: 0 0 0 4px $shadow-color !important;
-        outline: none;
-      }
-
-      &:hover {
-        border-color: $primary-purple !important;
-      }
-
-      option {
-        padding: 10px;
-        color: $text-dark;
-        background-color: white;
-        background: white;
-
-        &:checked {
-          background: linear-gradient($primary-purple, $primary-purple);
-          background-color: $primary-purple !important;
-          color: white !important;
-        }
-
-        &:hover {
-          background: linear-gradient($primary-purple, $primary-purple);
-          background-color: $primary-purple !important;
-          color: white !important;
+        @media (min-width: 768px) {
+          grid-template-columns: 1fr 1fr;
         }
       }
-    }
 
-    .submit-btn-gradient {
-      background: $grad !important;
-      border: none !important;
-      width: 100%;
-      padding: 1.2rem !important;
-      border-radius: 12px !important;
-      font-weight: 700 !important;
-      color: white !important;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px $shadow-color;
-
-      &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px $shadow-color;
-        opacity: 0.95;
+      .field {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 100%;
       }
 
-      &:hover {
-        background: $primary-purple !important;
-        border-color: $primary-purple !important;
+      // Base style for Input and Select
+      .custom-input, 
+      .p-select, 
+      .p-dropdown {
+        border: 2px solid $accent-purple !important;
+        border-radius: 12px !important;
+        width: 100% !important;
+        transition: all 0.3s ease !important;
+        font-family: 'Inter', sans-serif !important;
+        background-color: white !important;
+        color: $text-dark !important;
+        height: 52px !important;
+
+        &:hover:not(.p-disabled) {
+          border-color: $primary-purple !important;
+        }
+
+        &.p-focus, &:focus-within {
+          border-color: $primary-purple !important;
+          box-shadow: 0 0 0 4px $shadow-color !important;
+          outline: none !important;
+        }
       }
 
-      &:disabled {
-        background: $primary-purple !important;
-        box-shadow: none;
-        cursor: not-allowed;
+      // Specific height for PrimeNG Select
+      .p-select, .p-dropdown {
+        height: 52px;
+        display: flex;
+        align-items: center;
+      }
+
+      // Float Label positioning
+      .p-floatlabel {
+        width: 100%;
+        
+        label {
+          left: 14px !important;
+          color:#999!important;
+          transition: all 0.3s ease;
+          background: white;
+          padding: 0 6px;
+        }
+
+        // Active/Focus state for labels
+        input:focus ~ label,
+        input.p-filled ~ label,
+        .p-focus ~ label,
+        .p-inputwrapper-filled ~ label {
+          color: $primary-purple !important;
+          font-weight: 700 !important;
+        }
+      }
+
+      // Submit Button
+      .submit-btn-gradient {
+        background: $grad !important;
+        border: none !important;
+        width: 100%;
+        padding: 1.2rem !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        color: white !important;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px $shadow-color;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px $shadow-color;
+          opacity: 0.95;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
       }
     }
   }
 }
 
+// Animations
 @keyframes moveLeftRight {
-  0% {
-    transform: translateX(-60px);
-  }
-
-  50% {
-    transform: translateX(60px);
-  }
-
-  100% {
-    transform: translateX(-60px);
-  }
+  0% { transform: translateX(-60px); }
+  50% { transform: translateX(60px); }
+  100% { transform: translateX(-60px); }
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+::ng-deep {
+  /* עבור הגרסאות החדשות */
+  .p-select-option:hover {
+      background: #a85ed3 !important; /* צבע הרקע במעבר עכבר */
+      color: #ffffff !important;      /* צבע הטקסט במעבר עכבר */
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+}
+
+
+
+
+.ai-input-row {
+  display: flex;
+  align-items: flex-end; /* מבטיח שהכפתורים יהיו בגובה ה-input */
+  gap: 1rem;
+  width: 100%;
+
+  .input-container {
+    flex: 1; /* ה-input יתפוס את כל המקום הפנוי */
+  }
+
+  .buttons-container {
+    display: flex;
+    align-items: center;
+    height: 52px; /* תואם לגובה שהגדרנו ל-input */
+
+    .action-group {
+      display: flex;
+      gap: 0.5rem;
+    }
   }
 }
+ /* עיצוב הכפתור במצב רגיל */
+:host ::ng-deep .update-btn-custom.p-button.p-button-outlined {
+    border: 2px solid $primary-purple !important; /* צבע מסגרת סגול-כחול */
+    background-color: transparent !important;
+    color: $primary-purple !important; /* צבע טקסט ואייקון */
+}
+
+/* עיצוב במעבר עכבר (Hover) */
+:host ::ng-deep .update-btn-custom.p-button.p-button-outlined:hover {
+     background: $grad !important;
+    color: #ffffff !important; /* טקסט הופך ללבן */
+    // border-color: #6366f1 !important;
+}
+
+/* עיצוב האייקון בתוך הכפתור */
+:host ::ng-deep .update-btn-custom .p-button-icon {
+    color: inherit; /* יירש את הצבע מהכפתור (סגול ברגיל, לבן ב-hover) */
+}
+
+

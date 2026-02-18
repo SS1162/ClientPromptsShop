@@ -1,5 +1,5 @@
 export class geminiPromptModel{
-promptId!:number
-prompt!:string
-ProductsID?:number
+PromptId!:number
+Prompt!:string
+CategoryId?:number
 }

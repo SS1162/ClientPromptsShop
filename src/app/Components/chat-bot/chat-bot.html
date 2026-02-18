@@ -1,0 +1,74 @@
+<!-- ══ Floating button ══ -->
+<div class="chat-fab" [class.open]="isOpen" (click)="toggleChat()">
+  <div class="fab-inner">
+    @if (!isOpen) {
+      <i class="pi pi-comments"></i>
+    } @else {
+      <i class="pi pi-times"></i>
+    }
+  </div>
+  <div class="pulse-ring"></div>
+</div>
+
+<!-- ══ Chat panel ══ -->
+<div class="chat-panel" [class.panel-open]="isOpen">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="bot-avatar">
+      <i class="pi pi-star-fill"></i>
+    </div>
+    <div class="chat-header-info">
+      <span class="bot-name">PromptStore Assistant</span>
+      <span class="bot-status">Online</span>
+    </div>
+    <button class="close-btn" (click)="toggleChat()">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages-container" #messagesContainer>
+    @for (msg of messages; track $index) {
+      <div class="message-row" [class.user-row]="msg.role === 'user'" [class.bot-row]="msg.role === 'model'">
+        @if (msg.role === 'model') {
+          <div class="bot-bubble-avatar">
+            <i class="pi pi-star-fill"></i>
+          </div>
+        }
+        <div class="bubble" [class.user-bubble]="msg.role === 'user'" [class.bot-bubble]="msg.role === 'model'">
+          {{ msg.text }}
+        </div>
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="message-row bot-row">
+        <div class="bot-bubble-avatar">
+          <i class="pi pi-star-fill"></i>
+        </div>
+        <div class="bubble bot-bubble typing-bubble">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input-area">
+    <textarea
+      [(ngModel)]="newMessage"
+      (keydown)="onKeyDown($event)"
+      placeholder="Type a message..."
+      rows="1"
+      class="chat-textarea"
+      [disabled]="isLoading"
+    ></textarea>
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim() || isLoading">
+      <i class="pi pi-send"></i>
+    </button>
+  </div>
+
+</div>

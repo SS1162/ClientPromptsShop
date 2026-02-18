@@ -31,6 +31,11 @@
                 <ng-template #end>
                     <p-menu #menu [model]="itemsForProfile" [popup]="true" appendTo="body"></p-menu>
 
+                    <div class="cart-icon-wrap" [routerLink]="['/fullScreenCart']" title="My Cart">
+                        <i class="pi pi-shopping-cart cart-icon"></i>
+                        <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+                    </div>
+
                     <p-avatar image="assets/images/profil.png" shape="circle" (click)="menu.toggle($event)" [style]="{
             'height': '60px', 
             'width': '60px', 

@@ -47,11 +47,11 @@ export class EmptyProduct {
         )
       }
       else {
-        this.geminiServise.updateProductPrompt(this.prompt!.promptId, this.input).subscribe({
+        this.geminiServise.updateProductPrompt(this.prompt!.PromptId, this.input).subscribe({
           next: (data) => {
-            if (data.body!.prompt !== this.prompt!.prompt) {
+            if (data.body!.Prompt !== this.prompt!.Prompt) {
               this.input = ""
-              this.prompt!.prompt = data.body!.prompt
+              this.prompt!.Prompt = data.body!.Prompt
               
             }
             else {
@@ -77,7 +77,7 @@ export class EmptyProduct {
   Cancel(){
     this.input=""
     this.geminiPrompt.emit(null)
-    this.geminiServise.deletePrompt(this.prompt!.promptId)
+    this.geminiServise.deletePrompt(this.prompt!.PromptId)
     this.prompt=null
     this.flag=false
   }
