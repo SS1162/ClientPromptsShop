@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
@@ -37,7 +37,7 @@ import { geminiPromptModel } from '../../Models/geminiPromptModel';
   styleUrl: './basic-site.scss',
   providers: [MessageService],
 })
-export class BasicSite implements OnInit {
+export class BasicSite implements OnInit ,OnDestroy{
   private platformService = inject(PlatformServise);
   private siteTypeService = inject(SiteTypeService);
   private basicSiteService = inject(BasicSiteService);
@@ -51,7 +51,7 @@ export class BasicSite implements OnInit {
     siteTypeID: 0,
     platformID: 0,
   };
-
+neddDelete:boolean=false
   platforms: PlatformsModel[] = [];
   siteTypes: SiteTypeModel[] = [];
   isSubmitting = false;
@@ -172,12 +172,15 @@ export class BasicSite implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
+          this.isSubmitted=true
           this.isSubmitting = false;
+          this.neddDelete=false
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
             detail: `Basic Site "${result.siteName}" created successfully!`,
-          });
+    
+          },);
 
           // Reset form
           this.formData = {
@@ -219,10 +222,14 @@ export class BasicSite implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   handleAiSubmit() {
+      if (!this.user) {
+      this.router.navigate(['/login'])
+    }
     if (this.aiData && this.aiData.trim() !== '') {
       this.isSubmitted = true;
       this.geminiServise.AddBasicSitePrompt(this.aiData).subscribe({
         next: (response) => {
+          this.neddDelete=true
           console.log('AI Response:', response.body);
           this.prompt!.Prompt = (response.body as any).prompt
          this.prompt!.PromptId = (response.body as any).promptId
@@ -283,6 +290,12 @@ export class BasicSite implements OnInit {
     console.log("it not deleted"+this.prompt!.PromptId)
       }
     });
+  }
+  ngOnDestroy(){
+if(this.neddDelete===true)
+{
+  this.geminiServise.deletePrompt(this.prompt!.PromptId)
+}
   }
 }
 

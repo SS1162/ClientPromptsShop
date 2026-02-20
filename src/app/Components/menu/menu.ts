@@ -61,7 +61,8 @@ export class Menu implements OnInit {
           },
            {
             label: 'log out',
-            icon: 'pi pi-sign-out'
+            icon: 'pi pi-sign-out',
+            command: () => { this.logOut()}
           },
            {
             label: 'cart',
@@ -70,7 +71,8 @@ export class Menu implements OnInit {
           },
            {
             label: 'orders',
-            icon: 'pi pi-briefcase'
+            icon: 'pi pi-briefcase',
+            routerLink:['/orders']
           },
 
         ]

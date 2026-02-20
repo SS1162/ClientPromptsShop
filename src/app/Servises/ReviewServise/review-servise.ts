@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ReviewModel } from '../../Models/ReviewModel';
@@ -15,8 +15,10 @@ export class ReviewServise {
   private errorSubject = new BehaviorSubject<HttpErrorResponse | null>(null)
   public error$: Observable<HttpErrorResponse | null> = this.errorSubject.asObservable()
 
-  getReviews() {
-    this.http.get<ReviewModel[]>(this.BASIC_URL).subscribe({
+  getReviews(currentPage:number,limit:number) {
+    const params=new HttpParams()
+    .set(,currentPage).set(,limit)
+    this.http.get<ReviewModel[]>(this.BASIC_URL,params).subscribe({
 
       next: (data) => {
         this.reviewSubject.next(data)
