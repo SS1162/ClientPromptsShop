@@ -34,7 +34,7 @@
                 <span class="item-name">{{ item.productsName }}</span>
                 <span class="item-platform">{{ item.platformName }}</span>
               </div>
-              <span class="item-price">{{ item.price | currency:'USD' }}</span>
+              <span class="item-price">{{ item.price * currencyRate | currency:currencyCode }}</span>
             </div>
           }
 
@@ -53,12 +53,12 @@
           <div class="summary-footer">
             <div class="summary-row">
               <span>Items ({{ validItems.length }})</span>
-              <span>{{ totalPrice | currency:'USD' }}</span>
+              <span>{{ totalPrice * currencyRate | currency:currencyCode }}</span>
             </div>
             <div class="summary-divider"></div>
             <div class="summary-row total-row">
               <span>Total</span>
-              <span class="total-amount">{{ totalPrice | currency:'USD' }}</span>
+              <span class="total-amount">{{ totalPrice * currencyRate | currency:currencyCode }}</span>
             </div>
           </div>
         }
@@ -97,7 +97,7 @@
                 <path fill="#003087" d="M12.237 2.8C11.356.968 9.816 0 7.66 0H2.495C1.87 0 1.34.46 1.24 1.078L0 9.266a.75.75 0 0 0 .74.864h3.25l-.318 2.016a.655.655 0 0 0 .647.756h2.846c.548 0 1.014-.4 1.1-.942l.045-.236.602-3.823.039-.21a1.113 1.113 0 0 1 1.099-.941h.692c4.49 0 8.006-1.823 9.03-7.097.429-2.204.207-4.046-.928-5.342a4.43 4.43 0 0 0-1.247-.877"/>
                 <path fill="#009cde" d="M39.925 2.8C39.044.968 37.504 0 35.348 0h-5.165c-.625 0-1.155.46-1.254 1.078l-1.24 8.188a.75.75 0 0 0 .74.864h3.562l.893-5.664a1.113 1.113 0 0 1 1.099-.941h.692c4.49 0 8.006-1.823 9.03-7.097.429-2.204.207-4.046-.928-5.342"/>
               </svg>
-              Pay {{ totalPrice | currency:'USD' }} with PayPal
+              Pay {{ totalPrice * currencyRate | currency:currencyCode }} with PayPal
             }
           </button>
         </div>

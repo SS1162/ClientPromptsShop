@@ -5,5 +5,5 @@ export class UpdateUserModel {
     firstName?: string
     lastName?: string
     phone?: string
-    BasicID?: number
+    basicID?: number
 }

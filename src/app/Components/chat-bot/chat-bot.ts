@@ -16,6 +16,7 @@ export class ChatBot implements OnInit, AfterViewChecked {
   messages: ChatMessageDto[] = [];
   newMessage = '';
   isLoading = false;
+  private shouldScroll = false;
 
   private chatServise = inject(ChatServise);
 
@@ -45,6 +46,7 @@ export class ChatBot implements OnInit, AfterViewChecked {
     this.messages.push({ role: 'user', text });
     this.newMessage = '';
     this.isLoading = true;
+    this.shouldScroll = true;
 
     // Send the full history EXCLUDING the last user message as history,
     // then the last message as newMessage — matching the server's ChatRequestDto
@@ -55,11 +57,13 @@ export class ChatBot implements OnInit, AfterViewChecked {
         this.messages.push({ role: 'model', text: response });
         this.chatServise.saveSession(this.messages);
         this.isLoading = false;
+        this.shouldScroll = true;
       },
       error: () => {
         this.messages.push({ role: 'model', text: 'Sorry, something went wrong. Please try again.' });
         this.chatServise.saveSession(this.messages);
         this.isLoading = false;
+        this.shouldScroll = true;
       }
     });
   }
@@ -73,9 +77,10 @@ export class ChatBot implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     try {
-      if (this.messagesContainer) {
+      if (this.shouldScroll && this.messagesContainer) {
         const el = this.messagesContainer.nativeElement;
         el.scrollTop = el.scrollHeight;
+        this.shouldScroll = false;
       }
     } catch {}
   }

@@ -11,6 +11,45 @@
     
 }
 
+/* Currency Selector */
+.currency-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 14px;
+}
+
+::ng-deep .currency-select {
+  border-radius: 20px !important;
+  border: 2px solid #C64BF1 !important;
+  background: white !important;
+  font-weight: 700;
+  color: #C64BF1 !important;
+  min-width: 85px;
+
+  &.p-focus {
+    box-shadow: 0 0 0 3px rgba(198,75,241,0.2) !important;
+    border-color: #8139eb !important;
+  }
+  .p-select-label {
+    color: #C64BF1 !important;
+    font-weight: 700;
+    padding: 0.35rem 0.75rem !important;
+  }
+  .p-select-dropdown {
+    color: #C64BF1 !important;
+  }
+}
+
+::ng-deep .p-select-overlay .p-select-option.p-highlight {
+  background: #F6E8FE !important;
+  color: #8139eb !important;
+}
+
+.currency-selected {
+  font-weight: 700;
+  color: #C64BF1;
+}
+
 .cart-icon-wrap {
     position: relative;
     display: inline-flex;
@@ -30,7 +69,7 @@
         transition: color 0.2s ease;
 
         &:hover {
-            color: #bd00cb;
+            color:#8139eb;
         }
     }
 
@@ -38,7 +77,7 @@
         position: absolute;
         top: -6px;
         right: -8px;
-        background: #bd00cb;
+        background:  #C64BF1;
         color: #fff;
         font-size: 0.65rem;
         font-weight: 700;
@@ -58,7 +97,7 @@
 :host ::ng-deep {
     .p-megamenu-item-content:hover {
         background: #f3e5f5 !important;
-        color: #8d0a86 !important;
+        color:#8139eb!important;
     }
 
 
@@ -73,5 +112,17 @@
 
     .p-megamenu-item-link:hover {
         text-decoration: none !important;
+    }
+}
+
+:host ::ng-deep {
+    .p-megamenu-panel {
+        width: auto !important;
+        min-width: unset !important;
+    }
+
+    .p-megamenu-grid {
+        width: fit-content !important;
+        min-width: unset !important;
     }
 }

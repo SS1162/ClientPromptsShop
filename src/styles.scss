@@ -5,6 +5,24 @@
     box-sizing: border-box;
  }
 
+body {
+  background-color: #F6E8FE;
+}
+
+/* Global: p-select overlay option hover (needed for appendTo="body" overlays) */
+.p-select-overlay .p-select-option:not(.p-select-option-selected):not(.p-disabled):hover {
+  background: #8139eb !important;
+  color: white !important;
+}
+.p-select-overlay .p-select-option.p-select-option-selected {
+  background: #8139eb !important;
+  color: white !important;
+}
+.p-select-overlay .p-select-option.p-focus {
+  background: #F6E8FE !important;
+  color: #8139eb !important;
+}
+
 
 html {
 

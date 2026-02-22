@@ -51,6 +51,7 @@ export class UserServise {
         next: (data) => {
           this.userSubject.next(data)
           this.errorSubject.next(null)
+          sessionStorage.setItem('user', JSON.stringify(data))
         }
         ,
         error: (err) => {
@@ -86,13 +87,14 @@ export class UserServise {
       .subscribe({
         next: () => {
           this.errorSubject.next(null)
+          this.GetByID(id)
         }
         ,
         error: (err) => {
           this.errorSubject.next(err)
         }
       })
-    this.GetByID(id)
+  
   }
 
 

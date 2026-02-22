@@ -23,6 +23,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { RegisterUserModel } from '../../Models/RegisterUserModel';
+import { CartServise } from '../../Servises/cartServise/cart-servise';
 
 declare var google: any;
 
@@ -40,6 +41,7 @@ declare var google: any;
 
 export class Login implements OnInit, AfterViewInit {
   userServise: UserServise = inject(UserServise)
+  cartServise: CartServise = inject(CartServise)
   destroyRef = inject(DestroyRef)
   router = inject(Router);
   messageService = inject(MessageService);
@@ -65,11 +67,20 @@ export class Login implements OnInit, AfterViewInit {
 
     this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       if (data !== null && this.flag) {
-        this.flag = false
+        this.flag = false;
+        const pending = JSON.parse(sessionStorage.getItem('pendingCartItems') || '[]');
+        if (pending.length > 0) {
+          sessionStorage.removeItem('pendingCartItems');
+          for (const item of pending) {
+            this.cartServise.addCartItem(
+              { userID: data.userID, productsID: item.productsID, platformsID: item.platformsID },
+              data.userID
+            );
+          }
+        }
         if (window.history.length > 1) {
           this.location.back();
-        }
-        else {
+        } else {
           this.router.navigate(['/home']);
         }
       }

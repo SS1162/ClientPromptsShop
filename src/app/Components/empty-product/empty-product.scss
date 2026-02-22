@@ -1,3 +1,250 @@
-.box-content{
-    background-color:#F6E8FE  ;
+$primary: #8139eb;
+$grad: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
+$accent: #F6E8FE;
+$shadow: rgba(157, 88, 245, 0.2);
+
+/* ── Card ────────────────────────────────────── */
+.ep-card {
+  margin: 1.5rem;
+  background: white;
+  border-radius: 20px;
+  border: 1.5px solid rgba(129,57,235,0.18);
+  box-shadow: 0 4px 24px $shadow;
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Header ──────────────────────────────────── */
+.ep-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ep-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: $grad;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px $shadow;
+
+  i {
+    color: white;
+    font-size: 1.4rem;
+  }
+}
+
+.ep-title {
+  margin: 0 0 0.2rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #312639;
+}
+
+.ep-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* ── Input area ──────────────────────────────── */
+.ep-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* ── Float label title input ───────────────── */
+.ep-floatlabel {
+  width: 100%;
+
+  label {
+    left: 14px !important;
+    background: white;
+    padding: 0 6px;
+    color: #aaa;
+    transition: all 0.25s ease;
+  }
+
+  &:has(input:focus) label,
+  &:has(input.p-filled) label,
+  .p-floatlabel-active label {
+    color: $primary !important;
+    font-weight: 700;
+  }
+}
+
+.ep-title-input {
+  width: 100%;
+  height: 48px;
+  border: 2px solid #F6E8FE;
+  border-radius: 12px;
+  padding: 0 1rem;
+  font-size: 0.95rem;
+  color: #312639;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  box-sizing: border-box;
+  background: white;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 4px $shadow;
+  }
+}
+
+.ep-textarea-wrap {
+  position: relative;
+}
+
+.ep-textarea {
+  width: 100%;
+  resize: none;
+  border: 2px solid $accent;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+  color: #312639;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: #bbb;
+    font-style: italic;
+  }
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 4px $shadow;
+  }
+}
+
+/* ── Buttons ─────────────────────────────────── */
+.ep-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.25s ease;
+
+  i { font-size: 0.85rem; }
+}
+
+.ep-btn-primary {
+  background: $grad;
+  color: white;
+  box-shadow: 0 4px 14px $shadow;
+  align-self: flex-end;
+
+  &:hover {
+    opacity: 0.88;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px $shadow;
+  }
+}
+
+.ep-btn-outline {
+  background: white;
+  color: $primary;
+  border: 2px solid $primary;
+
+  &:hover {
+    background: $accent;
+    transform: translateY(-2px);
+  }
+}
+
+.ep-btn-ghost {
+  background: none;
+  color: #aaa;
+  border: 1.5px solid #e0e0e0;
+
+  &:hover {
+    color: #e53935;
+    border-color: #e53935;
+    background: #fff5f5;
+    transform: translateY(-2px);
+  }
+}
+
+/* ── Loading ─────────────────────────────────── */
+.ep-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem;
+  background: $accent;
+  border-radius: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.ep-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(129,57,235,0.2);
+  border-top-color: $primary;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: spin 0.8s linear infinite;
+}
+
+.ep-loading-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $primary;
+}
+
+/* ── Result ──────────────────────────────────── */
+.ep-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.ep-result-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $primary;
+
+  i { font-size: 1rem; }
+}
+
+.ep-result-box {
+  background: $accent;
+  border-left: 4px solid $primary;
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+  color: #312639;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.ep-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
 }

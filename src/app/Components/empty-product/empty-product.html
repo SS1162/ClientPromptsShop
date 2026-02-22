@@ -1,17 +1,67 @@
-<div class="box-content">
+<div class="ep-card">
 
-<p>Bring your ideas to life with Gemini</p>
-<input [(ngModel)]="input">
-@if(flag!==true)
-{
-<button (click)="sentGemini()">submit</button>
-}
+  <!-- ── Header ─────────────────────────────────── -->
+  <div class="ep-header">
+    <div class="ep-icon-wrap">
+      <i class="pi pi-sparkles"></i>
+    </div>
+    <div>
+      <h3 class="ep-title">Custom AI Design</h3>
+      <p class="ep-subtitle">Describe your idea and let Gemini craft it for you</p>
+    </div>
+  </div>
 
+  <!-- ── Input state ────────────────────────────── -->
+  @if (!flag) {
+  <div class="ep-input-area">
 
-@if(flag===true)
-{ {{prompt!.Prompt}}
-<button (click)="sentFather()">confrime</button>
-<button (click)="sentGemini()">built again</button>
-<button (click)="Cancel()">Cancel</button>
-}
+    <p-floatlabel variant="on" class="ep-floatlabel">
+      <input pInputText id="productTitle" [(ngModel)]="productTitle" class="ep-title-input" />
+      <label for="productTitle">Design title</label>
+    </p-floatlabel>
+
+    <div class="ep-textarea-wrap">
+      <textarea
+        [(ngModel)]="input"
+        rows="3"
+        placeholder="E.g. A landing page for a coffee shop with a warm, minimalist feel…"
+        class="ep-textarea"
+      ></textarea>
+    </div>
+    <button class="ep-btn ep-btn-primary" (click)="sentGemini()">
+      <i class="pi pi-send"></i> Generate Design
+    </button>
+  </div>
+  }
+
+  <!-- ── Generating loader ───────────────────────── -->
+  @if (flag && !prompt) {
+  <div class="ep-loading">
+    <span class="ep-spinner"></span>
+    <span class="ep-loading-text">Gemini is crafting your design…</span>
+  </div>
+  }
+
+  <!-- ── Result state ───────────────────────────── -->
+  @if (flag && prompt) {
+  <div class="ep-result">
+    <div class="ep-result-label">
+      <i class="pi pi-check-circle"></i> Your generated design prompt
+    </div>
+    <div class="ep-result-box">{{ prompt.Prompt }}</div>
+
+    <div class="ep-actions">
+      <button class="ep-btn ep-btn-primary" (click)="sentFather()">
+        <i class="pi pi-cart-plus"></i> Add to Cart
+      </button>
+      <button class="ep-btn ep-btn-outline" (click)="sentGemini()">
+        <i class="pi pi-refresh"></i> Regenerate
+      </button>
+      <button class="ep-btn ep-btn-ghost" (click)="Cancel()">
+        <i class="pi pi-times"></i> Cancel
+      </button>
+    </div>
+  </div>
+  }
+
 </div>

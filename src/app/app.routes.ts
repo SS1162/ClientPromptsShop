@@ -17,6 +17,7 @@ import { Home } from './Components/home/home';
 import { BasicSite } from './Components/basic-site/basic-site';
 import { Reviews } from './Components/reviews/reviews';
 import { Payment } from './Components/payment/payment';
+import { PageNotFound } from './Components/page-not-found/page-not-found';
 
 
 export const routes: Routes = [
@@ -36,9 +37,8 @@ export const routes: Routes = [
   { path: 'termsofService', component: TermsofService },
   { path: 'home', component: Home },
   { path: 'basicSite', component: BasicSite },
-    { path: 'reviews', component: Reviews },
+  { path: 'reviews', component: Reviews },
   { path: 'payment', component: Payment },
-  { path: '',redirectTo:'home',pathMatch:'full'}
- 
-
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', component: PageNotFound }
 ];

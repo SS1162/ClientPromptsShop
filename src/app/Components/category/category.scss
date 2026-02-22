@@ -1,143 +1,402 @@
+$primary-purple: #8139eb;
+$accent-purple: #F6E8FE;
+$shadow-color: rgba(157, 88, 245, 0.2);
+$grad: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
+$text-dark: #312639;
 
+/* ════════════════════════════════════════
+   LAYOUT
+════════════════════════════════════════ */
 .box_content {
-width: 99vw;
-padding: 1%;
-min-height: 100vh;
-font-family: 'Inter', sans-serif;
-
+  background: $accent-purple;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+ 
 }
 
+/* ── Filter Bar ──────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 1.25rem;
+  padding: 0.85rem 2rem;
+  background: white;
+  border-bottom: 2px solid $accent-purple;
+  box-shadow: 0 2px 12px $shadow-color;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  overflow-x: auto;
+  width: 96%;
+  border-radius: 14px;
+  margin: 0.75rem auto;
+  justify-content: center;
+}
 
-:host ::ng-deep .col-span-12 {
+/* ── Price Filter card ────────────────────── */
+.price-filter {
+  display: flex;
+
+  flex-direction: column;
+  gap: 0.45rem;
+  background: white;
+  border: 1.5px solid rgba(129,57,235,0.18);
+  border-radius: 14px;
+  padding: 0.6rem 1rem 0.7rem;
+  min-width: 220px;
+  flex-shrink: 0;
+}
+
+.price-filter-values {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: $primary-purple;
+  white-space: nowrap;
+  text-align: center;
+
+  .price-dash {
+    margin: 0 4px;
+    opacity: 0.5;
+  }
+}
+
+.filter-field {
+  flex-shrink: 0;
+  max-width: 230px;
+  min-width: 130px;
+   height: 100% !important;
+    // height:52px ;
+}
+
+.filter-search {
+  flex-shrink: 0;
+}
+
+/* ── Platform Required Bar ──────────────────── */
+.platform-required-bar {
+  background: white;
+  border-radius: 14px;
+  margin: 0 2rem 1rem;
+  padding: 0.75rem 2rem;
+  box-shadow: 0 2px 12px $shadow-color;
+  border: 2px dashed rgba(129,57,235,0.35);
+}
+
+.platform-required-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.platform-required-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: $text-dark;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+
+  .req-star {
+    color: #e53935;
+    font-size: 1.1rem;
+  }
+}
+
+.platform-hint {
+  font-size: 0.82rem;
+  color: #e53935;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  animation: pulse-hint 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-hint {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* PrimeNG platform select — override green with purple */
+::ng-deep .platform-select {
+  .p-select-filter-input:focus {
+    border-color: $primary-purple !important;
+    box-shadow: 0 0 0 3px rgba(129,57,235,0.2) !important;
+  }
+  .p-focus {
+    border-color: $primary-purple !important;
+    box-shadow: 0 0 0 3px rgba(129,57,235,0.2) !important;
+  }
+  .p-select-option.p-highlight {
+    background: $accent-purple !important;
+    color: $primary-purple !important;
+  }
+  .p-select-option:not(.p-highlight):hover {
+    background: rgba(129,57,235,0.08) !important;
+  }
+}
+
+/* Disabled buy button */
+.buy-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.filter-input {
+  width: 210px !important;
+//   height: 46px !important;
+  height: 100% !important;
+}
+
+/* ── Category Hero ───────────────────────── */
+.category-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 1.5rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px $shadow-color;
+
+  .hero-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
     display: block;
-    width: 100%;
+    filter: brightness(0.7);
+  }
+
+  .hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(to top, rgba(49, 38, 57, 0.85), transparent);
+  }
+
+  .hero-title {
+    margin: 0 0 0.25rem;
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  .hero-desc {
+    margin: 0;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.85);
+  }
 }
-.priceconteiner{
+
+/* ── Products Card ───────────────────────── */
+.products-card {
+  margin: 0 2rem 1.5rem;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px $shadow-color;
+  border: 1.5px solid rgba(129,57,235,0.12);
+}
+
+/* ── Product List ────────────────────────── */
+.product-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid rgba(129,57,235,0.1);
+  transition: background 0.2s ease;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #faf5ff; }
+
+  .product-info {
     display: flex;
-    gap: 10%;
-    width: 15rem;
-    height: 3.5rem;
-    justify-content: center;
     align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+  }
+
+  .star-icon {
+    color: $primary-purple;
+    font-size: 0.85rem;
+  }
+
+  .product-name {
+    font-weight: 600;
+    color: $text-dark;
+    font-size: 1rem;
+  }
+
+  .product-price {
+    font-weight: 700;
+    color: $primary-purple;
+    font-size: 1.05rem;
+    margin-right: 0.5rem;
+  }
 }
 
-/* צביעת האייקון בסגול באופן קבוע */
-:host ::ng-deep .p-iconfield .p-inputicon {
-    color: #8236f1 !important;
+/* ── Buy Bar ─────────────────────────────── */
+.buy-bar {
+  display: flex;
+  justify-content: flex-start;
+  padding: 1.25rem 2rem 2.5rem;
 }
 
-/* צביעת הטקסט של ה-Placeholder (הטקסט "Search") */
-:host ::ng-deep .p-inputtext::placeholder {
-    color: #8236f1;
-    opacity: 0.7; /* שקיפות קלה כדי להבדיל בין placeholder לטקסט חי */
+.buy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 2.5rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  color: white;
+  background: $grad;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px $shadow-color;
+  transition: all 0.25s ease;
+  letter-spacing: 0.02em;
+
+  i { font-size: 1.1rem; }
+
+  &:hover {
+    opacity: 0.88;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px $shadow-color;
+  }
+  &:active {
+    transform: translateY(0);
+  }
 }
 
-/* הבטחת צבע הטקסט שהמשתמש מקליד */
-:host ::ng-deep .p-inputtext {
-    color: #8236f1 !important;
-}
-:host ::ng-deep .product-item-wrapper {
-    border-top: 1px solid #e5e7eb !important;
-    padding: 1.5rem;
-}
-
-
-:host ::ng-deep .col-span-12:first-child .product-item-wrapper {
-    border-top: none !important;
-}
-
-
-:host ::ng-deep .p-checkbox-checked .p-checkbox-box {
-    border-color: #C4B6FD !important;
-    background: #C4B6FD !important;
-}
-
-
-:host ::ng-deep .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
-    border-color: #9D58F5 !important;
-}
-.myStyle{
-    display: flex;
-    gap: 1%;
-    color: #8236f1;
-}
-
-::ng-deep .p-slider .p-slider-range {
-    background: #8236f1; 
-}
-:host ::ng-deep .p-button:hover {
-    background: #8236f1 !important; 
-    border-color: #8236f1 !important;
-}
-.space{
-    height: 10px;
-    width: 100%;
-    background-color:#F6E8FE;
-}
-.space2{
-    width: 1px;
-    height: 25px;
-}
-
+/* ════════════════════════════════════════
+   PRIMENG OVERRIDES
+════════════════════════════════════════ */
 :host ::ng-deep {
+  .p-iconfield .p-inputicon { color: $primary-purple !important; }
 
-    .p-select {
-     
-        .p-select-label {
-            color: #8236f1 !important; 
-    
-        }
-
-     
-        &.p-focus {
-            border-color:#8236f1 !important; 
-            border-width: 3px !important;   
-            box-shadow: none !important;
-        }
-        
-
-        &:not(.p-disabled):hover {
-            border-color: #8236f1 !important;
-        }
+  .p-inputtext {
+    color: $primary-purple !important;
+    border: 2px solid $accent-purple !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    &::placeholder { color: $primary-purple; opacity: 0.6; }
+    &:focus {
+      border-color: $primary-purple !important;
+      box-shadow: 0 0 0 4px $shadow-color !important;
     }
+  }
 
-   
-    .p-floatlabel {
-     
-        label {
-            color:#8236f1 !important; 
-            font-weight: 500;
-        }
-        
-   
-        &:has(.p-focus) label,
-        &.p-floatlabel-active label {
-            color: #8236f1 !important;
-        }
+  /* ── Select ─────────────────────────────────── */
+  .p-select {
+    border: 2px solid $accent-purple !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    height: 44px !important;
+    min-width: unset !important;
+    width: 100% !important;
+    display: flex;
+    align-items: center;
+
+    .p-select-label { color: $primary-purple !important; }
+
+    &:hover:not(.p-disabled) { border-color: $primary-purple !important; }
+    &.p-focus {
+      border-color: $primary-purple !important;
+      border-width: 2px !important;
+      box-shadow: 0 0 0 4px $shadow-color !important;
     }
+  }
 
-  
-    .p-select-overlay {
-        border-color:#8236f1 !important; 
-
-        .p-select-option {
-           
-            &:not(.p-select-option-selected):not(.p-disabled):hover {
-                background: #f3e5f5 !important; 
-                color:#8236f1 !important;      
-            }
-
-          
-            &.p-select-option-selected {
-                background:#8236f1 !important; 
-                color: #ffffff !important;     
-            }
-            
-        
-            &.p-focus {
-                background: #f3e5f5 !important;
-                color: #8236f1 !important;
-            }
-        }
+  .p-select-overlay {
+    border-color: $primary-purple !important;
+    border-radius: 12px !important;
+    .p-select-option {
+      &:not(.p-select-option-selected):not(.p-disabled):hover {
+        background: #f3e5f5 !important;
+        color: $primary-purple !important;
+      }
+      &.p-select-option-selected {
+        background: $primary-purple !important;
+        color: white !important;
+      }
     }
+  }
+
+  /* ── Float label ─────────────────────────────── */
+  .p-floatlabel {
+    width: 100%;
+    label {
+      left: 14px !important;
+      color: #999 !important;
+      background: white;
+      padding: 0 6px;
+      transition: all 0.3s ease;
+    }
+    input:focus ~ label,
+    input.p-filled ~ label,
+    .p-focus ~ label,
+    .p-inputwrapper-filled ~ label {
+      color: $primary-purple !important;
+      font-weight: 700 !important;
+    }
+  }
+
+  /* ── Slider ──────────────────────────────────── */
+  .price-slider {
+    width: 100% !important;
+    margin: 2px 0 !important;
+  }
+  .p-slider .p-slider-range { background: $grad !important; }
+  .p-slider .p-slider-handle {
+    border-color: $primary-purple !important;
+    background: white !important;
+    box-shadow: 0 0 0 3px $shadow-color !important;
+  }
+
+  /* ── Checkbox ────────────────────────────────── */
+  .p-checkbox-checked .p-checkbox-box {
+    border-color: $primary-purple !important;
+    background: $primary-purple !important;
+  }
+  .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
+    border-color: $primary-purple !important;
+  }
+
+  /* ── DataView card wrapper ───────────────────── */
+  .p-dataview {
+    background: white !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(129,57,235,0.08);
+    border: 1px solid rgba(129,57,235,0.12);
+  }
+
+  /* ── Buy Now button ──────────────────────────── */
+  .p-button {
+    background: $grad !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px $shadow-color;
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px $shadow-color !important;
+    }
+  }
 }

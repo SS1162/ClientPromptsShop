@@ -36,9 +36,10 @@
                                 <p-select [options]="platforms" [(ngModel)]="formData.platformID" [showClear]="true"
                                     optionLabel="platformName" optionValue="platformID" name="platform" id="platform"
                                     (onChange)="onPlatformChange()" required class="custom-select-prime"
-                                    placeholder="Select a Platform">
+                                    placeholder="Select a Platform"
+                                    [filter]="true" filterPlaceholder="Search platform...">
                                 </p-select>
-                                <label for="platform">Platform *</label>
+                                <label for="platform">Select a Platform</label>
                             </p-floatlabel>
                         </div>
 
@@ -46,10 +47,10 @@
                             <p-floatlabel variant="on">
                                 <p-select [options]="siteTypes" [(ngModel)]="formData.siteTypeID" [showClear]="true"
                                     optionLabel="siteTypeName" optionValue="siteTypeID" name="siteType" id="siteType"
-                                    (onChange)="onSiteTypeChange()" required class="custom-select-prime"
+                                    (onChange)="onSiteTypeChange()" class="custom-select-prime"
                                     placeholder="Select a Site Type">
                                 </p-select>
-                                <label for="siteType">Site Type *</label>
+                                <label for="siteType">Select a Site Type</label>
                             </p-floatlabel>
                         </div>
                     </div>
@@ -89,7 +90,8 @@
                         </div>
                     </div>
 
-                    <p-button type="submit" [disabled]="basicSiteForm.invalid || isSubmitting"
+                    <p-button type="submit"
+                        [disabled]="basicSiteForm.invalid || isSubmitting || (!formData.siteTypeID && !isSubmitted)"
                         [label]="isSubmitting ? 'Creating...' : 'Create Site'" icon="pi pi-check"
                         styleClass="submit-btn-gradient">
                     </p-button>

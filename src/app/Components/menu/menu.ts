@@ -15,10 +15,13 @@ import { CartServise } from '../../Servises/cartServise/cart-servise';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink ,RouterModule} from '@angular/router';
 import { routes } from '../../app.routes';
+import { SelectModule } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
+import { CurrencyServise, CurrencyOption } from '../../Servises/currencyServise/currency-servise';
 
 @Component({
   selector: 'app-menu',
-  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule, RouterLink, RouterModule],
+  imports: [MegaMenu, ButtonModule, CommonModule, AvatarModule, MegaMenuModule, MenuModule, RouterLink, RouterModule, SelectModule, FormsModule],
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
 })
@@ -34,12 +37,22 @@ export class Menu implements OnInit {
   private DestroyRef = inject(DestroyRef);
   private mainCategoryServise = inject(MainCategoryServise);
   private cartServise = inject(CartServise);
+  currencyServise = inject(CurrencyServise);
   mainCategories: MainCategoriesModel[] | null = [];
   userServise = inject(UserServise);
   cartCount = 0;
+  currencies: CurrencyOption[] = [];
+  selectedCurrency: CurrencyOption = { code: 'USD', name: 'United States Dollar' };
   itemsForProfile: MenuItem[] | undefined;
   ngOnInit() {
-     this.itemsForProfile = [
+     this.currencyServise.loadCurrencies();
+    this.currencyServise.currencies$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data => {
+      this.currencies = data;
+    });
+    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(c => {
+      this.selectedCurrency = c;
+    });
+    this.itemsForProfile = [
       {
         label: 'Options',
         items: [
@@ -117,6 +130,10 @@ this.mainCategoryServise.error$.pipe(takeUntilDestroyed(this.DestroyRef)).subscr
 
    
   }
+  onCurrencyChange(currency: CurrencyOption): void {
+    this.currencyServise.selectCurrency(currency);
+  }
+
   logOut(){
   this.userServise.LogOut()
 }

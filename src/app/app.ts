@@ -8,11 +8,12 @@ import { UpdateUser } from './Components/update-user/update-user';
 import { Menu } from './Components/menu/menu';
 import { ButtomNevigation } from './Components/buttom-nevigation/buttom-nevigation';
 import { ChatBot } from './Components/chat-bot/chat-bot';
+import { PopCart } from './Components/pop-cart/pop-cart';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Menu, ButtomNevigation, ChatBot],
+  imports: [RouterOutlet, Menu, ButtomNevigation, ChatBot, PopCart],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

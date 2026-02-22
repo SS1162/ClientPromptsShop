@@ -31,6 +31,26 @@
                 <ng-template #end>
                     <p-menu #menu [model]="itemsForProfile" [popup]="true" appendTo="body"></p-menu>
 
+                    <div class="currency-select-wrap">
+                      <p-select
+                        [options]="currencies"
+                        [(ngModel)]="selectedCurrency"
+                        optionLabel="code"
+                        [filter]="true"
+                        filterPlaceholder="Search currency..."
+                        appendTo="body"
+                        (onChange)="onCurrencyChange($event.value)"
+                        styleClass="currency-select"
+                        [style]="{'min-width':'90px'}">
+                        <ng-template #selectedItem let-c>
+                          <span class="currency-selected">{{ c.code }}</span>
+                        </ng-template>
+                        <ng-template #item let-c>
+                          <span><b>{{ c.code }}</b> — {{ c.name }}</span>
+                        </ng-template>
+                      </p-select>
+                    </div>
+
                     <div class="cart-icon-wrap" [routerLink]="['/fullScreenCart']" title="My Cart">
                         <i class="pi pi-shopping-cart cart-icon"></i>
                         <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>

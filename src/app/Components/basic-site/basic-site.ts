@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
@@ -17,6 +17,7 @@ import { UserServise } from '../../Servises/UserServise/User-servise';
 import { UserModel } from '../../Models/UserModel';
 import { Router } from '@angular/router';
 import { UpdateUserModel } from '../../Models/UpdateUserModel';
+import { UpdateBasicSiteModel } from '../../Models/UpdateBasicSiteModel';
 import { SelectModule } from 'primeng/select';
 import { GeminiServise } from '../../Servises/geminiServise/gemini-servise';
 import { geminiPromptModel } from '../../Models/geminiPromptModel';
@@ -37,7 +38,7 @@ import { geminiPromptModel } from '../../Models/geminiPromptModel';
   styleUrl: './basic-site.scss',
   providers: [MessageService],
 })
-export class BasicSite implements OnInit {
+export class BasicSite implements OnInit, OnDestroy {
   private platformService = inject(PlatformServise);
   private siteTypeService = inject(SiteTypeService);
   private basicSiteService = inject(BasicSiteService);
@@ -45,29 +46,61 @@ export class BasicSite implements OnInit {
   private destroyRef = inject(DestroyRef);
   private userService = inject(UserServise);
   private router = inject(Router)
-  formData: AddBasicSiteModel = {
-    siteName: '',
-    userDescreption: '',
-    siteTypeID: 0,
-    platformID: 0,
-  };
-
+  formData: AddBasicSiteModel = new AddBasicSiteModel();
+  deletePrompt: boolean = false
   platforms: PlatformsModel[] = [];
   siteTypes: SiteTypeModel[] = [];
   isSubmitting = false;
   isLoading = false;
   selectedSiteTypeDescription: string = '';
   user?: UserModel
+
   ngOnInit(): void {
     this.loadPlatformsAndSiteTypes();
     this.loadUser();
   }
   loadUser() {
-    this.userService.user$.subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (user) => {
         this.user = user || undefined;
+        if (this.user?.basicID) {
+          this.basicSiteService.getBasicSites(this.user.basicID)
+        }
       },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load user data' });
+      }
     });
+
+    this.basicSiteService.basicSites$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data) => {
+        this.formData.siteName = data?.siteName || '';
+        if (data?.platformID) {
+          this.formData.platformID = data?.platformID
+        }
+        if (data?.siteTypeID) {
+          this.formData.siteTypeID = data?.siteTypeID
+        }
+
+        if (data?.geminiPromptId) {
+          this.formData.userDescreption = data.geminiPromptId;
+          this.geminiServise.getPrompt(data.geminiPromptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            next: (response) => {
+              this.prompt!.PromptId= (response.body as any).promptId;
+              this.prompt!.Prompt = (response.body as any).prompt;
+              this.aiData = this.prompt!.Prompt;
+              this.isSubmitted = true;
+              this.deletePrompt = false;
+            }
+          });
+        } else {
+          this.formData.userDescreption = undefined;
+        }
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load basic site data' });
+      }
+    })
   }
   loadPlatformsAndSiteTypes(): void {
     this.isLoading = true;
@@ -79,6 +112,9 @@ export class BasicSite implements OnInit {
         next: (platforms) => {
           this.platforms = platforms || [];
         },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load platforms' });
+        }
       });
 
 
@@ -90,6 +126,9 @@ export class BasicSite implements OnInit {
           this.siteTypes = siteTypes || [];
           this.isLoading = false;
         },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load site types' });
+        }
       });
 
     // Subscribe to platform errors
@@ -105,6 +144,9 @@ export class BasicSite implements OnInit {
             });
           }
         },
+        error: (err) => {
+          console.log(err);
+        }
       });
 
     // Subscribe to site type errors
@@ -121,6 +163,9 @@ export class BasicSite implements OnInit {
             this.isLoading = false;
           }
         },
+        error: (err) => {
+          console.log(err);
+        }
       });
 
     // Load data from services
@@ -130,24 +175,22 @@ export class BasicSite implements OnInit {
 
   onPlatformChange(): void {
     const selectedPlatform = this.platforms.find(p => p.platformID === this.formData.platformID);
-    if (selectedPlatform) {
-      // Platform selected
-    }
+
   }
 
   onSiteTypeChange(): void {
     const selectedSiteType = this.siteTypes.find(s => s.siteTypeID === this.formData.siteTypeID);
     if (selectedSiteType) {
       this.selectedSiteTypeDescription = selectedSiteType.siteTypeDescription;
-      this.formData.userDescreption = selectedSiteType.siteTypeDescription;
     }
   }
 
   handleSubmit(): void {
     if (!this.user) {
-      this.router.navigate(['/login'])
+      this.router.navigate(['/login']);
+      return;
     }
-    if (!this.formData.siteName || !this.formData.platformID || (!this.formData.siteTypeID&&this.aiData.trim()==="")) {
+    if (!this.formData.siteName || !this.formData.platformID || (!this.formData.siteTypeID && !this.aiData && this.aiData.trim() === "")) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
@@ -156,9 +199,8 @@ export class BasicSite implements OnInit {
       return;
     }
 
-    if(this.formData.siteTypeID&&this.aiData.trim()!=="")
-    {
-        this.messageService.add({
+    if (this.formData.siteTypeID && this.aiData.trim() !== "") {
+      this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
         detail: 'you can\'t fill the site type and the ai description at the same time, please choose one of them',
@@ -167,45 +209,72 @@ export class BasicSite implements OnInit {
     }
 
     this.isSubmitting = true;
+    if (!this.user?.basicID||this.user.basicID === 0) {
+      this.basicSiteService.addBasicSite(this.formData)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (result) => {
+            this.deletePrompt = false;
+            this.isSubmitting = false;
+            this.isSubmitted = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Basic Site "${result.siteName}" created successfully!`,
+            });
 
-    this.basicSiteService.addBasicSite(this.formData)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (result) => {
-          this.isSubmitting = false;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: `Basic Site "${result.siteName}" created successfully!`,
-          });
+            this.user!.basicID = result.basicSiteID;
+            const UpdaterUser: UpdateUserModel = {
+              userName: this.user!.userName,
+              basicID: this.user!.basicID,
+              userID: this.user!.userID,
+              firstName: this.user!.firstName,
+              lastName: this.user!.lastName,
+            };
+            this.userService.UpdaterUser(UpdaterUser, UpdaterUser.userID);
+          },
+          error: (error) => {
+            this.isSubmitting = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to create basic site: ',
+            });
+          },
+        });
+    }
+    else {
+      const updateData: UpdateBasicSiteModel = {
+        basicSiteID: this.user!.basicID!,
+        siteName: this.formData.siteName,
+        userDescreption: this.prompt?.PromptId || undefined,
+        siteTypeID: this.formData.siteTypeID,
+        platformID: this.formData.platformID,
+      };
+      this.basicSiteService.updateBasicSite(updateData)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.deletePrompt = false;
+            this.isSubmitting = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: `Basic Site "${this.formData.siteName}" updated successfully!`,
+            });
+          },
+          error: () => {
+            this.isSubmitting = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to update basic site',
+            });
+          },
+        });
+    }
 
-          // Reset form
-          this.formData = {
-            siteName: '',
-            userDescreption: '',
-            siteTypeID: 0,
-            platformID: 0,
-          };
-          this.selectedSiteTypeDescription = '';
-          this.user!.BasicID = result.basicSiteID
-          const UpdaterUser: UpdateUserModel = {
-            userName: this.user!.userName,
-            BasicID: this.user!.BasicID,
-            userID: this.user!.userID,
-            firstName: this.user!.firstName,
-            lastName: this.user!.lastName,
-          }
-          this.userService.UpdaterUser(UpdaterUser, UpdaterUser.userID)
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create basic site: ' + error.message,
-          });
-        },
-      });
+
   }
 
 
@@ -221,14 +290,14 @@ export class BasicSite implements OnInit {
   handleAiSubmit() {
     if (this.aiData && this.aiData.trim() !== '') {
       this.isSubmitted = true;
-      this.geminiServise.AddBasicSitePrompt(this.aiData).subscribe({
+      this.geminiServise.AddBasicSitePrompt(this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
+          this.deletePrompt = true
           console.log('AI Response:', response.body);
           this.prompt!.Prompt = (response.body as any).prompt
-         this.prompt!.PromptId = (response.body as any).promptId
+          this.prompt!.PromptId = (response.body as any).promptId
           this.aiData = this.prompt!.Prompt;
           console.log(this.aiData)
-          this.cdr.detectChanges();
         },
         error: (error) => {
           this.messageService.add({
@@ -243,7 +312,7 @@ export class BasicSite implements OnInit {
     }
   }
   handleEdit() {
-    this.geminiServise.updateBasicSitePrompt(this.prompt!.PromptId, this.aiData).subscribe({
+    this.geminiServise.updateBasicSitePrompt(this.prompt!.PromptId, this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         console.log('AI Response:', response.body);
         if (this.prompt!.Prompt === response.body!.Prompt) {
@@ -255,13 +324,13 @@ export class BasicSite implements OnInit {
         }
         else {
           this.prompt = response.body
-        this.aiData = (response.body as any).prompt;
+          this.aiData = (response.body as any).prompt;
           this.cdr.detectChanges();
         }
 
       },
       error: (error) => {
-           this.isSubmitted = false;
+        this.isSubmitted = false;
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -274,15 +343,24 @@ export class BasicSite implements OnInit {
 
   handleDelete() {
     this.isSubmitted = false;
-    this.aiData = ''; 
-    this.geminiServise.deletePrompt(this.prompt!.PromptId).subscribe({
+    this.aiData = '';
+    this.geminiServise.deletePrompt(this.prompt!.PromptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.prompt = null;   
+        this.prompt = new geminiPromptModel();
       },
       error: (error) => {
-    console.log("it not deleted"+this.prompt!.PromptId)
+        console.log("it not deleted" + this.prompt!.PromptId)
       }
     });
+  }
+
+
+
+
+  ngOnDestroy(): void {
+    if (this.deletePrompt) {
+      this.handleDelete()
+    }
   }
 }
 

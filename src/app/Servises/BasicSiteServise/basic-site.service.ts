@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AddBasicSiteModel } from '../../Models/AddBasicSiteModel';
 import { BasicSiteModel } from '../../Models/BasicSiteModel';
+import { UpdateBasicSiteModel } from '../../Models/UpdateBasicSiteModel';
 
 @Injectable({
   providedIn: 'root',
@@ -41,6 +42,23 @@ export class BasicSiteService {
         this.errorSubject.next(null);
       },
       error: (error: HttpErrorResponse) => this.errorSubject.next(error),
+    });
+  }
+
+  updateBasicSite(basicSite: UpdateBasicSiteModel): Observable<void> {
+    return new Observable((observer) => {
+      this.http.put<void>(`${this.BASIC_URL}/${basicSite.basicSiteID}`, basicSite).subscribe({
+        next: () => {
+          this.errorSubject.next(null);
+          this.getBasicSites(basicSite.basicSiteID);
+          observer.next();
+          observer.complete();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorSubject.next(error);
+          observer.error(error);
+        },
+      });
     });
   }
 }

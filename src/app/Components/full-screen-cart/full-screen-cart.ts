@@ -18,11 +18,12 @@ import { CardModule } from 'primeng/card';
 import { UserModel } from '../../Models/UserModel';
 import { BasicSiteModel } from '../../Models/BasicSiteModel';
 import { BasicSiteService } from '../../Servises/BasicSiteServise/basic-site.service';
+import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
 @Component({
   selector: 'app-full-screen-cart',
   imports: [
     CommonModule, ButtonModule, DialogModule, RatingModule, TextareaModule, FileUploadModule, FormsModule, FloatLabelModule,
-    RouterLink, ToastModule, RippleModule,CardModule
+    RouterLink, ToastModule, RippleModule, CardModule
   ],
   providers: [MessageService],
   templateUrl: './full-screen-cart.html',
@@ -41,9 +42,20 @@ export class FullScreenCart implements OnInit {
   error: string = ""
   noItems: string = ""
   totalPrice: number = 0  
-  basicSite?:BasicSiteModel
- basicSiteServise:BasicSiteService=inject(BasicSiteService)
+  basicSite?: BasicSiteModel
+  basicSiteServise: BasicSiteService = inject(BasicSiteService)
+  currencyServise: CurrencyServise = inject(CurrencyServise)
+  currencyCode: string = 'USD';
+  currencyRate: number = 1;
+
   ngOnInit() {
+    this.currencyServise.selectedCurrency$.subscribe(c => {
+      this.currencyCode = c.code;
+    });
+
+    this.currencyServise.rate$.subscribe(r => {
+      this.currencyRate = r;
+    });
 
     this.userServise.user$.subscribe({
       next: (data) => {
@@ -64,9 +76,9 @@ export class FullScreenCart implements OnInit {
       }
     })
 
-if(this.user.BasicID)
+if(this.user.basicID)
 {
-     this.basicSiteServise.getBasicSites(this.user.BasicID)
+     this.basicSiteServise.getBasicSites(this.user.basicID)
      this.basicSiteServise.basicSites$.subscribe({
       next:(data)=>
       {

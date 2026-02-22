@@ -4,5 +4,5 @@ export class UserModel {
     firstName?: string
     lastName?: string
     phone?: string
-    BasicID?:number
+    basicID?:number
 }

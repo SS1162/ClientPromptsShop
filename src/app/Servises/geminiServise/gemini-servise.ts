@@ -38,7 +38,9 @@ return this.http.get<geminiPromptModel>(`${this.BASIC_URL}/${promptId}`,{observe
 ))
 }
 
-
+getPrompt(promptId:number):Observable<HttpResponse<geminiPromptModel>>{
+  return this.http.get<geminiPromptModel>(`${this.BASIC_URL}/${promptId}`,{observe:'response'})
+} 
 AddBasicSitePrompt(userRequest:string):Observable<HttpResponse<geminiPromptModel>>{
  const geminiInput:GeminiInputModel={
     userRequest:userRequest

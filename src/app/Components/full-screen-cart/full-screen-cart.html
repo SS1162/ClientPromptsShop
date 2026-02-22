@@ -24,7 +24,7 @@
                             <div class="divider"></div>
                             <div class="summary-row total-row">
                                 <span>Total Amount:</span>
-                                <span class="value highlight">{{totalPrice | currency:'USD'}}</span>
+                                <span class="value highlight">{{totalPrice * currencyRate | currency:currencyCode}}</span>
                             </div>
                         </div>
                     </ng-template>
@@ -123,7 +123,7 @@
                                 </span>
                             </div>
                             <div class="price-section">
-                                <span class="price-value">${{item.price }}</span>
+                                <span class="price-value">{{ item.price * currencyRate | currency:currencyCode }}</span>
                             </div>
                         </div>
 

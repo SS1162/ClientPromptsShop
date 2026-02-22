@@ -1,0 +1,83 @@
+<p-toast />
+
+<div class="design-page-wrapper">
+
+  @if (!user) {
+    <div class="auth-guard-card">
+      <div class="lock-icon"><i class="pi pi-lock"></i></div>
+      <h2>Sign in to Design</h2>
+      <p>You need to be logged in to use the Custom Design Studio.</p>
+      <p-button label="Sign In" (click)="goToLogin()" styleClass="auth-btn" />
+    </div>
+  } @else {
+
+    <div class="form-card">
+
+      <div class="card-header">
+        <div class="header-icon"><i class="pi pi-sparkles"></i></div>
+        <h1 class="card-title">Custom Design Studio</h1>
+        <p class="card-subtitle">Describe your idea and let Gemini AI bring it to life</p>
+      </div>
+
+      @if (step === 'input' || step === 'generating') {
+        <div class="input-section">
+          <p-floatlabel variant="on">
+            <textarea pTextarea id="userInput" [(ngModel)]="userInput" rows="5" class="full-width custom-textarea"
+              [disabled]="step === 'generating'"></textarea>
+            <label for="userInput">Describe your custom design...</label>
+          </p-floatlabel>
+          <p-button
+            [label]="step === 'generating' ? 'Generating...' : (prompt ? 'Regenerate with AI ✨' : 'Generate with AI ✨')"
+            [loading]="step === 'generating'"
+            [disabled]="!userInput.trim()"
+            (click)="generate()"
+            styleClass="generate-btn"
+            icon="pi pi-sparkles" />
+        </div>
+      }
+
+      @if (step === 'generated' || step === 'adding') {
+        <div class="result-section">
+          <div class="prompt-result-card">
+            <div class="prompt-label"><i class="pi pi-check-circle"></i> Your Design Prompt</div>
+            <p class="prompt-text">{{ prompt?.Prompt }}</p>
+          </div>
+
+          <div class="platform-row">
+            <p-floatlabel variant="on">
+              <p-select id="platform" [options]="platforms" [(ngModel)]="selectedPlatform"
+                optionLabel="platformName" placeholder="Select Platform" styleClass="platform-select" />
+              <label for="platform">Platform</label>
+            </p-floatlabel>
+          </div>
+
+          <div class="action-buttons">
+            <p-button
+              label="Add to Cart 🛒"
+              [disabled]="!selectedPlatform || !emptyProductId || step === 'adding'"
+              [loading]="step === 'adding'"
+              (click)="addToCart()"
+              styleClass="add-cart-btn"
+              icon="pi pi-shopping-cart" />
+            <p-button
+              label="Refine Prompt"
+              (click)="step = 'input'"
+              styleClass="refine-btn"
+              severity="secondary"
+              [outlined]="true"
+              icon="pi pi-pencil" />
+            <p-button
+              label="Start Over"
+              (click)="cancel()"
+              styleClass="cancel-btn"
+              severity="danger"
+              [outlined]="true"
+              icon="pi pi-trash" />
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+
+</div>

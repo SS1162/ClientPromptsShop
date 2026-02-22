@@ -1,6 +1,6 @@
 export class CategoryModel {
-    categoryID!: Number
-    mainCategoryID!: Number
+    categoryID!: number
+    mainCategoryID!: number
     categoryName!: string
     imgUrl!: string
     categoryDescreption!: string

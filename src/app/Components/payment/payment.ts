@@ -10,6 +10,7 @@ import { CartServise } from '../../Servises/cartServise/cart-servise';
 import { UserServise } from '../../Servises/UserServise/User-servise';
 import { CartItemModel } from '../../Models/CartItemModel';
 import { UserModel } from '../../Models/UserModel';
+import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
 
 @Component({
   selector: 'app-payment',
@@ -25,13 +26,24 @@ export class Payment implements OnInit {
   user!: UserModel;
   loaded = false;
   isProcessing = false;
+  currencyCode: string = 'USD';
+  currencyRate: number = 1;
 
   private cartServise = inject(CartServise);
   private userServise = inject(UserServise);
   private messageService = inject(MessageService);
   private router = inject(Router);
+  private currencyServise = inject(CurrencyServise);
 
   ngOnInit() {
+    this.currencyServise.selectedCurrency$.subscribe(c => {
+      this.currencyCode = c.code;
+    });
+
+    this.currencyServise.rate$.subscribe(r => {
+      this.currencyRate = r;
+    });
+
     this.userServise.user$.subscribe({
       next: (data) => {
         if (data !== null) {

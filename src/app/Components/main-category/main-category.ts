@@ -56,6 +56,7 @@ export class MainCategory {
  
  
   pageSize: number = 24
+  emptyCategory?:number
   totalRecords!:number
   errorMessegeStatus200: string = ''
   errorMessegeBadRequest: string = ''
@@ -83,6 +84,8 @@ export class MainCategory {
 
     })
  }
+
+
  
   changeSearch() {
     if(this.searchTerm==="")

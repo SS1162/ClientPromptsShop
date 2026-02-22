@@ -214,7 +214,23 @@ $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
       color: #ffffff !important;      /* צבע הטקסט במעבר עכבר */
   }
 
-
+  /* Platform search filter input - override green with purple */
+  .p-select-filter {
+    border-color: $primary-purple !important;
+    &:focus {
+      border-color: $primary-purple !important;
+      box-shadow: 0 0 0 3px rgba(129, 57, 235, 0.2) !important;
+      outline: none !important;
+    }
+  }
+  .p-select-overlay .p-inputtext:focus {
+    border-color: $primary-purple !important;
+    box-shadow: 0 0 0 3px rgba(129, 57, 235, 0.2) !important;
+  }
+  .p-select-option.p-highlight {
+    background: $accent-purple !important;
+    color: $primary-purple !important;
+  }
 }
 
 
