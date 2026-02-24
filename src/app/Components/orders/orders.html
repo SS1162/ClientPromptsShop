@@ -23,8 +23,8 @@
                     <div class="content-header">
                         <div class="title-section">
                             <div class="title-row">
-                                <h3>{{ order.details?.siteName || ('Order #' + order.orderID) }}</h3>
-                                <span class="items-badge"><i class="pi pi-box"></i> {{ order.orderItemsCount || order.details?.products?.length || 0 }} items</span>
+                                <h3>{{ order.siteName || ('Order #' + order.orderID) }}</h3>
+                                <span class="items-badge"><i class="pi pi-box"></i> {{ order.productCount || 0 }} items</span>
                             </div>
                             <span class="site-type">{{ order.details?.siteTypeName || order.siteTypeName }}</span>
                         </div>
@@ -52,12 +52,19 @@
                                       (click)="openReview(order)" 
                                       styleClass="p-button-sm btn-gradient">
                             </p-button>
+                        } @else {
+                            <p-button label="View Review" 
+                                      icon="pi pi-eye"
+                                      (click)="viewReview(order)" 
+                                      styleClass="p-button-sm btn-gradient">
+                            </p-button>
                         }
 
                         <p-button label="Download Prompt" 
                                   icon="pi pi-download"
                                   styleClass="p-button-sm btn-gradient"
-                                  [disabled]="!order.details?.Prompt"
+                                  [loading]="order.isDownloading"
+                                  [disabled]="order.isDownloading"
                                   (click)="downloadPrompt(order)">
                         </p-button>
                     </div>
@@ -77,9 +84,6 @@
                                         <span class="item-name">{{ item.productName }}</span>
                                         <span class="item-price">${{ item.price }}</span>
                                         <span class="item-platform">({{ item.platformName }})</span>
-                                        @if (item.userDescription) {
-                                            <span class="item-desc"> — {{ item.userDescription }}</span>
-                                        }
                                     </li>
                                 } @empty {
                                     <li>No items found for this order.</li>
@@ -97,6 +101,27 @@
             </div>
         }
     </div>
+
+    <p-dialog header="Review" [(visible)]="displayViewReviewDialog" [modal]="true"
+              [style]="{width: '450px'}" styleClass="custom-dialog">
+        @if (selectedViewReview) {
+            <div class="review-form">
+                <div class="field">
+                    <label>Stars Rating</label>
+                    <p-rating [(ngModel)]="selectedViewReview.stars" [readonly]="true"></p-rating>
+                </div>
+                <div class="field">
+                    <label>Review</label>
+                    <p>{{ selectedViewReview.text }}</p>
+                </div>
+                @if (selectedViewReview.image) {
+                    <div class="field">
+                        <img [src]="selectedViewReview.image" style="max-width:100%; border-radius:8px" alt="Review Image" />
+                    </div>
+                }
+            </div>
+        }
+    </p-dialog>
 
     <p-dialog header="Add Review" [(visible)]="displayReviewDialog" [modal]="true" 
               [style]="{width: '450px'}" styleClass="custom-dialog">

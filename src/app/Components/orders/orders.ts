@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import emailjs from '@emailjs/browser';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -39,7 +40,9 @@ export class Orders implements OnInit {
   orders: any[] = [];
   user!: UserModel;
   displayReviewDialog: boolean = false;
+  displayViewReviewDialog: boolean = false;
   selectedOrder: OrderDetailsModel | null = null;
+  selectedViewReview: { stars: number; text: string; image: string } | null = null;
 
   newReview = { stars: 5, text: '', image: '' };
 
@@ -60,17 +63,13 @@ export class Orders implements OnInit {
     this.orderService.orders$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
-          this.orders = data.map(order => ({ ...order, isExpanded: false, isLoadingDetails: false }));
-          // Auto-fetch details for each order to populate site name, items and review status
-          this.orders.forEach(order => {
-            this.orderService.fetchOrderDetails(order.orderID).subscribe({
-              next: (details: OrderDetailsModel) => {
-                order.details = details;
-                order.reviewId = details.reviewId ?? 0;
-              },
-              error: () => {}
-            });
-          });
+          this.orders = data.map(order => ({
+            ...order,
+            reviewId: order.ReviewId ?? (order as any).reviewId ?? null,
+            isExpanded: false,
+            isLoadingDetails: false,
+            isDownloading: false
+          }));
         }
       },
        error:(err)=>
@@ -115,8 +114,8 @@ export class Orders implements OnInit {
       order.isExpanded = false;
       return;
     }
-    // If details already loaded, just expand
-    if (order.details) {
+    // If details already loaded AND prompt exists, just expand
+    if (order.details?.prompt) {
       order.isExpanded = true;
       return;
     }
@@ -125,12 +124,33 @@ export class Orders implements OnInit {
     this.orderService.fetchOrderDetails(order.orderID).subscribe({
       next: (details: OrderDetailsModel) => {
         order.details = details;
+        order.reviewId = (details as any).reviewId ?? (details as any).ReviewId ?? order.reviewId;
         order.isExpanded = true;
         order.isLoadingDetails = false;
       },
       error: () => {
         order.isLoadingDetails = false;
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load order details.', life: 3000 });
+      }
+    });
+  }
+
+  viewReview(order: any) {
+    order.isLoadingDetails = true;
+    this.orderService.fetchOrderDetails(order.orderID).subscribe({
+      next: (details: any) => {
+        order.details = details;
+        order.isLoadingDetails = false;
+        this.selectedViewReview = {
+          stars: details.stars ?? details.Stars ?? 0,
+          text: details.note ?? details.Note ?? details.reviewNote ?? details.ReviewNote ?? '',
+          image: details.reviewImg ?? details.ReviewImg ?? details.reviewImageUrl ?? details.ReviewImageUrl ?? ''
+        };
+        this.displayViewReviewDialog = true;
+      },
+      error: () => {
+        order.isLoadingDetails = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load review.', life: 3000 });
       }
     });
   }
@@ -150,19 +170,87 @@ export class Orders implements OnInit {
     this.displayReviewDialog = true;
   }
 
-  downloadPrompt(order: any) {
-    const prompt = order.details?.Prompt;
-    if (!prompt) {
-      this.messageService.add({ severity: 'warn', summary: 'Not Available', detail: 'No prompt found for this order.', life: 3000 });
-      return;
-    }
-    const blob = new Blob([prompt], { type: 'text/plain' });
+  private triggerDownload(promptText: string, filename: string) {
+    const blob = new Blob([promptText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${order.details?.siteName || 'prompt'}.txt`;
+    a.download = `${filename}.txt`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  private async sendEmail(promptText: string, siteName: string) {
+    try {
+      const templateParams = {
+        from_name:'s058329162@gmail.com' ,
+        from_email: this.user!.userName,
+        from_phone: this.user?.phone || '',
+        subject: `Design Prompt — ${siteName}`,
+        message: promptText,
+        to_email: this.user!.userName
+      };
+
+      await emailjs.send(
+        'gmail_service',
+        'template_5ypz4em',
+        templateParams,
+        'Jxe0Vhystdvy0tqUk'
+      );
+      this.messageService.add({ severity: 'success', summary: 'Email Sent', detail: 'The prompt has been sent to your email.', life: 3000 });
+    } catch (error) {
+      this.messageService.add({ severity: 'warn', summary: 'Email Failed', detail: 'Prompt downloaded but the email could not be sent.', life: 3000 });
+    }
+  }
+
+  downloadPrompt(order: any) {
+    const siteName = order.details?.siteName || order.siteName || 'prompt';
+
+    // If prompt already loaded locally, download + email immediately
+    if (order.details?.prompt) {
+      this.triggerDownload(order.details.prompt, siteName);
+      this.sendEmail(order.details.prompt, siteName);
+      return;
+    }
+
+    order.isDownloading = true;
+
+    // First fetch details to check if prompt exists on the server
+    this.orderService.fetchOrderDetails(order.orderID).subscribe({
+      next: (details: OrderDetailsModel) => {
+        order.details = details;
+        order.reviewId = (details as any).reviewId ?? (details as any).ReviewId ?? order.reviewId;
+
+        if (details.prompt) {
+          // Prompt already exists — download it
+          order.isDownloading = false;
+          this.triggerDownload(details.prompt, details.siteName || siteName);
+          this.sendEmail(details.prompt, details.siteName || siteName);
+        } else {
+          // No prompt yet — generate it; server returns the prompt string directly
+          this.orderService.generatePrompt(order.orderID).subscribe({
+            next: (promptText: string) => {
+              order.isDownloading = false;
+              if (promptText) {
+                order.details.prompt = promptText;
+                this.triggerDownload(promptText, details.siteName || siteName);
+                this.sendEmail(promptText, details.siteName || siteName);
+              } else {
+                this.messageService.add({ severity: 'warn', summary: 'Not Available', detail: 'Prompt could not be generated.', life: 3000 });
+              }
+            },
+            error: () => {
+              order.isDownloading = false;
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to generate prompt.', life: 3000 });
+            }
+          });
+        }
+      },
+      error: () => {
+        order.isDownloading = false;
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load order details.', life: 3000 });
+      }
+    });
   }
 
   saveReview() {
@@ -170,7 +258,7 @@ export class Orders implements OnInit {
     const reviewData: AddReviewModel = {
       orderId: this.selectedOrder.orderID,
       score: this.newReview.stars,
-      note: this.newReview.text,
+      Note: this.newReview.text,
       reviewImageUrl: this.newReview.image
     };
     this.reviewServise.saveOrderReview(

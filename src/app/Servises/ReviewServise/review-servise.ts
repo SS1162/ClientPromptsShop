@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ReviewModel } from '../../Models/ReviewModel';
@@ -11,7 +11,6 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 export class ReviewServise {
   private http: HttpClient = inject(HttpClient);
   private BASIC_URL: string = `${environment.apiUrl}/Review`;
-  private ORDERS_URL: string = `${environment.apiUrl}/Orders`;
 
   private reviewSubject = new BehaviorSubject<ReviewModel[] | null>(null);
   public review$: Observable<ReviewModel[] | null> = this.reviewSubject.asObservable();
@@ -22,8 +21,11 @@ export class ReviewServise {
   private reviewSavedSubject = new Subject<void>();
   public reviewSaved$: Observable<void> = this.reviewSavedSubject.asObservable();
 
-  getReviews() {
-    this.http.get<ReviewModel[]>(this.BASIC_URL).subscribe({
+  getReviews(currentPage:number,limit:number) {
+    const params=new HttpParams()
+    .set('currentPage',currentPage).set('limit',limit)
+    this.http.get<ReviewModel[]>(this.BASIC_URL, { params }).subscribe({
+
       next: (data) => {
         this.reviewSubject.next(data);
         this.errorSubject.next(null);
@@ -47,7 +49,13 @@ export class ReviewServise {
   // }
 
   saveOrderReview(orderId: number, review: AddReviewModel, refreshOrders: () => void) {
-    this.http.post(`${this.ORDERS_URL}/${orderId}/review`, review).subscribe({
+    const formData = new FormData();
+    formData.append('OrderId', review.orderId.toString());
+    formData.append('Score', review.score.toString());
+    if (review.Note) formData.append('Note', review.Note);
+    if (review.reviewImageUrl) formData.append('ReviewImageUrl', review.reviewImageUrl);
+
+    this.http.post(`${this.BASIC_URL}`, formData).subscribe({
       next: () => {
         this.errorSubject.next(null);
         this.reviewSavedSubject.next();

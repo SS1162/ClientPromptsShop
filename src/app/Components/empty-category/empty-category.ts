@@ -17,7 +17,7 @@ import { PlatformsModel } from '../../Models/PlatformsModel';
 import { UserModel } from '../../Models/UserModel';
 import { Router } from '@angular/router';
 
-type Step = 'input' | 'generating' | 'generated' | 'adding';
+type Step = 'input' | 'generating' | 'generated' | 'adding' | 'updating';
 
 @Component({
   selector: 'app-empty-category',
@@ -38,10 +38,12 @@ export class EmptyCategory implements OnInit, OnDestroy {
   step: Step = 'input';
   userInput = '';
   prompt: geminiPromptModel | null = null;
+  editablePromptText = '';
   platforms: PlatformsModel[] = [];
   selectedPlatform: PlatformsModel | null = null;
   user: UserModel | null = null;
   emptyProductId = 0;
+  addedToCart = false;
   private catId = 0;
 
   @Input() set categoryId(value: number) {
@@ -61,28 +63,34 @@ export class EmptyCategory implements OnInit, OnDestroy {
     });
   }
 
-  loadEmptyProductId() {
+  loadEmptyProductId(page = 1) {
     if (!this.catId) return;
-    this.productServise.getProduct(this.catId, 1, 1).subscribe({
+    this.productServise.getProduct(this.catId, page, 50).subscribe({
       next: (resp) => {
         const products = resp.body?.data ?? [];
-        this.emptyProductId = products[0]?.ProductsID ?? 0;
-        if(!this.emptyProductId) {
+        const emptyOne = products.find(p => ((p as any).productsName ?? p.ProductsName) === 'Empty');
+        if (emptyOne) {
+          this.emptyProductId = (emptyOne as any)?.productsID ?? emptyOne?.ProductsID ?? 0;
+        } else if (products.length === 50) {
+          // full page returned — empty product might be on the next page
+          this.loadEmptyProductId(page + 1);
+        } else {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load empty product. Try again.', life: 3000 });
         }
       },
-      error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load empty product . Try again.', life: 3000 }); }
+      error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load empty product. Try again.', life: 3000 }); }
     });
   }
 
   generate() {
-    if (!this.user) { this.goToLogin() }
+    if (!this.user) { this.goToLogin(); return; }
     if (!this.userInput.trim()) return;
     this.step = 'generating';
     if (!this.prompt) {
       this.geminiServise.AddCategoryPrompt(this.userInput, this.catId).subscribe({
         next: (resp) => {
           this.prompt = resp.body;
+          this.editablePromptText = this.prompt?.prompt ?? '';
           this.userInput = '';
           this.step = 'generated';
         },
@@ -95,6 +103,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
       this.geminiServise.updateCategoryPrompt(this.prompt.promptId, this.userInput).subscribe({
         next: (resp) => {
           this.prompt = resp.body;
+          this.editablePromptText = this.prompt?.prompt ?? '';
           this.userInput = '';
           this.step = 'generated';
         },
@@ -106,6 +115,23 @@ export class EmptyCategory implements OnInit, OnDestroy {
     }
   }
 
+  updatePrompt() {
+    if (!this.prompt || !this.editablePromptText.trim()) return;
+    this.step = 'updating';
+    this.geminiServise.updateCategoryPrompt(this.prompt.promptId, this.editablePromptText).subscribe({
+      next: (resp) => {
+        this.prompt = resp.body;
+        this.editablePromptText = this.prompt?.prompt ?? '';
+        this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Prompt updated successfully.', life: 3000 });
+        this.step = 'generated';
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update prompt. Try again.', life: 3000 });
+        this.step = 'generated';
+      }
+    });
+  }
+
   addToCart() {
     if (!this.user || !this.prompt || !this.selectedPlatform || !this.emptyProductId) return;
     this.step = 'adding';
@@ -114,11 +140,20 @@ export class EmptyCategory implements OnInit, OnDestroy {
       productsID: this.emptyProductId,
       userDescription: this.prompt.promptId,
       platformsID: this.selectedPlatform.platformID
-    }, this.user.userID);
-    this.step = 'generated';
+    }, this.user.userID).subscribe({
+      next: () => {
+        this.addedToCart = true;
+        this.messageService.add({ severity: 'success', summary: 'Added to Cart', detail: 'Your custom design has been added to the cart!', life: 3000 });
+        this.step = 'generated';
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add to cart. Try again.', life: 3000 });
+        this.step = 'generated';
+      }
+    });
   }
 
-  cancel() {
+  deleteAndReset() {
     if (this.prompt) {
       this.geminiServise.deletePrompt(this.prompt.promptId).subscribe({
         next: () => {},
@@ -126,8 +161,10 @@ export class EmptyCategory implements OnInit, OnDestroy {
       });
     }
     this.prompt = null;
+    this.editablePromptText = '';
     this.userInput = '';
     this.selectedPlatform = null;
+    this.addedToCart = false;
     this.step = 'input';
   }
 
@@ -136,11 +173,12 @@ export class EmptyCategory implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.prompt) {
+    if (this.prompt && !this.addedToCart) {
       this.geminiServise.deletePrompt(this.prompt.promptId).subscribe({
         next: () => {},
-        error: (err) => {console.log(err)}
+        error: (err) => { console.log(err); }
       });
     }
   }
 }
+

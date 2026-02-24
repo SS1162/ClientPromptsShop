@@ -102,6 +102,16 @@ $white:   #ffffff;
   }
 }
 
+/* ── Editable prompt textarea ───────────────────── */
+.editable-prompt {
+  margin-top: 0.5rem;
+  background: transparent !important;
+  resize: vertical;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
 /* ── Platform row ───────────────────────────────── */
 .platform-row { width: 100%; }
 
@@ -120,6 +130,7 @@ $white:   #ffffff;
     background: $grad !important;
     border: none !important;
     border-radius: 10px !important;
+    color: $white !important;
     width: 100%;
   }
 
@@ -127,6 +138,7 @@ $white:   #ffffff;
     background: $grad !important;
     border: none !important;
     border-radius: 10px !important;
+    color: $white !important;
     flex: 1;
     min-width: 150px;
   }
@@ -134,12 +146,14 @@ $white:   #ffffff;
   .refine-btn.p-button,
   .cancel-btn.p-button {
     border-radius: 10px !important;
+    color: $white !important;
   }
 
   .auth-btn.p-button {
     background: $grad !important;
     border: none !important;
     border-radius: 10px !important;
+    color: $white !important;
     padding: 0.75rem 2rem !important;
   }
 

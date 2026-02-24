@@ -25,9 +25,13 @@ export class Reviews implements OnInit {
   private reviewService = inject(ReviewServise);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
-IMG_URL=environment.reviewImageBaseUrl;
+  IMG_URL=environment.reviewImageBaseUrl;
+  currentPage:number=0;
+  limit:number=20;
+  haveNext:boolean=false
+
   ngOnInit() {
-    this.reviewService.getReviews();
+    this.reviewService.getReviews(this.currentPage, this.limit);
 
     this.reviewService.review$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {

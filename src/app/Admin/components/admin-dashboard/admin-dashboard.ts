@@ -58,8 +58,8 @@ export class AdminDashboard implements OnInit {
 
   private buildStats(orders: FullOrderModel[]) {
     const totalRevenue = orders.reduce((sum, o) => sum + (o.orderSum || 0), 0);
-    const pendingOrders = orders.filter(o => o.status === 0).length;
-    const openOrders = orders.filter(o => o.status === 0 || o.status === 1).length;
+    const pendingOrders = orders.filter(o => o.statusName === 'Pending').length;
+    const openOrders = orders.filter(o => o.statusName === 'Pending' || o.statusName === 'Processing').length;
 
     this.stats.set([
       {

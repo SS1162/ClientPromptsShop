@@ -27,7 +27,7 @@
             <label for="userInput">Describe your custom design...</label>
           </p-floatlabel>
           <p-button
-            [label]="step === 'generating' ? 'Generating...' : (prompt ? 'Regenerate with AI ✨' : 'Generate with AI ✨')"
+            [label]="step === 'generating' ? 'Generating...' : 'Generate with AI ✨'"
             [loading]="step === 'generating'"
             [disabled]="!userInput.trim()"
             (click)="generate()"
@@ -36,39 +36,49 @@
         </div>
       }
 
-      @if (step === 'generated' || step === 'adding') {
+      @if (step === 'generated' || step === 'adding' || step === 'updating') {
         <div class="result-section">
+
           <div class="prompt-result-card">
-            <div class="prompt-label"><i class="pi pi-check-circle"></i> Your Design Prompt</div>
-            <p class="prompt-text">{{ prompt?.prompt }}</p>
+            <div class="prompt-label"><i class="pi pi-pencil"></i> Your Design Prompt — edit freely below</div>
+            <textarea
+              pTextarea
+              [(ngModel)]="editablePromptText"
+              rows="6"
+              class="full-width custom-textarea editable-prompt"
+              [disabled]="step === 'adding' || step === 'updating'">
+            </textarea>
           </div>
 
           <div class="platform-row">
             <p-floatlabel variant="on">
               <p-select id="platform" [options]="platforms" [(ngModel)]="selectedPlatform"
                 optionLabel="platformName" placeholder="Select Platform" styleClass="platform-select" />
-              <label for="platform">Platform</label>
+              <label for="platform">Select Platform</label>
             </p-floatlabel>
           </div>
 
           <div class="action-buttons">
             <p-button
-              label="Add to Cart 🛒"
-              [disabled]="!selectedPlatform || !emptyProductId || step === 'adding'"
+              label="Add to Cart "
+              [disabled]="!selectedPlatform || !emptyProductId || step === 'adding' || step === 'updating'"
               [loading]="step === 'adding'"
               (click)="addToCart()"
               styleClass="add-cart-btn"
               icon="pi pi-shopping-cart" />
             <p-button
-              label="Refine Prompt"
-              (click)="step = 'input'"
+              label="Update Prompt"
+              [disabled]="!editablePromptText.trim() || step === 'adding' || step === 'updating'"
+              [loading]="step === 'updating'"
+              (click)="updatePrompt()"
               styleClass="refine-btn"
               severity="secondary"
               [outlined]="true"
-              icon="pi pi-pencil" />
+              icon="pi pi-refresh" />
             <p-button
-              label="Start Over"
-              (click)="cancel()"
+              label="Delete"
+              [disabled]="step === 'adding' || step === 'updating'"
+              (click)="deleteAndReset()"
               styleClass="cancel-btn"
               severity="danger"
               [outlined]="true"

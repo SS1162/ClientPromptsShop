@@ -61,4 +61,7 @@ export class OrderServise {
     return this.http.get<OrderDetailsModel>(`${this.BASIC_URL}/${orderId}`);
   }
 
+  generatePrompt(orderId: number): Observable<string> {
+    return this.http.post<string>(`${this.BASIC_URL}/${orderId}/prompt`, {});
+  }
 }

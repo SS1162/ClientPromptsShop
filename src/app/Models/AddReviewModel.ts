@@ -1,6 +1,6 @@
 export class AddReviewModel {
     orderId!: number
     score!: number
-    note?: string
+    Note?: string
     reviewImageUrl?: string
 }

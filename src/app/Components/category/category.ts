@@ -180,7 +180,7 @@ console.log(err)
           platformsID: this.selctedPlatform!.platformID 
         },
         this.user.userID
-      );
+      ).subscribe();
     }
     if (this.pendingGeminiPrompt && this.emptyProductId) {
       this.cartServise.addCartItem(
@@ -191,7 +191,7 @@ console.log(err)
           platformsID: this.selctedPlatform!.platformID 
         },
         this.user.userID
-      );
+      ).subscribe();
       this.pendingGeminiPrompt = null;
       this.geminiPromptConsumed = true;
       setTimeout(() => this.geminiPromptConsumed = false, 0);

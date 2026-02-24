@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef,  OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
@@ -38,7 +38,7 @@ import { geminiPromptModel } from '../../Models/geminiPromptModel';
   styleUrl: './basic-site.scss',
   providers: [MessageService],
 })
-export class BasicSite implements OnInit, OnDestroy {
+export class BasicSite implements OnInit {
   private platformService = inject(PlatformServise);
   private siteTypeService = inject(SiteTypeService);
   private basicSiteService = inject(BasicSiteService);
@@ -46,12 +46,18 @@ export class BasicSite implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private userService = inject(UserServise);
   private router = inject(Router)
-  formData: AddBasicSiteModel = new AddBasicSiteModel();
-  deletePrompt: boolean = false
+  formData: AddBasicSiteModel = {
+    siteName: '',
+    userDescreption: undefined,
+    siteTypeID: 0,
+    platformID: 0,
+  };
+
   platforms: PlatformsModel[] = [];
   siteTypes: SiteTypeModel[] = [];
   isSubmitting = false;
   isLoading = false;
+  deletePrompt: boolean = false;
   selectedSiteTypeDescription: string = '';
   user?: UserModel
 
@@ -209,19 +215,18 @@ export class BasicSite implements OnInit, OnDestroy {
     }
 
     this.isSubmitting = true;
-    if (!this.user?.basicID||this.user.basicID === 0) {
+
+    if (!this.user?.basicID) {
       this.basicSiteService.addBasicSite(this.formData)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (result) => {
-            this.deletePrompt = false;
-            this.isSubmitting = false;
-            this.isSubmitted = false;
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: `Basic Site "${result.siteName}" created successfully!`,
-            });
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.isSubmitting = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Basic Site "${result.siteName}" created successfully!`,
+          });
 
             this.user!.basicID = result.basicSiteID;
             const UpdaterUser: UpdateUserModel = {
@@ -288,11 +293,13 @@ export class BasicSite implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   handleAiSubmit() {
+      if (!this.user) {
+      this.router.navigate(['/login'])
+    }
     if (this.aiData && this.aiData.trim() !== '') {
       this.isSubmitted = true;
       this.geminiServise.AddBasicSitePrompt(this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          this.deletePrompt = true
           console.log('AI Response:', response.body);
           this.prompt!.prompt = (response.body as any).prompt
           this.prompt!.promptId = (response.body as any).promptId
@@ -352,15 +359,6 @@ export class BasicSite implements OnInit, OnDestroy {
         console.log("it not deleted" + this.prompt!.promptId)
       }
     });
-  }
-
-
-
-
-  ngOnDestroy(): void {
-    if (this.deletePrompt) {
-      this.handleDelete()
-    }
   }
 }
 

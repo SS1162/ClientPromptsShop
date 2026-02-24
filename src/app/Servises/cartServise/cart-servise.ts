@@ -76,16 +76,17 @@ export class CartServise {
     });
   }
 
-  addCartItem(cartItem: AddToCartModel, userId: number) {
-    this.http.post<AddToCartModel>(this.BASIC_URL, cartItem).subscribe({
-      next: () => {
+  addCartItem(cartItem: AddToCartModel, userId: number): Observable<void> {
+    return this.http.post<void>(this.BASIC_URL, cartItem).pipe(
+      tap(() => {
         this.getUserCart(userId);
         this.openPopup();
-      },
-      error: (err) => {
+      }),
+      catchError((err) => {
         this.errorSubject.next(err);
-      }
-    });
+        throw err;
+      })
+    );
   }
 
   removeCartItem(cartId: number, userId: number) {

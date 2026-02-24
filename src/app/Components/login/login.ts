@@ -81,7 +81,7 @@ export class Login implements OnInit, AfterViewInit {
             this.cartServise.addCartItem(
               { userID: data.userID, productsID: item.productsID, platformsID: item.platformsID },
               data.userID
-            );
+            ).subscribe();
           }
         }
         setTimeout(() => {

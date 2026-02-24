@@ -90,9 +90,9 @@ export class AdminOrders implements OnInit {
     if (this.selectedStatus === 'all') {
       this.filteredOrders = [...this.orders];
     } else {
-      const statusMap: { [key: string]: number } = { pending: 0, processing: 1, completed: 2, cancelled: 3 };
-      const statusNum = statusMap[this.selectedStatus];
-      this.filteredOrders = this.orders.filter(o => o.status === statusNum);
+      const statusMap: { [key: string]: string } = { pending: 'Pending', processing: 'Processing', completed: 'Completed', cancelled: 'Cancelled' };
+      const statusName = statusMap[this.selectedStatus];
+      this.filteredOrders = this.orders.filter(o => o.statusName === statusName);
     }
   }
 

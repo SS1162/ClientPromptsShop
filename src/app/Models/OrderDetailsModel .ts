@@ -7,9 +7,11 @@ export class OrderDetailsModel {
     reviewId?: number;
     reviewImg?: string;
     stars?: number;
+    note?: string;
+    Note?: string;
     siteName!: string;
     siteTypeName?: string;
     siteTypeDescription?: string;
     products!: OrderItemModel[];
-    Prompt?: string;
+    prompt?: string;
 }
