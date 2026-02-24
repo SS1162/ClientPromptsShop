@@ -22,8 +22,11 @@
                 <div class="order-content">
                     <div class="content-header">
                         <div class="title-section">
-                            <h3>{{ order.siteName || 'Untitled Project' }}</h3>
-                            <span class="site-type">{{ order.siteTypeName }}</span>
+                            <div class="title-row">
+                                <h3>{{ order.details?.siteName || ('Order #' + order.orderID) }}</h3>
+                                <span class="items-badge"><i class="pi pi-box"></i> {{ order.orderItemsCount || order.details?.products?.length || 0 }} items</span>
+                            </div>
+                            <span class="site-type">{{ order.details?.siteTypeName || order.siteTypeName }}</span>
                         </div>
                         <div class="price-section">
                             <span class="price-label">Total Amount:</span>
@@ -34,42 +37,49 @@
                     <div class="meta-row">
                         <span><i class="pi pi-calendar"></i> {{ order.orderDate }}</span>
                         <span><i class="pi pi-tag"></i> {{ order.statusName }}</span>
-                        <span><i class="pi pi-box"></i> {{ order.orderItemsCount }} items</span>
                     </div>
 
                     <div class="order-actions">
                         <p-button label="View Products" 
-                                  icon="pi pi-eye" 
-                                  [outlined]="true"
-                                  (click)="order.isExpanded = !order.isExpanded" 
-                                  styleClass="p-button-sm"
-                                  severity="help">
+                                  icon="pi pi-eye"
+                                  (click)="toggleExpand(order)" 
+                                  styleClass="p-button-sm btn-gradient">
                         </p-button>
 
-                        @if (order.reviewId === 0) {
+                        @if (!order.reviewId) {
                             <p-button label="Add Review" 
                                       icon="pi pi-star"
                                       (click)="openReview(order)" 
-                                      styleClass="p-button-sm" 
-                                      severity="help">
+                                      styleClass="p-button-sm btn-gradient">
                             </p-button>
                         }
 
                         <p-button label="Download Prompt" 
-                                  icon="pi pi-download" 
-                                  styleClass="p-button-sm">
+                                  icon="pi pi-download"
+                                  styleClass="p-button-sm btn-gradient"
+                                  [disabled]="!order.details?.Prompt"
+                                  (click)="downloadPrompt(order)">
                         </p-button>
                     </div>
 
-                    @if (order.isExpanded) {
+                    @if (order.isLoadingDetails) {
                         <div class="items-summary">
-                            <div class="summary-title">Order Breakdown:</div>
+                            <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="4"></p-progressSpinner>
+                        </div>
+                    }
+
+                    @if (order.isExpanded && order.details) {
+                        <div class="items-summary">
+                            <div class="summary-title">Order Breakdown: {{ order.details.siteName }}</div>
                             <ul class="items-list">
-                                @for (item of order.items; track item.productName) {
+                                @for (item of order.details.products; track item.orderItemID) {
                                     <li>
                                         <span class="item-name">{{ item.productName }}</span>
                                         <span class="item-price">${{ item.price }}</span>
                                         <span class="item-platform">({{ item.platformName }})</span>
+                                        @if (item.userDescription) {
+                                            <span class="item-desc"> — {{ item.userDescription }}</span>
+                                        }
                                     </li>
                                 } @empty {
                                     <li>No items found for this order.</li>
@@ -83,7 +93,7 @@
             <div class="empty-state" >
                 <i class="pi pi-folder-open"></i>
                 <p>You haven't placed any orders yet.</p>
-                <p-button label="Create Your First Site" icon="pi pi-plus" [routerLink]="['/basicSite']"></p-button>
+                <p-button label="Create Your First Site" icon="pi pi-plus" [routerLink]="['/basicSite']" severity="help"></p-button>
             </div>
         }
     </div>

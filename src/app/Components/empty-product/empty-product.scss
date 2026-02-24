@@ -242,6 +242,34 @@ $shadow: rgba(157, 88, 245, 0.2);
   font-style: italic;
 }
 
+// Inline-editable result textarea
+.ep-textarea-result {
+  border-color: $primary;
+  background: $accent;
+  font-style: italic;
+  line-height: 1.6;
+  min-height: 110px;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 4px $shadow;
+    background: white;
+    font-style: normal;
+  }
+}
+
+.ep-price-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: #8139eb;
+  font-size: 1rem;
+  font-weight: 600;
+
+  i { font-size: 1rem; }
+}
+
 .ep-actions {
   display: flex;
   flex-wrap: wrap;

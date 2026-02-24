@@ -6,6 +6,18 @@ import { CartItemModel } from '../../Models/CartItemModel';
 import { catchError, EMPTY, Observable, tap } from 'rxjs';
 import { AddToCartModel } from '../../Models/AddToCartModel';
 
+export interface SessionCartItem {
+  productsID: number;
+  platformsID: number;
+  productsName: string;
+  price: number;
+  platformName: string;
+  imgUrl: string;
+  categoryID: number;
+}
+
+const SESSION_KEY = 'pendingCartItems';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,8 +34,35 @@ export class CartServise {
   private popupOpenSubject = new BehaviorSubject<boolean>(false);
   public popupOpen$: Observable<boolean> = this.popupOpenSubject.asObservable();
 
+  private sessionCartSubject = new BehaviorSubject<SessionCartItem[]>(this.readSession());
+  public sessionCart$: Observable<SessionCartItem[]> = this.sessionCartSubject.asObservable();
+
   openPopup() { this.popupOpenSubject.next(true); }
   closePopup() { this.popupOpenSubject.next(false); }
+
+  // ── Session cart helpers (guests) ──────────────────────────
+  private readSession(): SessionCartItem[] {
+    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]'); } catch { return []; }
+  }
+
+  private writeSession(items: SessionCartItem[]) {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(items));
+    this.sessionCartSubject.next(items);
+  }
+
+  addSessionItem(item: SessionCartItem) {
+    this.writeSession([...this.sessionCartSubject.value, item]);
+  }
+
+  removeSessionItem(index: number) {
+    const updated = this.sessionCartSubject.value.filter((_, i) => i !== index);
+    this.writeSession(updated);
+  }
+
+  clearSessionCart() {
+    sessionStorage.removeItem(SESSION_KEY);
+    this.sessionCartSubject.next([]);
+  }
 
   getUserCart(userId: number) {
     this.http.get<CartItemModel[]>(`${this.BASIC_URL}?userId=${userId}`, { observe: 'response' }).subscribe({

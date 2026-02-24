@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Menu } from 'primeng/menu';
 import { Register } from './Components/register/register';
 import { Login } from './Components/login/login';
 import { UpdateUser } from './Components/update-user/update-user';
@@ -17,11 +16,12 @@ import { Home } from './Components/home/home';
 import { BasicSite } from './Components/basic-site/basic-site';
 import { Reviews } from './Components/reviews/reviews';
 import { Payment } from './Components/payment/payment';
+import { PaymentSuccess } from './Components/payment-success/payment-success';
+import { adminGuard } from './Auth/admin-guard';
 import { PageNotFound } from './Components/page-not-found/page-not-found';
 
-
 export const routes: Routes = [
-
+  { path: 'home', component: Home },
   { path: 'register', component: Register },
   { path: 'login', component: Login },
   { path: 'update', component: UpdateUser },
@@ -35,10 +35,17 @@ export const routes: Routes = [
   { path: 'accessibility', component: Accessibility },
   { path: 'refundPolicy', component: RefundPolicy },
   { path: 'termsofService', component: TermsofService },
-  { path: 'home', component: Home },
   { path: 'basicSite', component: BasicSite },
   { path: 'reviews', component: Reviews },
   { path: 'payment', component: Payment },
+   { path: 'paymentSuccess', component: PaymentSuccess },
+{ 
+  path: 'admin', 
+  loadChildren: () => import('./Admin/admin.routes').then(m => m.ADMIN_ROUTES),
+  canMatch: [adminGuard] 
+},
+
+ 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', component: PageNotFound }
 ];

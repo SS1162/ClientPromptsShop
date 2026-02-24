@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-page-not-found',
@@ -11,6 +12,7 @@ import { Router } from '@angular/router';
   styleUrl: './page-not-found.scss'
 })
 export class PageNotFound {
+  BASIC_IMG: string = environment.staticFilesUrl;
   constructor(private router: Router) {}
 
   goHome() {

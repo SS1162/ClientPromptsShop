@@ -11,57 +11,76 @@
     </div>
   </div>
 
-  <!-- ── Input state ────────────────────────────── -->
+  <!-- ── Input area (shown only before first generation) ── -->
   @if (!flag) {
-  <div class="ep-input-area">
+    <div class="ep-input-area">
+      <p-floatlabel variant="on" class="ep-floatlabel">
+        <input pInputText id="productTitle" [(ngModel)]="productTitle" class="ep-title-input" />
+        <label for="productTitle">Design title (optional)</label>
+      </p-floatlabel>
 
-    <p-floatlabel variant="on" class="ep-floatlabel">
-      <input pInputText id="productTitle" [(ngModel)]="productTitle" class="ep-title-input" />
-      <label for="productTitle">Design title</label>
-    </p-floatlabel>
+      <div class="ep-textarea-wrap">
+        <textarea
+          [(ngModel)]="input"
+          rows="3"
+          placeholder="E.g. A landing page for a coffee shop with a warm, minimalist feel…"
+          class="ep-textarea"
+        ></textarea>
+      </div>
 
-    <div class="ep-textarea-wrap">
-      <textarea
-        [(ngModel)]="input"
-        rows="3"
-        placeholder="E.g. A landing page for a coffee shop with a warm, minimalist feel…"
-        class="ep-textarea"
-      ></textarea>
+      <div class="ep-actions">
+        <button class="ep-btn ep-btn-primary" (click)="generate()" [disabled]="!input?.trim()">
+          <i class="pi pi-send"></i> Generate Design
+        </button>
+      </div>
     </div>
-    <button class="ep-btn ep-btn-primary" (click)="sentGemini()">
-      <i class="pi pi-send"></i> Generate Design
-    </button>
-  </div>
   }
 
-  <!-- ── Generating loader ───────────────────────── -->
+  <!-- ── Generating loader ──────────────────────── -->
   @if (flag && !prompt) {
-  <div class="ep-loading">
-    <span class="ep-spinner"></span>
-    <span class="ep-loading-text">Gemini is crafting your design…</span>
-  </div>
+    <div class="ep-loading">
+      <span class="ep-spinner"></span>
+      <span class="ep-loading-text">Gemini is crafting your design…</span>
+    </div>
   }
 
-  <!-- ── Result state ───────────────────────────── -->
+  <!-- ── Result: inline-editable prompt + actions ── -->
   @if (flag && prompt) {
-  <div class="ep-result">
-    <div class="ep-result-label">
-      <i class="pi pi-check-circle"></i> Your generated design prompt
-    </div>
-    <div class="ep-result-box">{{ prompt.Prompt }}</div>
+    <div class="ep-result">
+      <div class="ep-result-label">
+        <i class="pi pi-check-circle"></i> Your design prompt — edit directly if needed
+      </div>
 
-    <div class="ep-actions">
-      <button class="ep-btn ep-btn-primary" (click)="sentFather()">
-        <i class="pi pi-cart-plus"></i> Add to Cart
-      </button>
-      <button class="ep-btn ep-btn-outline" (click)="sentGemini()">
-        <i class="pi pi-refresh"></i> Regenerate
-      </button>
-      <button class="ep-btn ep-btn-ghost" (click)="Cancel()">
-        <i class="pi pi-times"></i> Cancel
-      </button>
+      <div class="ep-textarea-wrap">
+        <textarea
+          [(ngModel)]="editablePrompt"
+          rows="5"
+          class="ep-textarea ep-textarea-result"
+          placeholder="Edit your prompt here…"
+        ></textarea>
+      </div>
+
+      @if (price) {
+        <div class="ep-price-row">
+          <i class="pi pi-tag"></i>
+          <span>Price: <strong>{{ price | currency }}</strong></span>
+        </div>
+      }
+
+      <div class="ep-actions">
+        <button class="ep-btn ep-btn-outline" (click)="update()" [disabled]="isUpdating || !editablePrompt.trim()">
+          @if (isUpdating) {
+            <i class="pi pi-spin pi-spinner"></i> Updating…
+          } @else {
+            <i class="pi pi-refresh"></i> Update
+          }
+        </button>
+
+        <button class="ep-btn ep-btn-ghost" (click)="deletePrompt()">
+          <i class="pi pi-times"></i> Cancel
+        </button>
+      </div>
     </div>
-  </div>
   }
 
 </div>

@@ -1,5 +1,5 @@
 
-
+<p-toast position="top-center"></p-toast>
 <div class="login-page-wrapper ">
     <p-card class="custom-login-card border">
         <ng-template #title>
@@ -29,8 +29,6 @@
                      @if (!isproper ) {
                 <p-message   class="message"severity="error" size="small" variant="simple">The password or the email is incorrect.</p-message>}
             </div>
-             <p-message class="message" severity="error" size="small" variant="simple"> {{errorMessege}}
-                </p-message>
               <p-button label="Log In Now" class="w-full" styleClass="w-full custom-login-btn" (click)="onSubmit()"  [disabled]="loginForm.invalid"></p-button>
 
                   

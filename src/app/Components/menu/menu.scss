@@ -16,6 +16,13 @@
   display: inline-flex;
   align-items: center;
   margin-right: 14px;
+  position: relative;
+
+  ::ng-deep .p-select-overlay {
+    top: auto !important;
+    bottom: calc(100% + 4px) !important;
+    transform-origin: bottom center !important;
+  }
 }
 
 ::ng-deep .currency-select {
@@ -61,6 +68,10 @@
 
     &:hover {
         transform: scale(1.15);
+
+        .cart-badge {
+            background: #8139eb;
+        }
     }
 
     .cart-icon {
@@ -91,6 +102,7 @@
         line-height: 1;
         padding: 0 3px;
         pointer-events: none;
+        transition: background 0.2s ease;
     }
 }
 
@@ -119,6 +131,7 @@
     .p-megamenu-panel {
         width: auto !important;
         min-width: unset !important;
+        z-index: 1500 !important;
     }
 
     .p-megamenu-grid {

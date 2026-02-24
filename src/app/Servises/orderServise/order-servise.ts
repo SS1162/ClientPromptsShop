@@ -33,6 +33,18 @@ export class OrderServise {
     });
   }
 
+  getAllOrders() {
+    this.http.get<FullOrderModel[]>(`${this.BASIC_URL}`).subscribe({
+      next: (data) => {
+        this.errorSubject.next(null);
+        this.ordersSubject.next(data);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.errorSubject.next(err);
+      }
+    });
+  }
+
   getOrderDetails(orderId: number) {
     this.http.get<OrderDetailsModel>(`${this.BASIC_URL}/${orderId}`).subscribe({
       next: (data) => {
@@ -43,6 +55,10 @@ export class OrderServise {
         this.errorSubject.next(err);
       }
     });
+  }
+
+  fetchOrderDetails(orderId: number): Observable<OrderDetailsModel> {
+    return this.http.get<OrderDetailsModel>(`${this.BASIC_URL}/${orderId}`);
   }
 
 }

@@ -1,3 +1,4 @@
+<p-toast position="top-center"></p-toast>
 <div class="register-container">
     <p-card class="custom-card border">
         <ng-template #title>
@@ -57,8 +58,18 @@
                 <p-message class="message" severity="error" size="small" variant="simple">The password is required and
                     must be identical to the original password.</p-message>}
             </div>
-                <p-message class="message" severity="error" size="small" variant="simple"> {{errorMessege}}
-                </p-message>
+
+            <div class="privacy-policy-row">
+                <p-checkbox formControlName="acceptPrivacyPolicy" [binary]="true" inputId="acceptPrivacy"></p-checkbox>
+                <label for="acceptPrivacy" class="privacy-label">
+                    I have read and agree to the
+                    <a routerLink="/privacyPolicy" target="_blank" class="privacy-link">Privacy Policy</a>
+                </label>
+            </div>
+            @if (RegisterForm.get('acceptPrivacyPolicy')?.invalid && RegisterForm.get('acceptPrivacyPolicy')?.touched) {
+                <p-message class="message" severity="error" size="small" variant="simple">You must accept the Privacy Policy to register.</p-message>
+            }
+
             <div class="buttom">
 
 

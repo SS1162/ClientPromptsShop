@@ -34,6 +34,10 @@ $text-dark: #312639;
   bottom: 30px;
   right: 24px;
   z-index: 9999;
+
+  &.cart-open {
+    z-index: 900;
+  }
   cursor: pointer;
   animation: bounce 2.8s ease-in-out infinite;
 

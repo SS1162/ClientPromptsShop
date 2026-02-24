@@ -6,30 +6,38 @@
             [style]="{ 'border-radius': '3rem', display: 'flex' ,border: '2px solid #C64BF1',color:' #C64BF1'}"
             class="p-4 bg-surface-0 dark:bg-surface-900 ">
             <ng-template #start>
-                <img src="assets/images/logo.png" alt="logo"
-                    style="height: 80px; width: auto; margin-right: 15px; cursor: pointer; border-radius: 50%;">
-
+                <a routerLink="/home" aria-label="Click Site – go to home page" style="display:inline-flex;align-items:center;">
+                  <img src="assets/images/logo.png" alt="Click Site logo"
+                      style="height: 80px; width: auto; margin-right: 15px; cursor: pointer; border-radius: 50%;">
+                </a>
             </ng-template>
             <ng-template #item let-item>
                 <a *ngIf="item.root" pRipple
               
                     class="flex items-center cursor-pointer px-4 py-2 overflow-hidden relative font-semibold text-lg uppercase"
-                    style="border-radius: 2rem">
-                    <i [ngClass]="item.icon"></i>
+                    style="border-radius: 2rem"
+                    tabindex="0"
+                    role="menuitem"
+                    [attr.aria-label]="item.label"
+                    [attr.aria-haspopup]="item.items ? 'true' : null">
+                    <i [ngClass]="item.icon" aria-hidden="true"></i>
                     <span class="ml-2" style="color: #C64BF1; font-size: 1.5rem;">{{ item.label }}</span>
                 </a>
                 <a *ngIf="!item.root && !item.image" class="flex items-center p-4 cursor-pointer mb-2 gap-2 "
-                  [routerLink]="['/mainCategory',item.id]">
+                  [routerLink]="['/mainCategory',item.id]"
+                  tabindex="0"
+                  role="menuitem"
+                  [attr.aria-label]="item.label">
                     <span
                         class="inline-flex items-center justify-center rounded-full bg-primary text-primary-contrast w-12 h-12">
-                        <i [ngClass]="item.icon + ' text-lg'"></i>
+                        <i [ngClass]="item.icon + ' text-lg'" aria-hidden="true"></i>
                     </span>
                     <span class="inline-flex flex-col gap-1">
                         <span class="font-medium text-lg text-surface-900 dark:text-surface-0">{{ item.label }}</span>
                     </span>
                 </a>
                 <ng-template #end>
-                    <p-menu #menu [model]="itemsForProfile" [popup]="true" appendTo="body"></p-menu>
+                    <p-menu #menu [model]="itemsForProfile" [popup]="true" appendTo="body" styleClass="profile-popup-menu"></p-menu>
 
                     <div class="currency-select-wrap">
                       <p-select
@@ -38,7 +46,6 @@
                         optionLabel="code"
                         [filter]="true"
                         filterPlaceholder="Search currency..."
-                        appendTo="body"
                         (onChange)="onCurrencyChange($event.value)"
                         styleClass="currency-select"
                         [style]="{'min-width':'90px'}">
@@ -51,12 +58,19 @@
                       </p-select>
                     </div>
 
-                    <div class="cart-icon-wrap" [routerLink]="['/fullScreenCart']" title="My Cart">
-                        <i class="pi pi-shopping-cart cart-icon"></i>
-                        <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
-                    </div>
+                    <a class="cart-icon-wrap" [routerLink]="['/fullScreenCart']" aria-label="My Cart">
+                        <i class="pi pi-shopping-cart cart-icon" aria-hidden="true"></i>
+                        <span class="cart-badge" *ngIf="cartCount > 0"
+                          [attr.aria-label]="cartCount + ' items in cart'">{{ cartCount }}</span>
+                    </a>
 
-                    <p-avatar image="assets/images/profil.png" shape="circle" (click)="menu.toggle($event)" [style]="{
+                    <p-avatar image="assets/images/profil.png" shape="circle"
+                        (click)="menu.toggle($event)"
+                        aria-label="Open profile menu"
+                        role="button"
+                        tabindex="0"
+                        (keydown.enter)="menu.toggle($event)"
+                        [style]="{
             'height': '60px', 
             'width': '60px', 
             'margin-right': '15px', 

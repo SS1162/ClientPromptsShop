@@ -314,36 +314,42 @@ $hover-purple: #6a2ecb;
   &:hover { box-shadow: 0 4px 16px $shadow-color; }
 }
 
-.method-header {
+
+
+.paypal-method-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.method-icon {
+.paypal-logo-wrap {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-weight: 700;
-  color: $text-dark;
-  font-size: 1rem;
 
-  &.paypal-icon svg { display: block; }
-
-  &.card-icon .pi {
-    font-size: 1.4rem;
-    color: $primary-purple;
-  }
+  svg { display: block; }
 }
 
-.recommended-badge {
-  background: $grad;
-  color: white;
-  font-size: 0.72rem;
+.paypal-label {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: $text-dark;
+}
+
+.secure-badge {
+  background: #f3e8ff;
+  color: $primary-purple;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e0c4ff;
+
+  .pi { font-size: 0.78rem; }
 }
 
 .method-desc {
@@ -387,57 +393,7 @@ $hover-purple: #6a2ecb;
   .pi-spin { margin-right: 6px; }
 }
 
-// ── Separator ──
-.separator {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #aaa;
-  font-size: 0.82rem;
-  margin: 18px 0;
 
-  &::before, &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #eee;
-  }
-}
-
-// ── Card button ──
-.card-btn {
-  width: 100%;
-  background: $light-purple;
-  border: 2px solid #d8b4fe;
-  border-radius: 12px;
-  padding: 13px 20px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #aaa;
-  cursor: not-allowed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.card-icons {
-  display: flex;
-  gap: 8px;
-}
-
-.card-badge {
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-
-  &.visa  { background: #1434cb; color: white; }
-  &.mc    { background: #eb001b; color: white; }
-  &.amex  { background: #007bc1; color: white; }
-}
 
 // ── Back link ──
 .back-link {

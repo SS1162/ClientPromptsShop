@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SplitterModule } from 'primeng/splitter';
 import { ProductModel } from '../../Models/ProductModel';
 import { ProductServise } from '../../Servises/ProductServise/product-servise';
@@ -20,7 +21,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { EmptyProduct } from '../empty-product/empty-product';
-import { EmptyCategory } from '../../empty-category/empty-category';
+import { EmptyCategory } from '../empty-category/empty-category';
 import { PlatformsModel } from '../../Models/PlatformsModel';
 import { geminiPromptModel } from '../../Models/geminiPromptModel';
 import { PlatformServise } from '../../Servises/PlatformServise/platform-servise';
@@ -30,12 +31,14 @@ import { UserModel } from '../../Models/UserModel';
 import { MessageService } from 'primeng/api';
 import { AddToCartModel } from '../../Models/AddToCartModel';
 import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
+import { ToastModule } from 'primeng/toast';
+import { SessionCartItem } from '../../Servises/cartServise/cart-servise';
 
 @Component({
   selector: 'app-category',
   imports: [SplitterModule, CurrencyPipe, FormsModule, Checkbox, DataView, ButtonModule,
     CommonModule, CheckboxModule, SliderModule, SelectModule, FloatLabelModule,
-    IconFieldModule, InputIconModule, InputTextModule, EmptyProduct, EmptyCategory],
+    IconFieldModule, InputIconModule, InputTextModule, EmptyProduct, EmptyCategory, ToastModule],
     providers: [MessageService],
   templateUrl: './category.html',
   styleUrl: './category.scss',
@@ -44,6 +47,7 @@ import { CurrencyServise } from '../../Servises/currencyServise/currency-servise
 
 export class Category implements OnInit {
   private messageService = inject(MessageService);
+  private destroyRef = inject(DestroyRef);
   productModel!: ProductModel[]
   productService: ProductServise = inject(ProductServise)
   categoryService: CategoryServise = inject(CategoryServise)
@@ -76,6 +80,9 @@ export class Category implements OnInit {
   errorMessegeStatuse200: string = ''
   staticFilesURL: string = environment.staticFilesUrl
   emptyProductId!: number
+  emptyProductPrice: number = 0
+  emptyProductResetTick: number = 0
+  geminiPromptConsumed: boolean = false
   pendingGeminiPrompt: geminiPromptModel | null = null
   rangeValues: number[] = [0, 100];
   platforms: PlatformsModel[] | null = null
@@ -92,8 +99,19 @@ export class Category implements OnInit {
       'price from high to low'
     ];
 
-
-    this.platformServise.platforms$.subscribe({
+    this.cartServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (err) => {
+        if(!err)
+        {
+console.log(err)
+        }
+      },
+      error:(err)=>{
+        console.log(err)
+      }
+    })
+    this.platformServise.getPlatforms()
+    this.platformServise.platforms$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.platforms = data
       },
@@ -102,7 +120,7 @@ export class Category implements OnInit {
       }
     })
 
-    this.currencyServise.selectedCurrency$.subscribe({
+    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (c) => {
         this.currencyCode = c.code;
       },
@@ -111,7 +129,7 @@ export class Category implements OnInit {
       }
     });
 
-    this.currencyServise.rate$.subscribe({
+    this.currencyServise.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (r) => {
         this.currencyRate = r;
       },
@@ -120,7 +138,7 @@ export class Category implements OnInit {
       }
     });
 
-    this.userServise.user$.subscribe({
+    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next:(data)=>{
         if (data) { this.user = data; }
       }
@@ -135,16 +153,22 @@ export class Category implements OnInit {
   addSelectedToCart() {
     if (!this.user) 
     {
-      const productForSession: { productsID: number, platformsID: number }[] = [];
       const selectedItems = this.productModel.filter((_, i) => this.chosenProducts[i]);
       for (const item of selectedItems) {
-        productForSession.push({
-          productsID: item.ProductsID,
-          platformsID: this.selctedPlatform!.platformID
-        });
+        const sessionItem: SessionCartItem = {
+          productsID:  (item as any).productsID ?? item.ProductsID,
+          platformsID: this.selctedPlatform!.platformID,
+          productsName: (item as any).productsName ?? item.ProductsName,
+          price:        (item as any).price ?? item.Price,
+          platformName: this.selctedPlatform!.platformName,
+          imgUrl:       (item as any).imgUrl ?? item.ImgUrl ?? '',
+          categoryID:   (item as any).categoryID ?? item.CategoryID,
+        };
+        this.cartServise.addSessionItem(sessionItem);
       }
-      const existing = JSON.parse(sessionStorage.getItem('pendingCartItems') || '[]');
-      sessionStorage.setItem('pendingCartItems', JSON.stringify([...existing, ...productForSession]));
+      this.cartServise.openPopup();
+      this.messageService.add({ severity: 'success', summary: 'Added to cart', detail: 'Selected items have been added to your cart successfully', life: 3000 });
+      this.clearChoose()
     }
     else{
     const selectedItems = this.productModel.filter((_, i) => this.chosenProducts[i]);
@@ -152,7 +176,7 @@ export class Category implements OnInit {
       this.cartServise.addCartItem(
         {
           userID: this.user.userID,
-          productsID: item.ProductsID,
+          productsID: (item as any).productsID,
           platformsID: this.selctedPlatform!.platformID 
         },
         this.user.userID
@@ -163,16 +187,30 @@ export class Category implements OnInit {
         {
           userID: this.user.userID,
           productsID: this.emptyProductId,
-          userDescription: this.pendingGeminiPrompt.PromptId.toString(),
-          platformsID: this.selctedPlatform?.platformID ?? 1
+          userDescription: this.pendingGeminiPrompt.promptId,
+          platformsID: this.selctedPlatform!.platformID 
         },
         this.user.userID
       );
       this.pendingGeminiPrompt = null;
+      this.geminiPromptConsumed = true;
+      setTimeout(() => this.geminiPromptConsumed = false, 0);
     }
+    // Open the cart drawer immediately — don't wait for HTTP response
+    this.cartServise.openPopup();
+    this.messageService.add({ severity: 'success', summary: 'Added to cart', detail: 'Selected items have been added to your cart successfully', life: 3000 });
+    this.clearChoose()
   }
+  
   }
 
+  clearChoose(){
+    for(let i=0;i<this.chosenProducts.length;i++){
+      this.chosenProducts[i] = false;
+    }
+    this.pendingGeminiPrompt = null;
+    this.emptyProductResetTick++;
+  }
   handleGeminiPrompt(prompt: geminiPromptModel | null) {
     this.pendingGeminiPrompt = prompt;
   }
@@ -210,8 +248,9 @@ export class Category implements OnInit {
           for (let i = 0; i < this.productModel.length; i++) {
             this.chosenProducts.push(false);
           }
-          const emptyOne = this.productModel.find(obj => obj.ProductsName === 'Empty')
-          this.emptyProductId = emptyOne!.ProductsID 
+         const emptyOne = this.productModel.find(obj => ((obj as any).productsName ?? obj.ProductsName) === 'Empty')
+          this.emptyProductId = (emptyOne as any)?.productsID ?? emptyOne?.ProductsID
+          this.emptyProductPrice = (emptyOne as any)?.price ?? emptyOne?.Price
         }
 
       },
@@ -253,8 +292,9 @@ export class Category implements OnInit {
           for (let i = 0; i < this.productModel.length; i++) {
             this.chosenProducts.push(false);
           }
-          const emptyOne = this.productModel.find(obj => obj.ProductsName === 'Empty')
-          this.emptyProductId = emptyOne!.ProductsID 
+          const emptyOne = this.productModel.find(obj => ((obj as any).productsName ?? obj.ProductsName) === 'Empty')
+          this.emptyProductId = (emptyOne as any)?.productsID ?? emptyOne?.ProductsID
+          this.emptyProductPrice = (emptyOne as any)?.price ?? emptyOne?.Price
         }
 
       },

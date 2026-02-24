@@ -1,6 +1,6 @@
 export class AddToCartModel {
     userID!: number
     productsID!: number
-    userDescription?: string
+    userDescription?: number
     platformsID!: number
 }

@@ -1,5 +1,5 @@
 <div class="page">
-
+<h1 class="sr-only">Browse Categories</h1>
 
     <div class="product flex flex-wrap justify-center gap-4">
         <div class="top">
@@ -14,13 +14,15 @@
             <div class="card flex flex-wrap justify-center gap-4">
                 <p-iconfield>
                     <p-inputicon styleClass="pi pi-search" />
-                    <input type="text" pInputText placeholder="Search" (blur)="changeSearch()" [(ngModel)]="searchTerm"
+                    <input type="text" pInputText placeholder="Search categories…"
+                        aria-label="Search categories"
+                        (blur)="changeSearch()" [(ngModel)]="searchTerm"
                         [style]="{border: '1px solid #9D58F5' }" />
                 </p-iconfield>
             </div>
         </div>
 
-        <div class=message-container>
+        <div class="message-container" aria-live="polite" role="status">
             @if(errorMessegeStatus200!==""){
             <p-message severity="error" variant="simple" size="small">{{errorMessegeStatus200}}</p-message>
             }
@@ -38,12 +40,12 @@
                 styleClass="p-0 flex flex-col custom-card">
 
                 <ng-template #header>
-                    <img alt="Card" class="w-full" src="{{staticFilesURL+category.imgUrl }}"
+                    <img [alt]="category.categoryName" class="w-full" [src]="staticFilesURL + category.imgUrl"
                         [style]="{ height: '17rem' }" />
                 </ng-template>
 
                 <ng-template #title>
-                    <div class="px-4 pt-2" [style]="{ height: '3rem' }">{{ category.categoryName }}</div>
+                    <h2 class="px-4 pt-2 card-title" [style]="{ height: '3rem', fontSize: '1rem', fontWeight: '600' }">{{ category.categoryName }}</h2>
                 </ng-template>
 
                 <div class="px-4 flex-grow overflow-hidden" [style]="{ height: '8.5rem' }">
@@ -53,7 +55,9 @@
                 </div>
 
                 <ng-template #footer>
-                     <p-button label="Add To Cart 🛒" severity="secondary" [outlined]="true" [routerLink]="['/category',category.categoryID]"
+                     <p-button label="Add To Cart" severity="secondary" [outlined]="true"
+                        [routerLink]="['/category',category.categoryID]"
+                        [ariaLabel]="'Browse ' + category.categoryName"
                         styleClass="w-full border-none py-4 m-0" class="w-full mt-auto" />
                 </ng-template>
             </p-card>

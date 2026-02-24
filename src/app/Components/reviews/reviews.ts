@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
@@ -23,11 +24,12 @@ export class Reviews implements OnInit {
 
   private reviewService = inject(ReviewServise);
   private messageService = inject(MessageService);
+  private destroyRef = inject(DestroyRef);
 IMG_URL=environment.reviewImageBaseUrl;
   ngOnInit() {
     this.reviewService.getReviews();
 
-    this.reviewService.review$.subscribe({
+    this.reviewService.review$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.reviews = data;
@@ -43,7 +45,7 @@ IMG_URL=environment.reviewImageBaseUrl;
       }
     });
 
-    this.reviewService.error$.subscribe({
+    this.reviewService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
         if (err) {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load reviews', life: 3000 });

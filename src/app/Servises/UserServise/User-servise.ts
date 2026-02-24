@@ -23,10 +23,16 @@ export class UserServise {
   public error$: Observable<HttpErrorResponse | null> = this.errorSubject.asObservable()
   private sucssesToRegisterSubject = new BehaviorSubject<boolean | null>(null)
   public sucssesToRegister: Observable<boolean | null> = this.sucssesToRegisterSubject.asObservable()
+  private isAdminSubject = new BehaviorSubject<boolean>(false)
+  public isAdmin$: Observable<boolean> = this.isAdminSubject.asObservable()
   constructor() {
     const temp = sessionStorage.getItem('user')
     if (temp !== null) {
       this.userSubject.next(JSON.parse(temp))
+    }
+    const isAdmin = sessionStorage.getItem('isAdmin')
+    if (isAdmin === 'true') {
+      this.isAdminSubject.next(true)
     }
   }
   LoginUser(loginData: LoginModel) {
@@ -36,6 +42,7 @@ export class UserServise {
           this.userSubject.next(data)
           this.errorSubject.next(null)
           sessionStorage.setItem('user', JSON.stringify(data))
+          this.checkIsAdmin(data.userID)
         }
         ,
         error: (err) => {
@@ -62,6 +69,9 @@ export class UserServise {
 
   LogOut() {
     this.userSubject.next(null)
+    this.isAdminSubject.next(false)
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('isAdmin');
   }
 
   RegisterUser(registerData: RegisterUserModel) {
@@ -94,25 +104,34 @@ export class UserServise {
           this.errorSubject.next(err)
         }
       })
-  
+
   }
 
 
   signInWithGoogle(registerData: RegisterUserModel) {
 
-this.http.post<UserModel>(`${this.BASIC_URL}/signInWithGoogle`, registerData)
-       .subscribe({
-        next: (data) => {
-          this.userSubject.next(data)
-          this.errorSubject.next(null)
-          sessionStorage.setItem('user', JSON.stringify(data))
-          
-        }
-        ,
-        error: (err) => {
-          this.errorSubject.next(err)
-        }
-      })
+    this.http.post<UserModel>(`${this.BASIC_URL}/signInWithGoogle`, registerData)
+
   }
+
+
+  checkIsAdmin(userID: number): void {
+    this.http.get<boolean>(`${this.BASIC_URL}/isAdmin/${userID}`).subscribe({
+      next: (data) => {
+        this.isAdminSubject.next(data)
+        sessionStorage.setItem('isAdmin', String(data))
+      },
+      error: () => {
+        this.isAdminSubject.next(false)
+        sessionStorage.removeItem('isAdmin')
+      }
+    })
+  }
+
+  isAdmin(userID: number): void {
+    this.checkIsAdmin(userID)
+  }
+
+
 }
 

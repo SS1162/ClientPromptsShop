@@ -414,6 +414,21 @@ $grad: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
 $light-purple: #F6E8FE;
 $text-dark: #312639;
 
+// ── Guest notice ───────────────────────────────────────────
+.guest-notice {
+  margin-top: 12px;
+  padding: 0.6rem 0.85rem;
+  background: #f3e8ff;
+  border: 1px dashed #8139eb;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #8139eb;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
 ::ng-deep .custom-summary-card {
   background: white !important;
   border-radius: 20px !important;

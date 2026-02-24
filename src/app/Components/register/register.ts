@@ -24,11 +24,12 @@ import { checkIfThePhoneValid } from '../../Validators/phone';
 import { UserModel } from '../../Models/UserModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { CheckboxModule } from 'primeng/checkbox';
 @Component({
   selector: 'app-register',
   imports: [FormsModule, InputTextModule, FloatLabel, PasswordModule, IftaLabelModule, CardModule, CommonModule, ReactiveFormsModule,
-    TextareaModule, ButtonModule, MessageModule, ToastModule
+    TextareaModule, ButtonModule, MessageModule, ToastModule, CheckboxModule, RouterModule
   ],
   providers: [MessageService],
   templateUrl: './register.html',
@@ -40,35 +41,42 @@ export class Register implements OnInit {
   user$?: UserModel | null
   error$?: HttpErrorResponse | null
   router: Router = inject(Router)
-  errorMessege: string = ""
+
   ngOnInit() {
-    
 
     this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.error$ = data
-      if (data === null) {
-        this.errorMessege = ''
-      }
-      else {
-        this.errorMessege = "An error occurred. Please try again later "
-        this.showError()
+      if (data !== null && data !== undefined) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Registration Failed',
+          detail: 'An error occurred. Please try again later.',
+          life: 4000
+        });
       }
     })
 
-this.userServise.sucssesToRegister.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-  next:(data)=>{
-if(data===true)
-{
-   this.router.navigate(['/login'])
-}
- 
-  },
-  error:()=>{
-     this.errorMessege = "An error occurred. Please try again later "
-     this.showError()
-  }
-
-})
+    this.userServise.sucssesToRegister.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data) => {
+        if (data === true) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Account Created',
+            detail: 'Your account has been created successfully! Redirecting to login...',
+            life: 2500
+          });
+          setTimeout(() => this.router.navigate(['/login']), 2500);
+        }
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Registration Failed',
+          detail: 'An error occurred. Please try again later.',
+          life: 4000
+        });
+      }
+    })
 
   }
 
@@ -80,6 +88,7 @@ if(data===true)
     verificationPassword: new FormControl(null, [Validators.required]),
     firstName: new FormControl(null),
     secondName: new FormControl(null),
+    acceptPrivacyPolicy: new FormControl(false, [Validators.requiredTrue]),
   }, { validators: CheckVertifictionPassword })
 
   messageService = inject(MessageService);
@@ -100,9 +109,7 @@ if(data===true)
     }
 
   }
-   showError() {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: this.errorMessege });
-  }
+   
   password: PasswardModel = new PasswardModel()
   passordStrength: number = 0
   checkPasswordStrength() {

@@ -18,54 +18,95 @@
   <!-- Item list -->
   <div class="drawer-body">
 
-    @if (cartItems.length === 0) {
-      <div class="empty-state">
-        <i class="pi pi-folder-open"></i>
-        <p>Every great creation begins with a single prompt.<br>Your cart is waiting for the next big idea.</p>
-        <p-button label="Start Creating" icon="pi pi-code"
-          [style]="{'backgroundColor':'#8139eb','color':'white','border':'none'}"
-          [routerLink]="['/basicSite']" (click)="close()">
-        </p-button>
+    <!-- ── Guest / Session Cart ── -->
+    @if (isGuest) {
+      @if (sessionItems.length === 0) {
+        <div class="empty-state">
+          <i class="pi pi-folder-open"></i>
+          <p>Every great creation begins with a single prompt.<br>Your cart is waiting for the next big idea.</p>
+          <p-button label="Start Creating" icon="pi pi-code"
+            [style]="{'backgroundColor':'#8139eb','color':'white','border':'none'}"
+            [routerLink]="['/basicSite']" (click)="close()">
+          </p-button>
+        </div>
+      }
+      @for (item of sessionItems; track $index) {
+        <div class="cart-item glass-panel">
+          <div class="cart-item-visual">
+            <img [src]="BASIC_IMAGE_URL + item.imgUrl || '../../assets/images/logo.png'" class="cart-item-img" alt="Product Preview" />
+          </div>
+          <div class="cart-item-content">
+            <div class="content-header">
+              <div class="title-section">
+                <h3>{{ item.productsName }}</h3>
+                <span class="platform-tag">
+                  <i class="pi pi-cog"></i> {{ item.platformName }}
+                </span>
+              </div>
+              <span class="price-value">{{ item.price * currencyRate | currency:currencyCode }}</span>
+            </div>
+            <div class="item-actions">
+              <p-button label="Remove" icon="pi pi-trash" [outlined]="true"
+                (click)="removeSessionItem($index)" styleClass="p-button-sm" severity="help">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      }
+      <div class="guest-login-hint">
+        <i class="pi pi-lock"></i>
+        <span>Log in to save your cart and checkout</span>
       </div>
     }
 
-    @for (item of cartItems; track item.cartID) {
-      <div class="cart-item glass-panel">
-        <div class="cart-item-visual">
-          <img [src]="item.imgUrl" class="cart-item-img" alt="Product Preview" />
+    <!-- ── Logged-in Cart ── -->
+    @if (!isGuest) {
+      @if (cartItems.length === 0) {
+        <div class="empty-state">
+          <i class="pi pi-folder-open"></i>
+          <p>Every great creation begins with a single prompt.<br>Your cart is waiting for the next big idea.</p>
+          <p-button label="Start Creating" icon="pi pi-code"
+            [style]="{'backgroundColor':'#8139eb','color':'white','border':'none'}"
+            [routerLink]="['/basicSite']" (click)="close()">
+          </p-button>
         </div>
-        <div class="cart-item-content">
-          <div class="content-header">
-            <div class="title-section">
-              <a [routerLink]="['/category', item.productID]" (click)="close()" style="text-decoration:none;">
-                <h3>{{ item.productsName }}</h3>
-              </a>
-              <span class="platform-tag">
-                <i class="pi pi-cog"></i> {{ item.platformName }}
-              </span>
+      }
+      @for (item of cartItems; track item.cartID) {
+        <div class="cart-item glass-panel">
+          <div class="cart-item-visual">
+            <img [src]="BASIC_IMAGE_URL + item.imgUrl" class="cart-item-img" alt="Product Preview" />
+          </div>
+          <div class="cart-item-content">
+            <div class="content-header">
+              <div class="title-section">
+                <a [routerLink]="['/category', item.productID]" (click)="close()" style="text-decoration:none;">
+                  <h3>{{ item.productsName }}</h3>
+                </a>
+                <span class="platform-tag">
+                  <i class="pi pi-cog"></i> {{ item.platformName }}
+                </span>
+              </div>
+              <span class="price-value">{{ item.price * currencyRate | currency:currencyCode }}</span>
             </div>
-            <span class="price-value">{{ item.price * currencyRate | currency:currencyCode }}</span>
-          </div>
-
-          <div class="validity-row">
-            @if (item.valid) {
-              <span class="valid-badge" (click)="changeProductToInValid(item.cartID)">
-                <i class="pi pi-bookmark-fill"></i> Included
-              </span>
-            } @else {
-              <span class="invalid-badge" (click)="changeProductToValid(item.cartID)">
-                <i class="pi pi-bookmark"></i> Excluded
-              </span>
-            }
-          </div>
-
-          <div class="item-actions">
-            <p-button label="Remove" icon="pi pi-trash" [outlined]="true"
-              (click)="removeProduct(item.cartID)" styleClass="p-button-sm" severity="help">
-            </p-button>
+            <div class="validity-row">
+              @if (item.valid) {
+                <span class="valid-badge" (click)="changeProductToInValid(item.cartID)">
+                  <i class="pi pi-bookmark-fill"></i> Included
+                </span>
+              } @else {
+                <span class="invalid-badge" (click)="changeProductToValid(item.cartID)">
+                  <i class="pi pi-bookmark"></i> Excluded
+                </span>
+              }
+            </div>
+            <div class="item-actions">
+              <p-button label="Remove" icon="pi pi-trash" [outlined]="true"
+                (click)="removeProduct(item.cartID)" styleClass="p-button-sm" severity="help">
+              </p-button>
+            </div>
           </div>
         </div>
-      </div>
+      }
     }
 
   </div>
@@ -78,12 +119,21 @@
     </div>
     <div class="footer-divider"></div>
     <div class="footer-buttons">
-      <p-button label="View Full Cart" icon="pi pi-shopping-bag" styleClass="btn-full-cart"
-        (click)="goToFullCart()">
-      </p-button>
-      <p-button label="Continue Shopping" [outlined]="true" icon="pi pi-arrow-left"
-        styleClass="btn-continue" (click)="close()">
-      </p-button>
+      @if (isGuest) {
+        <p-button label="Login to Checkout" icon="pi pi-sign-in" styleClass="btn-full-cart"
+          (click)="goToLogin()">
+        </p-button>
+        <p-button label="Continue Shopping" [outlined]="true" icon="pi pi-arrow-left"
+          styleClass="btn-continue" (click)="close()">
+        </p-button>
+      } @else {
+        <p-button label="View Full Cart" icon="pi pi-shopping-bag" styleClass="btn-full-cart"
+          (click)="goToFullCart()">
+        </p-button>
+        <p-button label="Continue Shopping" [outlined]="true" icon="pi pi-arrow-left"
+          styleClass="btn-continue" (click)="close()">
+        </p-button>
+      }
     </div>
   </div>
 

@@ -1,5 +1,11 @@
 <!-- ══ Floating button ══ -->
-<div class="chat-fab" [class.open]="isOpen" (click)="toggleChat()">
+<div class="chat-fab" [class.open]="isOpen" [class.cart-open]="cartOpen" (click)="toggleChat()"
+  role="button"
+  tabindex="0"
+  [attr.aria-expanded]="isOpen"
+  aria-label="Open chat assistant"
+  (keydown.enter)="toggleChat()"
+  (keydown.space)="$event.preventDefault(); toggleChat()">
   <div class="fab-inner">
     @if (!isOpen) {
       <i class="pi pi-comments"></i>

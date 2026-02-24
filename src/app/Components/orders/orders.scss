@@ -235,6 +235,31 @@ p {
         text-align: left;
       }
 
+      .title-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .items-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+
+        i {
+          font-size: 0.75rem;
+          color: white;
+          margin: 0;
+        }
+      }
+
       .price-label {
         font-size: 0.8rem;
         color: #888;
@@ -265,6 +290,22 @@ p {
       display: flex;
       gap: 12px;
       margin-top: auto;
+
+      ::ng-deep .btn-gradient {
+        background: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%) !important;
+        border: none !important;
+        color: white !important;
+        transition: opacity 0.2s ease !important;
+
+        &:hover {
+          opacity: 0.85 !important;
+        }
+
+        &:disabled, &.p-disabled {
+          opacity: 0.4 !important;
+          cursor: not-allowed !important;
+        }
+      }
     }
 
     .items-summary {

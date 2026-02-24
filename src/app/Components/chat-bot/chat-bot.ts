@@ -1,7 +1,9 @@
-import { Component, inject, ElementRef, ViewChild, AfterViewChecked, OnInit } from '@angular/core';
+import { Component, inject, ElementRef, ViewChild, AfterViewChecked, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatServise, ChatMessageDto } from '../../Servises/chatServise/chat-servise';
+import { CartServise } from '../../Servises/cartServise/cart-servise';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-chat-bot',
@@ -13,18 +15,24 @@ export class ChatBot implements OnInit, AfterViewChecked {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   isOpen = false;
+  cartOpen = false;
   messages: ChatMessageDto[] = [];
   newMessage = '';
   isLoading = false;
   private shouldScroll = false;
 
   private chatServise = inject(ChatServise);
+  private cartServise = inject(CartServise);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     const saved = this.chatServise.loadSession();
     if (saved.length > 0) {
       this.messages = saved;
     }
+    this.cartServise.popupOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(open => {
+      this.cartOpen = open;
+    });
   }
 
   toggleChat() {

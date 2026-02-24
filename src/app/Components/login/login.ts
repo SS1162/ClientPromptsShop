@@ -20,6 +20,7 @@ import { UserServise } from '../../Servises/UserServise/User-servise';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserModel } from '../../Models/UserModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { take } from 'rxjs';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { RegisterUserModel } from '../../Models/RegisterUserModel';
@@ -48,7 +49,6 @@ export class Login implements OnInit, AfterViewInit {
   location: Location = inject(Location);
   user$?: UserModel | null
   error$?: HttpErrorResponse | null
-  errorMessege: string = ''
   public googleClientId = environment.googleClientId;
   loginUser: LoginModel = new LoginModel();
   isproper: boolean = true;
@@ -68,6 +68,12 @@ export class Login implements OnInit, AfterViewInit {
     this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       if (data !== null && this.flag) {
         this.flag = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Welcome Back!',
+          detail: 'You have logged in successfully.',
+          life: 2000
+        });
         const pending = JSON.parse(sessionStorage.getItem('pendingCartItems') || '[]');
         if (pending.length > 0) {
           sessionStorage.removeItem('pendingCartItems');
@@ -78,20 +84,29 @@ export class Login implements OnInit, AfterViewInit {
             );
           }
         }
-        if (window.history.length > 1) {
-          this.location.back();
-        } else {
-          this.router.navigate(['/home']);
-        }
+        setTimeout(() => {
+          this.userServise.isAdmin$.pipe(take(1)).subscribe(isAdmin => {
+            if (isAdmin) {
+              this.router.navigate(['/admin']);
+            } else if (window.history.length > 1) {
+              this.location.back();
+            } else {
+              this.router.navigate(['/']);
+            }
+          });
+        }, 2000);
       }
     });
 
     this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.error$ = data
-      if (data === null) {
-        this.errorMessege = ''
-      } else {
-        this.errorMessege ="error accuard try again later"
+      if (data !== null && data !== undefined) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Login Failed',
+          detail: 'An error occurred. Please try again later.',
+          life: 4000
+        });
       }
     });
 
@@ -107,21 +122,35 @@ export class Login implements OnInit, AfterViewInit {
     this.renderGoogleButton();
   }
 
-  renderGoogleButton() {
-    if (typeof google !== 'undefined' && google.accounts) {
-      google.accounts.id.initialize({
-        client_id: this.googleClientId,
-        callback: (window as any).handleCredentialResponse
-      });
+ renderGoogleButton() {
+  if (typeof google !== 'undefined' && google.accounts) {
+google.accounts.id.initialize({
+  client_id: this.googleClientId,
+  callback: (window as any).handleCredentialResponse,
+  ux_mode: 'popup',
+  use_fedcm_for_prompt: true // זה משתמש במנגנון החדש של הדפדפן לעקיפת חסימות Cross-Origin
+});
 
-      google.accounts.id.renderButton(
-        document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "100%" }
-      );
-    } else {
-      setTimeout(() => this.renderGoogleButton(), 100);
+    const btnEl = document.getElementById("googleBtn");
+    
+    // שינוי 3: הגנה מפני רוחב לא תקין (גוגל לא מקבלת אחוזים או ערכים קטנים מדי)
+    let btnWidth = btnEl ? btnEl.offsetWidth : 250;
+    if (btnWidth < 200 || btnWidth > 400) {
+      btnWidth = 250; // ערך בטוח שגוגל תמיד מאשרת
     }
+
+    google.accounts.id.renderButton(
+      btnEl,
+      { 
+        theme: "outline", 
+        size: "large", 
+        width: btnWidth // כאן נשלח מספר נקי
+      }
+    );
+  } else {
+    setTimeout(() => this.renderGoogleButton(), 100);
   }
+}
 
   onSignIn(response: any) {
     const payload = JSON.parse(atob(response.credential.split('.')[1]));

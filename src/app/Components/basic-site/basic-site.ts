@@ -86,9 +86,9 @@ export class BasicSite implements OnInit, OnDestroy {
           this.formData.userDescreption = data.geminiPromptId;
           this.geminiServise.getPrompt(data.geminiPromptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: (response) => {
-              this.prompt!.PromptId= (response.body as any).promptId;
-              this.prompt!.Prompt = (response.body as any).prompt;
-              this.aiData = this.prompt!.Prompt;
+              this.prompt!.promptId = (response.body as any).promptId;
+              this.prompt!.prompt = (response.body as any).prompt;
+              this.aiData = this.prompt!.prompt;
               this.isSubmitted = true;
               this.deletePrompt = false;
             }
@@ -247,7 +247,7 @@ export class BasicSite implements OnInit, OnDestroy {
       const updateData: UpdateBasicSiteModel = {
         basicSiteID: this.user!.basicID!,
         siteName: this.formData.siteName,
-        userDescreption: this.prompt?.PromptId || undefined,
+        userDescreption: this.prompt?.promptId || undefined,
         siteTypeID: this.formData.siteTypeID,
         platformID: this.formData.platformID,
       };
@@ -294,9 +294,9 @@ export class BasicSite implements OnInit, OnDestroy {
         next: (response) => {
           this.deletePrompt = true
           console.log('AI Response:', response.body);
-          this.prompt!.Prompt = (response.body as any).prompt
-          this.prompt!.PromptId = (response.body as any).promptId
-          this.aiData = this.prompt!.Prompt;
+          this.prompt!.prompt = (response.body as any).prompt
+          this.prompt!.promptId = (response.body as any).promptId
+          this.aiData = this.prompt!.prompt;
           console.log(this.aiData)
         },
         error: (error) => {
@@ -312,10 +312,10 @@ export class BasicSite implements OnInit, OnDestroy {
     }
   }
   handleEdit() {
-    this.geminiServise.updateBasicSitePrompt(this.prompt!.PromptId, this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.geminiServise.updateBasicSitePrompt(this.prompt!.promptId, this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         console.log('AI Response:', response.body);
-        if (this.prompt!.Prompt === response.body!.Prompt) {
+        if (this.prompt!.prompt === response.body!.prompt) {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -344,12 +344,12 @@ export class BasicSite implements OnInit, OnDestroy {
   handleDelete() {
     this.isSubmitted = false;
     this.aiData = '';
-    this.geminiServise.deletePrompt(this.prompt!.PromptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.geminiServise.deletePrompt(this.prompt!.promptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.prompt = new geminiPromptModel();
       },
       error: (error) => {
-        console.log("it not deleted" + this.prompt!.PromptId)
+        console.log("it not deleted" + this.prompt!.promptId)
       }
     });
   }

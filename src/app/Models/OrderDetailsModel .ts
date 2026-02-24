@@ -1,15 +1,15 @@
-import { AddToCartModel } from "./AddToCartModel";
+import { OrderItemModel } from "./OrderItemModel";
 
 
 export class OrderDetailsModel {
-    orderId!: number;
-    userId!: number;     
+    orderID!: number;
+    userId!: number;
     reviewId?: number;
     reviewImg?: string;
-    stars?: number;       
+    stars?: number;
     siteName!: string;
     siteTypeName?: string;
     siteTypeDescription?: string;
-    products!: AddToCartModel[]; 
-    Prompt?:string
+    products!: OrderItemModel[];
+    Prompt?: string;
 }

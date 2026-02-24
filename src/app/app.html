@@ -1,11 +1,21 @@
-<main class="main">
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
+@if (showCustomerUI()) {
+  <header role="banner">
+    <app-menu></app-menu>
+  </header>
+}
 
-<app-menu></app-menu>
+<main id="main-content">
+  <router-outlet /> </main>
 
-</main>
+@if (showCustomerUI()) {
+  <footer>
+    <app-buttom-nevigation></app-buttom-nevigation>
+  </footer>
 
-<router-outlet />
-<app-buttom-nevigation></app-buttom-nevigation>
-<app-chat-bot></app-chat-bot>
-<app-pop-cart></app-pop-cart>
+  <app-chat-bot></app-chat-bot>
+  <app-pop-cart></app-pop-cart>
+}
+
+<app-accessibility-sidebar></app-accessibility-sidebar>

@@ -1,12 +1,14 @@
 export class CartItemModel {
     cartID!: number
     productsName!: string
-    productID!:number
+    productID!: number
+    platformID!: number
     price!: number
     categoryName!: string
     imgUrl!: string
     categoryDescreption!: string
+    userDescreption?: string | null
     valid!: number
-    userDescription?: string
     platformName!: string
+    userDescreptionID?: number | null
 }

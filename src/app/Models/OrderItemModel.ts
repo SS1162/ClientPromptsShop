@@ -2,7 +2,7 @@ export class OrderItemModel {
     orderItemID!: number
     userDescription?: string
     platformName!: string
-    productsName!: number
+    productName!: string
     price!: number
     categoryName!: string
     imgUrl!: string

@@ -7,14 +7,14 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { GeminiServise } from '../Servises/geminiServise/gemini-servise';
-import { CartServise } from '../Servises/cartServise/cart-servise';
-import { UserServise } from '../Servises/UserServise/User-servise';
-import { PlatformServise } from '../Servises/PlatformServise/platform-servise';
-import { ProductServise } from '../Servises/ProductServise/product-servise';
-import { geminiPromptModel } from '../Models/geminiPromptModel';
-import { PlatformsModel } from '../Models/PlatformsModel';
-import { UserModel } from '../Models/UserModel';
+import { GeminiServise } from '../../Servises/geminiServise/gemini-servise';
+import { CartServise } from '../../Servises/cartServise/cart-servise';
+import { UserServise } from '../../Servises/UserServise/User-servise';
+import { PlatformServise } from '../../Servises/PlatformServise/platform-servise';
+import { ProductServise } from '../../Servises/ProductServise/product-servise';
+import { geminiPromptModel } from '../../Models/geminiPromptModel';
+import { PlatformsModel } from '../../Models/PlatformsModel';
+import { UserModel } from '../../Models/UserModel';
 import { Router } from '@angular/router';
 
 type Step = 'input' | 'generating' | 'generated' | 'adding';
@@ -92,7 +92,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.geminiServise.updateCategoryPrompt(this.prompt.PromptId, this.userInput).subscribe({
+      this.geminiServise.updateCategoryPrompt(this.prompt.promptId, this.userInput).subscribe({
         next: (resp) => {
           this.prompt = resp.body;
           this.userInput = '';
@@ -112,7 +112,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
     this.cartServise.addCartItem({
       userID: this.user.userID,
       productsID: this.emptyProductId,
-      userDescription: this.prompt.PromptId.toString(),
+      userDescription: this.prompt.promptId,
       platformsID: this.selectedPlatform.platformID
     }, this.user.userID);
     this.step = 'generated';
@@ -120,7 +120,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
 
   cancel() {
     if (this.prompt) {
-      this.geminiServise.deletePrompt(this.prompt.PromptId).subscribe({
+      this.geminiServise.deletePrompt(this.prompt.promptId).subscribe({
         next: () => {},
         error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete prompt. Try again.', life: 3000 }); }
       });
@@ -137,7 +137,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.prompt) {
-      this.geminiServise.deletePrompt(this.prompt.PromptId).subscribe({
+      this.geminiServise.deletePrompt(this.prompt.promptId).subscribe({
         next: () => {},
         error: (err) => {console.log(err)}
       });

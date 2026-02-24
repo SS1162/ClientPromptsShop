@@ -13,6 +13,10 @@ export class ProductServise {
   http:HttpClient=inject(HttpClient)
 BASIC_URL: string = `${environment.apiUrl}/Products`;
 
+getAllProducts(): Observable<ProductModel[]> {
+  return this.http.get<ProductModel[]>(`${this.BASIC_URL}/all`);
+}
+
 getProduct( categoryID:number,  numOfPages:number,  PageSize:number,  search?:string, minPrice?:number,  MaxPrice?:number, orderByPrice?:boolean, desc?:boolean):Observable<HttpResponse<ResponePageModel<ProductModel>>>{
 let params=new HttpParams()
 .set('categoryID',categoryID)

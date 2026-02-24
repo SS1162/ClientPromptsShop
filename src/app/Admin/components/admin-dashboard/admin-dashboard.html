@@ -1,0 +1,97 @@
+<div class="dashboard-container">
+  @if (loading) {
+    <div class="loading-state">
+      <i class="pi pi-spin pi-spinner"></i>
+    </div>
+  } @else {
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1 class="page-title">Dashboard</h1>
+          @if (user) {
+            <p class="page-subtitle">Welcome back, {{ user.firstName || user.userName }}</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      @for (stat of stats(); track stat.title) {
+        <div [routerLink]="stat.link" class="stat-card">
+          <div class="card-icon" [ngClass]="stat.color">
+            <i [class]="stat.icon"></i>
+          </div>
+          <div class="card-content">
+            <span class="stat-label">{{ stat.title }}</span>
+            <h3 class="stat-value">{{ stat.value }}</h3>
+            @if (stat.subtitle) {
+              <p class="stat-subtitle">{{ stat.subtitle }}</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="recent-orders-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="pi pi-shopping-cart"></i>
+            Recent Orders
+          </h2>
+          <a routerLink="/admin/orders" class="view-all-link">
+            View All <i class="pi pi-arrow-right"></i>
+          </a>
+        </div>
+        
+        <div class="orders-list">
+          @if (recentOrders().length === 0) {
+            <div class="empty-msg">No recent orders found.</div>
+          } @else {
+            @for (order of recentOrders(); track order.orderId) {
+              <div class="order-item">
+                <div class="order-info">
+                  <span class="order-id">#{{ order.orderID.toString().slice(-8) }}</span>
+                  <span class="order-email">{{ order.userEmail || 'N/A' }}</span>
+                </div>
+                <div class="order-meta">
+                  <span class="order-amount">${{ order.orderSum?.toFixed(2) || '0.00' }}</span>
+                  <span class="status-badge" [ngClass]="order.statusName?.toLowerCase()">
+                    {{ order.statusName || 'Unknown' }}
+                  </span>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="quick-actions-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <i class="pi pi-bolt"></i>
+            Quick Actions
+          </h2>
+        </div>
+        <div class="actions-grid">
+          <button routerLink="/admin/products" class="action-btn violet">
+            <i class="pi pi-box"></i>
+            <span>Add Product</span>
+          </button>
+          <button routerLink="/admin/sub-categories" class="action-btn fuchsia">
+            <i class="pi pi-folder"></i>
+            <span>Sub Categories</span>
+          </button>
+          <button routerLink="/admin/main-categories" class="action-btn blue">
+            <i class="pi pi-folder-open"></i>
+            <span>Main Categories</span>
+          </button>
+          <button routerLink="/admin/site-types" class="action-btn green">
+            <i class="pi pi-globe"></i>
+            <span>Site Types</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

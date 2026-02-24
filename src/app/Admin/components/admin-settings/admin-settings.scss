@@ -1,0 +1,10 @@
+.admin-container {
+  background-color: #fdfcff;
+  background-image: radial-gradient(circle at 10% 20%, rgba(129, 57, 235, 0.05) 0%, transparent 40%);
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}

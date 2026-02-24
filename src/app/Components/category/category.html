@@ -1,4 +1,5 @@
 
+<p-toast />
 
 @if(!isEmpty){
 <div class="box_content">
@@ -7,7 +8,7 @@
   <div class="filter-bar">
 
     <!-- Price Range -->
-    <div class="price-filter" [style]="{'width':'130px', 'min-height':'55px'}" >
+    <div class="price-filter" role="group" aria-label="Price range filter" [style]="{'width':'130px', 'min-height':'55px'}" >
       <span class="price-filter-values">
         {{ rangeValues[0] * currencyRate | currency:currencyCode:'symbol':'1.0-0' }}
         <span class="price-dash">—</span>
@@ -28,7 +29,9 @@
     <!-- Search -->
     <p-iconfield class="filter-search">
       <p-inputicon class="pi pi-search" />
-      <input type="text" [(ngModel)]="search" pInputText placeholder="Search products…"[style]="{'width':'130px', 'min-height':'55px'}" 
+      <input type="text" [(ngModel)]="search" pInputText placeholder="Search products…"
+        aria-label="Search products"
+        [style]="{'width':'130px', 'min-height':'55px'}" 
         (blur)="loadOnFilter()" class="filter-input" />
     </p-iconfield>
 
@@ -48,20 +51,24 @@
   <div class="platform-required-bar">
     <div class="platform-required-inner">
       <span class="platform-required-label">
-        <i class="pi pi-desktop"></i>
-        Select a Platform <span class="req-star">*</span>
+        <i class="pi pi-desktop" aria-hidden="true"></i>
+        Select a Platform <span class="req-star" aria-hidden="true">*</span>
+        <span class="sr-only">(required)</span>
       </span>
       <p-select [(ngModel)]="selctedPlatform" inputId="platform"
         [options]="platforms" optionLabel="platformName"
         appendTo="body" [showClear]="true"
         [filter]="true" filterPlaceholder="Search platform..."
+        ariaLabel="Select a platform"
         styleClass="platform-select" [style]="{'min-width':'220px'}" />
-      @if (!selctedPlatform) {
-        <span class="platform-hint">
-          <i class="pi pi-exclamation-circle"></i>
-          Choose a platform before adding to cart
-        </span>
-      }
+      <div aria-live="polite">
+        @if (!selctedPlatform) {
+          <span class="platform-hint" id="platform-hint">
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+            Choose a platform before adding to cart
+          </span>
+        }
+      </div>
     </div>
   </div>
 
@@ -74,18 +81,19 @@
             @if(item.productsName !== 'Empty') {
             <div class="product-row">
               <div class="product-info">
-                <i class="pi pi-star-fill star-icon"></i>
+                <i class="pi pi-star-fill star-icon" aria-hidden="true"></i>
                 <span class="product-name">{{ item.productsName }}</span>
               </div>
               <span class="product-price">{{ item.price * currencyRate | currency:currencyCode:'symbol':'1.2-2' }}</span>
-              <p-checkbox [(ngModel)]="chosenProducts[i]" [binary]="true" styleClass="product-check" />
+              <p-checkbox [(ngModel)]="chosenProducts[i]" [binary]="true" styleClass="product-check"
+                [ariaLabel]="item.productsName + ' – add to cart'" />
             </div>
             }
           </div>
         </div>
 
         <!-- ── AI Custom Design ───────────────────────── -->
-        <app-empty-product [id]="categoryID" (geminiPrompt)="handleGeminiPrompt($event)" />
+        <app-empty-product [id]="categoryID" [price]="emptyProductPrice" [promptConsumed]="geminiPromptConsumed" [reset]="emptyProductResetTick" (geminiPrompt)="handleGeminiPrompt($event)" />
 
       </ng-template>
     </p-dataview>
@@ -93,8 +101,9 @@
 
   <!-- ── Buy Now ───────────────────────────────────────── -->
   <div class="buy-bar">
-    <button class="buy-btn" (click)="addSelectedToCart()" [disabled]="!selctedPlatform">
-      <i class="pi pi-shopping-cart"></i>
+    <button class="buy-btn" (click)="addSelectedToCart()" [disabled]="!selctedPlatform"
+      aria-describedby="platform-hint">
+      <i class="pi pi-shopping-cart" aria-hidden="true"></i>
       Buy Now
     </button>
   </div>

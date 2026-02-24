@@ -23,6 +23,26 @@ body {
   color: #8139eb !important;
 }
 
+/* Global: p-select overlay filter/search input — purple border */
+.p-select-overlay .p-select-filter {
+  border-color: #8139eb !important;
+  outline: none;
+  &:focus {
+    border-color: #8139eb !important;
+    box-shadow: 0 0 0 2px rgba(129, 57, 235, 0.2) !important;
+  }
+}
+
+/* Global: PrimeNG ToggleSwitch purple theme */
+.p-toggleswitch .p-toggleswitch-slider {
+  background: rgba(129, 57, 235, 0.2) !important;
+  border: 2px solid #8139eb !important;
+}
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+  background: #8139eb !important;
+  border-color: #8139eb !important;
+}
+
 
 html {
 
@@ -51,3 +71,116 @@ html {
     background-color:#9D58F5; 
 }
 
+/* ── Default keyboard focus visibility (always on) ── */
+:focus-visible {
+  outline: 2px solid #8139eb;
+  outline-offset: 2px;
+}
+
+/* ── Ensure the site header (menu) always stacks above sticky content ── */
+header[role="banner"] {
+  position: relative;
+  z-index: 1200;
+}
+
+/* Global: PrimeNG megamenu panel always above sticky bars */
+.p-megamenu-panel {
+  z-index: 1500 !important;
+}
+
+/* Profile popup menu — layered above everything */
+.profile-popup-menu,
+.p-menu {
+  z-index: 9999 !important;
+}
+
+/* ── Skip navigation link ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 8px;
+  background: #8139eb;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-weight: 600;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.2s;
+  &:focus { top: 8px; }
+}
+
+/* ── Screen reader only utility ── */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── a11y: High Contrast ── */
+html.a11y-high-contrast {
+  /* Boost text contrast site-wide without nuking all backgrounds */
+  filter: contrast(1.35);
+
+  /* Ensure primary text surfaces are readable */
+  body { color: #111 !important; }
+
+  /* White/light backgrounds → slightly off-white so text stays visible */
+  .p-card { border: 2px solid #29163b !important; }
+
+  /* Dark text on any surface */
+  p, span, h1, h2, h3, h4, h5, h6, li, label, td, th {
+    color: inherit;
+  }
+
+  /* Links: dark underlined for contrast */
+  a { text-decoration: underline; }
+
+  /* Buttons: stronger border */
+  button, .p-button {
+    outline: 2px solid currentColor !important;
+  }
+
+  /* Inputs: strong border */
+  input, select, textarea {
+    border: 2px solid #29163b !important;
+  }
+}
+
+/* ── a11y: Font Scale ── */
+html.a11y-font-large { font-size: 115%; }
+html.a11y-font-xl    { font-size: 132%; }
+
+/* ── a11y: Reduced Motion ── */
+html.a11y-reduced-motion,
+html.a11y-reduced-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+html.a11y-reduced-motion *::before,
+html.a11y-reduced-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Also respect OS-level preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── a11y: Enhanced Focus Indicators ── */
+html.a11y-focus-indicators *:focus,
+html.a11y-focus-indicators *:focus-visible {
+  outline:        3px solid #8139eb !important;
+  outline-offset: 3px               !important;
+  box-shadow:     0 0 0 5px rgba(129, 57, 235, 0.3) !important;
+}
