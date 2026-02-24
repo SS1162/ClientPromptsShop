@@ -360,3 +360,26 @@ $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
     font-size: 1.1rem;
   }
 }
+
+.sentinel {
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.all-loaded-msg {
+  text-align: center;
+  color: #9d58f5;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  padding: 0.5rem;
+}

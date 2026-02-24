@@ -67,6 +67,12 @@
                                   [disabled]="order.isDownloading"
                                   (click)="downloadPrompt(order)">
                         </p-button>
+
+                        <p-button label="Download Instructions" 
+                                  icon="pi pi-file-pdf"
+                                  styleClass="p-button-sm btn-gradient"
+                                  (click)="downloadInstructions()">
+                        </p-button>
                     </div>
 
                     @if (order.isLoadingDetails) {

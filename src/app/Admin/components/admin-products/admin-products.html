@@ -27,7 +27,7 @@
         <tr>
           <td>
             <div class="flex align-items-center gap-3">
-              <img [src]="product.ImgUrl ? staticFilesUrl + product.ImgUrl : 'assets/placeholder.png'" class="w-3rem h-3rem border-round shadow-1" style="object-fit:cover" />
+              <img [src]="product.imgUrl ? staticFilesUrl + product.imgUrl : 'assets/images/logo.png'" style="width:32px; height:32px; object-fit:cover; border-radius:6px; flex-shrink:0;" />
               <span class="font-medium">{{ product.ProductsName }}</span>
             </div>
           </td>

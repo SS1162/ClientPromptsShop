@@ -18,8 +18,9 @@ import { ReviewServise } from '../../Servises/ReviewServise/review-servise';
 import { UserServise } from '../../Servises/UserServise/User-servise';
 import { OrderDetailsModel } from '../../Models/OrderDetailsModel ';
 import { AddReviewModel } from '../../Models/AddReviewModel';
+import { environment } from '../../../environments/environment';
 import { UserModel } from '../../Models/UserModel';
-
+import { jsPDF } from "jspdf";
 @Component({
   selector: 'app-orders',
   imports: [
@@ -43,8 +44,7 @@ export class Orders implements OnInit {
   displayViewReviewDialog: boolean = false;
   selectedOrder: OrderDetailsModel | null = null;
   selectedViewReview: { stars: number; text: string; image: string } | null = null;
-
-  newReview = { stars: 5, text: '', image: '' };
+  newReview: { stars: number; text: string; image: File | null } = { stars: 5, text: '', image: null };
 
   ngOnInit() {
     this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -106,7 +106,8 @@ export class Orders implements OnInit {
   }
 
   onFileSelect(event: any) {
-    this.newReview.image = 'assets/demo-path.png';
+    const file: File = event.files?.[0] ?? event.currentFiles?.[0];
+    if (file) this.newReview.image = file;
   }
 
   toggleExpand(order: any) {
@@ -124,7 +125,7 @@ export class Orders implements OnInit {
     this.orderService.fetchOrderDetails(order.orderID).subscribe({
       next: (details: OrderDetailsModel) => {
         order.details = details;
-        order.reviewId = (details as any).reviewId ?? (details as any).ReviewId ?? order.reviewId;
+        order.reviewId = details.reviewId ?? order.reviewId;
         order.isExpanded = true;
         order.isLoadingDetails = false;
       },
@@ -138,13 +139,13 @@ export class Orders implements OnInit {
   viewReview(order: any) {
     order.isLoadingDetails = true;
     this.orderService.fetchOrderDetails(order.orderID).subscribe({
-      next: (details: any) => {
+      next: (details: OrderDetailsModel) => {
         order.details = details;
         order.isLoadingDetails = false;
         this.selectedViewReview = {
-          stars: details.stars ?? details.Stars ?? 0,
-          text: details.note ?? details.Note ?? details.reviewNote ?? details.ReviewNote ?? '',
-          image: details.reviewImg ?? details.ReviewImg ?? details.reviewImageUrl ?? details.ReviewImageUrl ?? ''
+          stars: details.stars ?? 0,
+          text: details.reviewNote ?? '',
+          image: details.reviewImg ? `${environment.reviewImageBaseUrl}${details.reviewImg}` : ''
         };
         this.displayViewReviewDialog = true;
       },
@@ -156,99 +157,157 @@ export class Orders implements OnInit {
   }
 
   openReview(order: any) {
-    // Normalize: FullOrderModel uses orderID, OrderDetailsModel uses orderID
     this.selectedOrder = { ...order, orderID: order.orderID ?? order.orderId };
     if (order.reviewId && order.reviewId > 0) {
       this.newReview = {
         stars: order.details?.stars || 5,
-        text: order.details?.note || '',
-        image: order.details?.reviewImg || ''
+        text: order.details?.reviewNote || '',
+        image: null
       };
     } else {
-      this.newReview = { stars: 5, text: '', image: '' };
+      this.newReview = { stars: 5, text: '', image: null };
     }
     this.displayReviewDialog = true;
   }
 
-  private triggerDownload(promptText: string, filename: string) {
-    const blob = new Blob([promptText], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  downloadInstructions() {
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.txt`;
+    a.href = 'assets/images/instruction.png';
+    a.download = 'instruction.png';
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   }
 
-  private async sendEmail(promptText: string, siteName: string) {
-    try {
-      const templateParams = {
-        from_name:'s058329162@gmail.com' ,
-        from_email: this.user!.userName,
-        from_phone: this.user?.phone || '',
-        subject: `Design Prompt — ${siteName}`,
-        message: promptText,
-        to_email: this.user!.userName
-      };
+ 
+   private triggerDownloadPDF(promptText: string, siteName: string) {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20; // שוליים
+    const maxLineWidth = pageWidth - (margin * 2);
 
-      await emailjs.send(
-        'gmail_service',
-        'template_5ypz4em',
-        templateParams,
-        'Jxe0Vhystdvy0tqUk'
-      );
-      this.messageService.add({ severity: 'success', summary: 'Email Sent', detail: 'The prompt has been sent to your email.', life: 3000 });
-    } catch (error) {
-      this.messageService.add({ severity: 'warn', summary: 'Email Failed', detail: 'Prompt downloaded but the email could not be sent.', life: 3000 });
-    }
+    const logoImg = new Image();
+    logoImg.src = 'assets/images/logo.png'; 
+
+    logoImg.onload = () => {
+        
+        // פונקציה להוספת הרקע והסימן מים - נקרא לה בכל עמוד חדש
+        const applyPageTemplate = () => {
+            // רקע סגול כהה (בהתאם לעיצוב של Busy-4u)
+            doc.setFillColor(45, 10, 80);
+            doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+            // הוספת הלוגו כסימן מים בשקיפות נמוכה
+            const imgSize = 100;
+            doc.saveGraphicsState();
+            doc.setGState(new (doc as any).GState({ opacity: 0.07 }));
+            doc.addImage(logoImg, 'PNG', (pageWidth - imgSize) / 2, (pageHeight - imgSize) / 2, imgSize, imgSize);
+            doc.restoreGraphicsState();
+        };
+
+        // --- עמוד 1: עמוד שער ---
+        applyPageTemplate();
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(40);
+        doc.setFont("helvetica", "bold");
+        doc.text(siteName, pageWidth / 2, 80, { align: "center" });
+        doc.setFontSize(20);
+        doc.text("Website Design Prompt", pageWidth / 2, 100, { align: "center" });
+
+        // --- עמוד 2 והלאה: תוכן הפרומפט ---
+        doc.addPage();
+        applyPageTemplate();
+
+        doc.setFontSize(18);
+        doc.text("System Instructions", margin, 30);
+        
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+
+        // פיצול הטקסט לשורות שמתאימות לרוחב הדף
+        const splitLines = doc.splitTextToSize(promptText, maxLineWidth);
+        
+        let cursorY = 50; // מיקום התחלה אנכי
+        const lineHeight = 7; // רווח בין שורות
+
+        splitLines.forEach((line: string) => {
+            // בדיקה האם השורה הבאה תחרוג מהעמוד (משאירים מרווח ביטחון של 20 מהקצה)
+            if (cursorY > pageHeight - 20) {
+                doc.addPage();
+                applyPageTemplate();
+                doc.setTextColor(255, 255, 255); // החזרת צבע לבן לאחר פתיחת עמוד
+                cursorY = 30; // איפוס מיקום אנכי בעמוד החדש
+            }
+            doc.text(line, margin, cursorY);
+            cursorY += lineHeight;
+        });
+
+        doc.save(`${siteName}_Full_Prompt.pdf`);
+    };
+
+    logoImg.onerror = () => {
+        console.error("Logo failed to load");
+        doc.save(`${siteName}_Prompt.pdf`);
+    };
+}
+
+
+
+
+   private async sendEmail(promptText: string, siteName: string) {
+  try {
+    // אלו המשתנים שיכנסו לתוך ה-{{ }} שהגדרת בתבנית
+    const templateParams = {
+      to_email: this.user!.userName,      // מתאים ל-{{to_email}} בשדה הנמען
+      name: siteName,                    // מתאים ל-{{name}} שהגדרת בגוף המייל
+      message: promptText,               // מתאים ל-{{message}} שהגדרת בתוכן ובנושא
+      from_email: this.user!.userName,   // מייל המשתמש
+ // טלפון המשתמש (אם תרצי להוסיף לתבנית)
+    };
+
+    await emailjs.send(
+      'service_jwf0j1g',      // ה-Service ID מהתמונה הראשונה שלך
+      'template_dw51v6n',     // ה-Template ID (שימי לב: ודאי שזה ה-ID של התבנית החדשה ששמרת)
+      templateParams,
+      'aW3nRdKhDr4xwyblv'     // ה-Public Key שלך
+    );
+
+    this.messageService.add({ 
+      severity: 'success', 
+      summary: 'Email Sent', 
+      detail: 'The prompt has been sent to your email.', 
+      life: 3000 
+    });
+  } catch (error) {
+    console.error('EmailJS Error:', error);
+    this.messageService.add({ 
+      severity: 'warn', 
+      summary: 'Email Failed', 
+      detail: 'Prompt downloaded but the email could not be sent.', 
+      life: 3000 
+    });
+  }
   }
 
   downloadPrompt(order: any) {
     const siteName = order.details?.siteName || order.siteName || 'prompt';
-
-    // If prompt already loaded locally, download + email immediately
-    if (order.details?.prompt) {
-      this.triggerDownload(order.details.prompt, siteName);
-      this.sendEmail(order.details.prompt, siteName);
-      return;
-    }
-
     order.isDownloading = true;
 
-    // First fetch details to check if prompt exists on the server
-    this.orderService.fetchOrderDetails(order.orderID).subscribe({
-      next: (details: OrderDetailsModel) => {
-        order.details = details;
-        order.reviewId = (details as any).reviewId ?? (details as any).ReviewId ?? order.reviewId;
-
-        if (details.prompt) {
-          // Prompt already exists — download it
-          order.isDownloading = false;
-          this.triggerDownload(details.prompt, details.siteName || siteName);
-          this.sendEmail(details.prompt, details.siteName || siteName);
+    this.orderService.generatePrompt(order.orderID).subscribe({
+      next: (promptText: string) => {
+        order.isDownloading = false;
+        if (promptText) {
+          if (order.details) order.details.prompt = promptText;
+          this.triggerDownloadPDF(promptText, siteName);
+          this.sendEmail(promptText, siteName);
         } else {
-          // No prompt yet — generate it; server returns the prompt string directly
-          this.orderService.generatePrompt(order.orderID).subscribe({
-            next: (promptText: string) => {
-              order.isDownloading = false;
-              if (promptText) {
-                order.details.prompt = promptText;
-                this.triggerDownload(promptText, details.siteName || siteName);
-                this.sendEmail(promptText, details.siteName || siteName);
-              } else {
-                this.messageService.add({ severity: 'warn', summary: 'Not Available', detail: 'Prompt could not be generated.', life: 3000 });
-              }
-            },
-            error: () => {
-              order.isDownloading = false;
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to generate prompt.', life: 3000 });
-            }
-          });
+          this.messageService.add({ severity: 'warn', summary: 'Not Available', detail: 'Prompt could not be generated.', life: 3000 });
         }
       },
       error: () => {
         order.isDownloading = false;
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load order details.', life: 3000 });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to generate prompt.', life: 3000 });
       }
     });
   }
@@ -259,7 +318,7 @@ export class Orders implements OnInit {
       orderId: this.selectedOrder.orderID,
       score: this.newReview.stars,
       Note: this.newReview.text,
-      reviewImageUrl: this.newReview.image
+      ReviewImg: this.newReview.image ?? undefined
     };
     this.reviewServise.saveOrderReview(
       this.selectedOrder.orderID,

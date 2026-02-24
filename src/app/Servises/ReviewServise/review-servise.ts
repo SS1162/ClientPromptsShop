@@ -53,7 +53,7 @@ export class ReviewServise {
     formData.append('OrderId', review.orderId.toString());
     formData.append('Score', review.score.toString());
     if (review.Note) formData.append('Note', review.Note);
-    if (review.reviewImageUrl) formData.append('ReviewImageUrl', review.reviewImageUrl);
+    if (review.ReviewImg) formData.append('ReviewImg', review.ReviewImg, review.ReviewImg.name);
 
     this.http.post(`${this.BASIC_URL}`, formData).subscribe({
       next: () => {

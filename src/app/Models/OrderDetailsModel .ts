@@ -3,15 +3,14 @@ import { OrderItemModel } from "./OrderItemModel";
 
 export class OrderDetailsModel {
     orderID!: number;
-    userId!: number;
+    userID!: number;
     reviewId?: number;
-    reviewImg?: string;
+    reviewImg?: string | null;
     stars?: number;
-    note?: string;
-    Note?: string;
+    reviewNote?: string;
     siteName!: string;
     siteTypeName?: string;
-    siteTypeDescription?: string;
+    siteTypeDescreption?: string;
     products!: OrderItemModel[];
-    prompt?: string;
+    prompt?: string | null;
 }

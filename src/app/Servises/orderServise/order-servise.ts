@@ -34,7 +34,7 @@ export class OrderServise {
   }
 
   getAllOrders() {
-    this.http.get<FullOrderModel[]>(`${this.BASIC_URL}`).subscribe({
+    this.http.get<FullOrderModel[]>(`${this.BASIC_URL}/admin`).subscribe({
       next: (data) => {
         this.errorSubject.next(null);
         this.ordersSubject.next(data);
@@ -62,6 +62,6 @@ export class OrderServise {
   }
 
   generatePrompt(orderId: number): Observable<string> {
-    return this.http.post<string>(`${this.BASIC_URL}/${orderId}/prompt`, {});
+    return this.http.post(`${this.BASIC_URL}/${orderId}/prompt`, {}, { responseType: 'text' });
   }
 }

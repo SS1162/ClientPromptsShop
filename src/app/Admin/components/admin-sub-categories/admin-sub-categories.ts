@@ -16,6 +16,7 @@ import { UserServise } from '../../../Servises/UserServise/User-servise';
 import { CategoryModel } from '../../../Models/categoryModel';
 import { MainCategoriesModel } from '../../../Models/MainCategoriesModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-admin-sub-categories',
@@ -51,6 +52,7 @@ export class AdminSubCategories implements OnInit {
   loading = true;
   selectedFile: File | null = null;
   imagePreview: string | null = null;
+  IMG_URL = environment.staticFilesUrl;
 
   ngOnInit() {
     this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
