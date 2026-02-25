@@ -88,6 +88,7 @@ export class AdminMainCategories implements OnInit {
     if (this.selectedCategory.mainCategoryName?.trim()) {
       this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Save functionality to be implemented' });
       this.categoryDialog = false;
+      
     }
   }
 

@@ -113,7 +113,7 @@ export class MainCategory {
 
    }
     onPageChange(event: PaginatorState) {
-    this.numberOfPages= this.numberOfPages+1
+    this.numberOfPages= event?.page ? event?.page + 1 : 1;
     if(this.searchTerm ==="")
       this.searchTerm=undefined
  this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize,this.searchTerm).subscribe({

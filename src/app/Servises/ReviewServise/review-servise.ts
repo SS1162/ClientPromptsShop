@@ -22,6 +22,9 @@ export class ReviewServise {
   public reviewSaved$: Observable<void> = this.reviewSavedSubject.asObservable();
 
   getReviews(currentPage:number,limit:number) {
+    if (currentPage === 1) {
+      this.reviewSubject.next(null); // clear stale cache on fresh load
+    }
     const params=new HttpParams()
     .set('currentPage',currentPage).set('limit',limit)
     this.http.get<ReviewModel[]>(this.BASIC_URL, { params }).subscribe({
