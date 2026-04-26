@@ -53,9 +53,9 @@ export class Reviews implements OnInit, AfterViewInit, OnDestroy {
           this.averageScore = this.reviews.length
             ? Math.round((this.reviews.reduce((sum, r) => sum + r.stars, 0) / this.reviews.length) * 10) / 10
             : 0;
+          this.loaded = true;
+          this.isLoadingMore = false;
         }
-        this.loaded = true;
-        this.isLoadingMore = false;
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load reviews', life: 3000 });

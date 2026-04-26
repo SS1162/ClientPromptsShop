@@ -34,4 +34,16 @@ export class MainCategoryServise {
     })
   }
 
+  addMainCategory(mainCategory: { mainCategoryName: string }): Observable<MainCategoriesModel> {
+    return this.http.post<MainCategoriesModel>(`${this.BASIC_URL}/admin`, mainCategory);
+  }
+
+  updateMainCategory(id: number, mainCategory: MainCategoriesModel): Observable<void> {
+    return this.http.put<void>(`${this.BASIC_URL}/admin/${id}`, mainCategory);
+  }
+
+  deleteMainCategory(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.BASIC_URL}/admin/${id}`);
+  }
+
 }

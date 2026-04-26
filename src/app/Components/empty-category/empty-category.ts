@@ -68,7 +68,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
     this.productServise.getProduct(this.catId, page, 50).subscribe({
       next: (resp) => {
         const products = resp.body?.data ?? [];
-        const emptyOne = products.find(p => ((p as any).productsName ?? p.ProductsName) === 'Empty');
+        const emptyOne = products.find(p => ((p as any).productsName ?? p.ProductsName)?.trim() === 'Empty');
         if (emptyOne) {
           this.emptyProductId = (emptyOne as any)?.productsID ?? emptyOne?.ProductsID ?? 0;
         } else if (products.length === 50) {

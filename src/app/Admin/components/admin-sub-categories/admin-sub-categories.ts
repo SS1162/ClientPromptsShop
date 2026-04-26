@@ -139,61 +139,56 @@ export class AdminSubCategories implements OnInit {
 
   async saveSubCategory() {
     this.submitted = true;
-    if (this.selectedSubCategory.categoryName?.trim() && this.selectedSubCategory.mainCategoryID) {
-      try {
-        // TODO: Upload image to server when backend is ready
-        // if (this.selectedFile) {
-        //   const formData = new FormData();
-        //   formData.append('image', this.selectedFile);
-        //   const uploadResponse = await this.subCategoryService.uploadImage(formData);
-        //   this.selectedSubCategory.imageUrl = uploadResponse.imageUrl;
-        // }
+    if (!this.selectedSubCategory.categoryName?.trim() || !this.selectedSubCategory.mainCategoryID) {
+      return;
+    }
 
-        // For now, use the preview as imageUrl (base64)
-        if (this.selectedFile && this.imagePreview) {
-          this.selectedSubCategory.imgUrl = this.imagePreview;
+    const formData = new FormData();
+    formData.append('categoryName', this.selectedSubCategory.categoryName);
+    formData.append('mainCategoryID', this.selectedSubCategory.mainCategoryID.toString());
+    if (this.selectedSubCategory.categoryDescreption) {
+      formData.append('categoryDescreption', this.selectedSubCategory.categoryDescreption);
+    }
+    if (this.selectedFile) {
+      formData.append('imgUrl', this.selectedFile);
+    }
+
+    if (this.selectedSubCategory.categoryID) {
+      this.categoryServise.updateCategory(this.selectedSubCategory.categoryID, formData).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category updated successfully' });
+          this.subCategoryDialog = false;
+          this.mainCategoryServise.getMainCategory();
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update category' });
         }
-
-        // Save sub-category
-        // await this.subCategoryService.saveSubCategory(this.selectedSubCategory);
-        
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Success', 
-          detail: 'Sub-category saved (API integration pending)' 
-        });
-        this.subCategoryDialog = false;
-        this.mainCategoryServise.getMainCategory();
-      } catch (error) {
-        console.error('Save error:', error);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Error', 
-          detail: 'Failed to save sub-category' 
-        });
-      }
+      });
+    } else {
+      this.categoryServise.addCategory(formData).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category created successfully' });
+          this.subCategoryDialog = false;
+          this.mainCategoryServise.getMainCategory();
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create category' });
+        }
+      });
     }
   }
 
   async deleteSubCategory(subCategory: CategoryModel) {
     if (confirm(`Delete ${subCategory.categoryName}?`)) {
-      try {
-        // TODO: Implement delete API call
-        // await this.subCategoryService.deleteSubCategory(subCategory.subCategoryId);
-        
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Success', 
-          detail: 'Sub-category deleted (API integration pending)' 
-        });
-        this.mainCategoryServise.getMainCategory();
-      } catch (error) {
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Error', 
-          detail: 'Failed to delete sub-category' 
-        });
-      }
+      this.categoryServise.deleteCategory(subCategory.categoryID).subscribe({
+        next: () => {
+          this.subCategories = this.subCategories.filter(c => c.categoryID !== subCategory.categoryID);
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category deleted successfully' });
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete category' });
+        }
+      });
     }
   }
 

@@ -14,7 +14,7 @@ export class ProductServise {
 BASIC_URL: string = `${environment.apiUrl}/Products`;
 
 getAllProducts(): Observable<ProductModel[]> {
-  return this.http.get<ProductModel[]>(`${this.BASIC_URL}/all`);
+  return this.http.get<ProductModel[]>(`${this.BASIC_URL}/admin`);
 }
 
 getProduct( categoryID:number,  numOfPages:number,  PageSize:number,  search?:string, minPrice?:number,  MaxPrice?:number, orderByPrice?:boolean, desc?:boolean):Observable<HttpResponse<ResponePageModel<ProductModel>>>{
@@ -37,5 +37,17 @@ params=params.set('orderByPrice',orderByPrice)
 if(desc)
 params=params.set('desc',desc)
 return this.http.get< ResponePageModel<ProductModel>>(this.BASIC_URL,{params:params,observe:'response'})
+}
+
+createProduct(product: ProductModel): Observable<ProductModel> {
+  return this.http.post<ProductModel>(`${this.BASIC_URL}/admin`, product);
+}
+
+updateProduct(id: number, product: ProductModel): Observable<ProductModel> {
+  return this.http.put<ProductModel>(`${this.BASIC_URL}/admin/${id}`, product);
+}
+
+deleteProduct(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.BASIC_URL}/admin/${id}`);
 }
 }

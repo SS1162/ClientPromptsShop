@@ -81,13 +81,52 @@ export class AdminProducts implements OnInit {
 
   saveProduct() {
     this.submitted = true;
-    this.productDialog = false;
-    this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Save functionality to be implemented' });
+    
+    if (!this.selectedProduct.ProductsName) {
+      return;
+    }
+
+    if (this.selectedProduct.ProductsID) {
+      this.productServise.updateProduct(this.selectedProduct.ProductsID, this.selectedProduct).subscribe({
+        next: (data) => {
+          const index = this.products.findIndex(p => p.ProductsID === data.ProductsID);
+          if (index !== -1) {
+            this.products[index] = data;
+          }
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product updated successfully' });
+          this.productDialog = false;
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update product' });
+        }
+      });
+    } else {
+      this.productServise.createProduct(this.selectedProduct).subscribe({
+        next: (data) => {
+          this.products.push(data);
+          this.totalRecords++;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product created successfully' });
+          this.productDialog = false;
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create product' });
+        }
+      });
+    }
   }
 
   deleteProduct(product: ProductModel) {
     if (confirm(`Delete ${product.ProductsName}?`)) {
-      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Delete functionality to be implemented' });
+      this.productServise.deleteProduct(product.ProductsID).subscribe({
+        next: () => {
+          this.products = this.products.filter(p => p.ProductsID !== product.ProductsID);
+          this.totalRecords--;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product deleted successfully' });
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete product' });
+        }
+      });
     }
   }
 }

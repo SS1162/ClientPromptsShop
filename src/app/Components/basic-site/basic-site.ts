@@ -49,8 +49,8 @@ export class BasicSite implements OnInit {
   formData: AddBasicSiteModel = {
     siteName: '',
     userDescreption: undefined,
-    siteTypeID: 0,
-    platformID: 0,
+    siteTypeID: undefined,
+    platformID: 0
   };
 
   platforms: PlatformsModel[] = [];
@@ -304,7 +304,9 @@ export class BasicSite implements OnInit {
           this.prompt!.prompt = (response.body as any).prompt
           this.prompt!.promptId = (response.body as any).promptId
           this.aiData = this.prompt!.prompt;
+          this.formData.userDescreption = this.prompt!.promptId;
           console.log(this.aiData)
+          console.log(this.prompt)
         },
         error: (error) => {
           this.messageService.add({
@@ -354,6 +356,7 @@ export class BasicSite implements OnInit {
     this.geminiServise.deletePrompt(this.prompt!.promptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.prompt = new geminiPromptModel();
+      this.formData.userDescreption = undefined;
       },
       error: (error) => {
         console.log("it not deleted" + this.prompt!.promptId)

@@ -85,15 +85,46 @@ export class AdminMainCategories implements OnInit {
 
   saveCategory() {
     this.submitted = true;
-    if (this.selectedCategory.mainCategoryName?.trim()) {
-      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Save functionality to be implemented' });
-      this.categoryDialog = false;
+    if (!this.selectedCategory.mainCategoryName?.trim()) {
+      return;
+    }
+
+    if (this.selectedCategory.mainCategoryID) {
+      this.mainCategoriesServise.updateMainCategory(this.selectedCategory.mainCategoryID, this.selectedCategory).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Main category updated successfully' });
+          this.categoryDialog = false;
+          this.mainCategoriesServise.getMainCategory();
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update main category' });
+        }
+      });
+    } else {
+      this.mainCategoriesServise.addMainCategory({ mainCategoryName: this.selectedCategory.mainCategoryName }).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Main category created successfully' });
+          this.categoryDialog = false;
+          this.mainCategoriesServise.getMainCategory();
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create main category' });
+        }
+      });
     }
   }
 
   deleteCategory(category: MainCategoriesModel) {
     if (confirm(`Delete ${category.mainCategoryName}?`)) {
-      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Delete functionality to be implemented' });
+      this.mainCategoriesServise.deleteMainCategory(category.mainCategoryID).subscribe({
+        next: () => {
+          this.mainCategories = this.mainCategories.filter(c => c.mainCategoryID !== category.mainCategoryID);
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Main category deleted successfully' });
+        },
+        error: () => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete main category' });
+        }
+      });
     }
   }
 }

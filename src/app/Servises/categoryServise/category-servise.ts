@@ -28,4 +28,16 @@ getCategoryByID(id:number):Observable<HttpResponse<CategoryModel>>{
 return this.http.get<CategoryModel>(`${this.BASIC_URL}/${id}`,{observe:'response'})
 }
 
+addCategory(formData: FormData): Observable<CategoryModel> {
+  return this.http.post<CategoryModel>(`${this.BASIC_URL}/admin`, formData);
+}
+
+updateCategory(id: number, formData: FormData): Observable<void> {
+  return this.http.put<void>(`${this.BASIC_URL}/admin/${id}`, formData);
+}
+
+deleteCategory(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.BASIC_URL}/admin/${id}`);
+}
+
 }

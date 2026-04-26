@@ -7,8 +7,7 @@
         <ng-template #subtitle>
             <div class="text-center text-slate-500 mb-6">Join us by filling out the details below</div>
         </ng-template>
-        {{this.RegisterForm.get('password')?.value}}
-        {{this.RegisterForm.get('verificationPassword')?.value}}
+       
         <form [formGroup]="RegisterForm">
             <div class="form-grid">
                 <p-floatlabel variant="on" class="w-full">

@@ -4,8 +4,9 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { rateLimitInterceptor } from './Interceptors/rate-limit.interceptor';
 
 
 
@@ -15,11 +16,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([rateLimitInterceptor])),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes,withComponentInputBinding()),
-    provideHttpClient(),
+    provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
         providePrimeNG({ 
             theme: {

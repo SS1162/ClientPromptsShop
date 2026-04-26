@@ -1,1 +1,142 @@
-<p>home works!</p>
+<div class="home-wrapper" dir="ltr">
+  
+  <section class="hero">
+    <div class="hero-content">
+      <h1 pAnimateOnScroll enterClass="reveal-up">From Dream to Site in 3 Steps</h1>
+      <p class="greeting" pAnimateOnScroll enterClass="reveal-up">Meet the easiest way to work with AI</p>
+      <div class="underline"></div>
+    </div>
+  </section>
+
+  <section class="about-info">
+    <div class="info-card">
+      
+      <div class="text-block" pAnimateOnScroll enterClass="fade-in">
+        <h2>Build a Website Without Coding: Turn Imagination into Reality with Precise Prompts</h2>
+        <p>
+          Always wanted to start your own website? Today, everyone knows that Artificial Intelligence (AI) can build sites, but there’s one big problem:
+          <strong>How do you explain to the AI exactly what you want?</strong>
+        </p>
+        <p>
+          Many customers trying tools like Firebase or other AI platforms find themselves struggling with "prompts" (instructions) that don't produce the desired results. 
+          <strong>This is where our site comes in to simplify the entire process for you.</strong>
+        </p>
+      </div>
+
+      <div class="content-section" pAnimateOnScroll enterClass="fade-in">
+        <h2>The First Visual Store for Building Your Website</h2>
+        <p>Instead of getting tangled in technical settings you're unfamiliar with, our site allows you to "buy" the ingredients of your website just like in a store:</p>
+
+        <section class="visual-store">
+          <h2 class="section-title" pAnimateOnScroll enterClass="fade-in">How It Works?</h2>
+          
+          <div class="features-grid">
+            <div class="feature-card glass-panel" pAnimateOnScroll enterClass="slide-left" style="--delay: 0.1s">
+              <div class="icon-box bg-violet"><i class="pi pi-tag"></i></div>
+              <span class="step-badge bg-violet">Step 1</span>
+              <h3>Identify Your Vision</h3>
+              <p>Choose your site type (Blog, Store, Portfolio) and set your winning name.</p>
+            </div>
+
+            <div class="feature-card glass-panel" pAnimateOnScroll enterClass="reveal-up" style="--delay: 0.3s">
+              <div class="icon-box bg-fuchsia"><i class="pi pi-pencil"></i></div>
+              <span class="step-badge bg-fuchsia">Step 2</span>
+              <h3>Visual & Functional Specs</h3>
+              <p>Select design, pages, plugins, and advanced features – all in a simple visual interface.</p>
+            </div>
+
+            <div class="feature-card glass-panel" pAnimateOnScroll enterClass="slide-right" style="--delay: 0.5s">
+              <div class="icon-box bg-plum"><i class="pi pi-bolt"></i></div>
+              <span class="step-badge bg-plum">Step 3</span>
+              <h3>Prompt Generator</h3>
+              <p>With one click, the system generates a precise technical prompt ready to copy to any AI.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="content-section" pAnimateOnScroll enterClass="fade-in">
+        <h2>The Magic Behind the Scenes</h2>
+        <p>
+          Once you've finished selecting your components, our smart system (powered by advanced AI) processes all your choices and generates a <strong>Perfect Prompt</strong> for you.
+        </p>
+      </div>
+
+      <div class="content-section">
+        <h2>Why Build Your Prompt with Us?</h2>
+        <ul class="benefits-list">
+          <li pAnimateOnScroll enterClass="slide-right"><i class="pi pi-check-circle"></i> <strong>Massive Time Savings:</strong> No more trial and error with the AI.</li>
+          <li pAnimateOnScroll enterClass="slide-right" style="--delay: 0.2s"><i class="pi pi-check-circle"></i> <strong>Developer Professionalism:</strong> Ensures clean and efficient code.</li>
+          <li pAnimateOnScroll enterClass="slide-right" style="--delay: 0.4s"><i class="pi pi-check-circle"></i> <strong>Full Control:</strong> You are the architect of your site.</li>
+        </ul>
+      </div>
+
+      <div class="cta-box" pAnimateOnScroll enterClass="zoom-in">
+        <p class="highlight-text">The power to build a professional website is now in your hands.</p>
+        <p-button label="Let's do it" icon="pi pi-arrow-right" iconPos="right" styleClass="home-btn" severity="help" [routerLink]="['/basicSite']"></p-button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" pAnimateOnScroll enterClass="reveal-up">
+    <div class="stats-card">
+      <h2>Our Community in Numbers</h2>
+      <div class="chart-container">
+        <p-chart type="pie" [data]="chartData" [options]="chartOptions"></p-chart>
+      </div>
+      <p class="chart-description">Over 2,000 customers have already upgraded their projects.</p>
+    </div>
+  </section>
+
+  <section class="portfolio-section">
+    <div class="section-header" pAnimateOnScroll enterClass="fade-in">
+      <h1 class="section-title">A Glimpse into Dreams Turned Reality</h1>
+      <div class="underline"></div>
+    </div>
+
+    <div class="portfolio-grid">
+      <div class="portfolio-item glass-panel" pAnimateOnScroll enterClass="slide-right" leaveClass="fade-out" style="--delay: 0.1s">
+        <img [src]="BASIC_URL + 'rev_1.png'" alt="Project 1">
+        <div class="overlay"><span>Weather Site</span></div>
+      </div>
+      <div class="portfolio-item glass-panel" pAnimateOnScroll enterClass="reveal-up" leaveClass="fade-out" style="--delay: 0.2s">
+        <img [src]="BASIC_URL + 'rev_2.png'" alt="Project 2">
+        <div class="overlay"><span>News Site</span></div>
+      </div>
+      <div class="portfolio-item glass-panel" pAnimateOnScroll enterClass="slide-left" leaveClass="fade-out" style="--delay: 0.3s">
+        <img [src]="BASIC_URL + 'rev_3.png'" alt="Project 3">
+        <div class="overlay"><span>Personal Portfolio</span></div>
+      </div>
+      <div class="portfolio-item glass-panel" pAnimateOnScroll enterClass="zoom-in" leaveClass="fade-out" style="--delay: 0.4s">
+        <img [src]="BASIC_URL + 'rev_4.png'" alt="Project 4">
+        <div class="overlay"><span>Tech Blog</span></div>
+      </div>
+      <div class="portfolio-item glass-panel" pAnimateOnScroll enterClass="slide-top" leaveClass="fade-out" style="--delay: 0.5s">
+        <img [src]="BASIC_URL + 'rev_5.png'" alt="Project 5">
+        <div class="overlay"><span>Business Landing Page</span></div>
+      </div>
+      <div class="portfolio-item glass-panel" pAnimateOnScroll enterClass="spin-in" leaveClass="fade-out" style="--delay: 0.6s">
+        <img [src]="BASIC_URL + 'rev_6.png'" alt="Project 6">
+        <div class="overlay"><span>Admin Dashboard</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section" pAnimateOnScroll enterClass="fade-in">
+    <div class="section-header">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="underline"></div>
+    </div>
+    
+    <div class="faq-container">
+      <p-accordion value="0">
+        <p-accordion-panel value="0">
+          <p-accordion-header>Do I need prior knowledge?</p-accordion-header>
+          <p-accordion-content>
+            <p>No, the system was specifically designed for people without a technical background who want to leverage the power of AI.</p>
+          </p-accordion-content>
+        </p-accordion-panel>
+      </p-accordion>
+    </div>
+  </section>
+</div>
