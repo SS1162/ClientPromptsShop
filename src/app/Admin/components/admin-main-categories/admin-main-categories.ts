@@ -85,6 +85,7 @@ export class AdminMainCategories implements OnInit {
 
   saveCategory() {
     this.submitted = true;
+<<<<<<< HEAD
     if (!this.selectedCategory.mainCategoryName?.trim()) {
       return;
     }
@@ -111,6 +112,12 @@ export class AdminMainCategories implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create main category' });
         }
       });
+=======
+    if (this.selectedCategory.mainCategoryName?.trim()) {
+      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Save functionality to be implemented' });
+      this.categoryDialog = false;
+      
+>>>>>>> 337b76aea4d0e26ab893c1a8dad5b7dee7927501
     }
   }
 
