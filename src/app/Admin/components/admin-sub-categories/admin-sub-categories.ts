@@ -10,10 +10,10 @@ import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
-import { CategoryServise } from '../../../Servises/categoryServise/category-servise';
-import { MainCategoryServise } from '../../../Servises/MainCategoriesServise/main-category';
-import { UserServise } from '../../../Servises/UserServise/User-servise';
-import { CategoryModel } from '../../../Models/categoryModel';
+import { CategoryService } from '../../../Services/category/category.service';
+import { MainCategoryService } from '../../../Services/main-category/main-category.service';
+import { UserService } from '../../../Services/user/user.service';
+import { CategoryModel } from '../../../Models/CategoryModel';
 import { MainCategoriesModel } from '../../../Models/MainCategoriesModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../../environments/environment';
@@ -37,9 +37,9 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './admin-sub-categories.scss',
 })
 export class AdminSubCategories implements OnInit {
-  private categoryServise: CategoryServise = inject(CategoryServise);
-  private mainCategoryServise: MainCategoryServise = inject(MainCategoryServise);
-  private userServise: UserServise = inject(UserServise);
+  private categoryService: CategoryService = inject(CategoryService);
+  private mainCategoryService: MainCategoryService = inject(MainCategoryService);
+  private userService: UserService = inject(UserService);
   private router = inject(Router);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
@@ -55,7 +55,7 @@ export class AdminSubCategories implements OnInit {
   IMG_URL = environment.staticFilesUrl;
 
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (user) => {
         if (!user) {
           this.router.navigate(['/login']);
@@ -63,7 +63,7 @@ export class AdminSubCategories implements OnInit {
       }
     });
 
-    this.mainCategoryServise.mainCategories$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.mainCategoryService.mainCategories$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.mainCategories = data;
@@ -71,7 +71,7 @@ export class AdminSubCategories implements OnInit {
           let pending = data.length;
           if (pending === 0) { this.loading = false; return; }
           data.forEach(mc => {
-            this.categoryServise.getcategory(1, mc.mainCategoryID, 100).subscribe({
+            this.categoryService.getcategory(1, mc.mainCategoryID, 100).subscribe({
               next: (response) => {
                 if (response.body?.data) {
                   this.subCategories = [...this.subCategories, ...response.body.data];
@@ -93,7 +93,7 @@ export class AdminSubCategories implements OnInit {
       }
     });
 
-    this.mainCategoryServise.getMainCategory();
+    this.mainCategoryService.getMainCategory();
   }
 
   openNew() {
@@ -154,22 +154,22 @@ export class AdminSubCategories implements OnInit {
     }
 
     if (this.selectedSubCategory.categoryID) {
-      this.categoryServise.updateCategory(this.selectedSubCategory.categoryID, formData).subscribe({
+      this.categoryService.updateCategory(this.selectedSubCategory.categoryID, formData).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category updated successfully' });
           this.subCategoryDialog = false;
-          this.mainCategoryServise.getMainCategory();
+          this.mainCategoryService.getMainCategory();
         },
         error: () => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update category' });
         }
       });
     } else {
-      this.categoryServise.addCategory(formData).subscribe({
+      this.categoryService.addCategory(formData).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category created successfully' });
           this.subCategoryDialog = false;
-          this.mainCategoryServise.getMainCategory();
+          this.mainCategoryService.getMainCategory();
         },
         error: () => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create category' });
@@ -180,7 +180,7 @@ export class AdminSubCategories implements OnInit {
 
   async deleteSubCategory(subCategory: CategoryModel) {
     if (confirm(`Delete ${subCategory.categoryName}?`)) {
-      this.categoryServise.deleteCategory(subCategory.categoryID).subscribe({
+      this.categoryService.deleteCategory(subCategory.categoryID).subscribe({
         next: () => {
           this.subCategories = this.subCategories.filter(c => c.categoryID !== subCategory.categoryID);
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Category deleted successfully' });

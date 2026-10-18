@@ -7,20 +7,20 @@ import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { MessageService } from 'primeng/api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PlatformServise } from '../../Servises/PlatformServise/platform-servise';
-import { SiteTypeService } from '../../Servises/SiteTypeService/site-type.service';
-import { BasicSiteService } from '../../Servises/BasicSiteServise/basic-site.service';
+import { PlatformService } from '../../Services/platform/platform.service';
+import { SiteTypeService } from '../../Services/site-type/site-type.service';
+import { BasicSiteService } from '../../Services/basic-site/basic-site.service';
 import { AddBasicSiteModel } from '../../Models/AddBasicSiteModel';
 import { PlatformsModel } from '../../Models/PlatformsModel';
 import { SiteTypeModel } from '../../Models/SiteTypeModel';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { UserService } from '../../Services/user/user.service';
 import { UserModel } from '../../Models/UserModel';
 import { Router } from '@angular/router';
 import { UpdateUserModel } from '../../Models/UpdateUserModel';
 import { UpdateBasicSiteModel } from '../../Models/UpdateBasicSiteModel';
 import { SelectModule } from 'primeng/select';
-import { GeminiServise } from '../../Servises/geminiServise/gemini-servise';
-import { geminiPromptModel } from '../../Models/geminiPromptModel';
+import { GeminiService } from '../../Services/gemini/gemini.service';
+import { GeminiPromptModel } from '../../Models/GeminiPromptModel';
 
 @Component({
   selector: 'app-basic-site',
@@ -39,12 +39,12 @@ import { geminiPromptModel } from '../../Models/geminiPromptModel';
   providers: [MessageService],
 })
 export class BasicSite implements OnInit {
-  private platformService = inject(PlatformServise);
+  private platformService = inject(PlatformService);
   private siteTypeService = inject(SiteTypeService);
   private basicSiteService = inject(BasicSiteService);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
-  private userService = inject(UserServise);
+  private userService = inject(UserService);
   private router = inject(Router)
   formData: AddBasicSiteModel = {
     siteName: '',
@@ -90,7 +90,7 @@ export class BasicSite implements OnInit {
 
         if (data?.geminiPromptId) {
           this.formData.userDescreption = data.geminiPromptId;
-          this.geminiServise.getPrompt(data.geminiPromptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+          this.geminiService.getPrompt(data.geminiPromptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
             next: (response) => {
               this.prompt!.promptId = (response.body as any).promptId;
               this.prompt!.prompt = (response.body as any).prompt;
@@ -151,7 +151,7 @@ export class BasicSite implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
+          console.error(err);
         }
       });
 
@@ -170,7 +170,7 @@ export class BasicSite implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
+          console.error(err);
         }
       });
 
@@ -196,7 +196,7 @@ export class BasicSite implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-    if (!this.formData.siteName || !this.formData.platformID || (!this.formData.siteTypeID && !this.aiData && this.aiData.trim() === "")) {
+    if (!this.formData.siteName || !this.formData.platformID || (!this.formData.siteTypeID && !this.aiData.trim())) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
@@ -288,25 +288,23 @@ export class BasicSite implements OnInit {
 
   aiData: string = '';
   isSubmitted: boolean = false;
-  prompt: geminiPromptModel | null = new geminiPromptModel();
-  geminiServise: GeminiServise = inject(GeminiServise)
+  prompt: GeminiPromptModel | null = new GeminiPromptModel();
+  geminiService: GeminiService = inject(GeminiService)
   private cdr = inject(ChangeDetectorRef);
 
   handleAiSubmit() {
-      if (!this.user) {
-      this.router.navigate(['/login'])
+    if (!this.user) {
+      this.router.navigate(['/login']);
+      return;
     }
     if (this.aiData && this.aiData.trim() !== '') {
       this.isSubmitted = true;
-      this.geminiServise.AddBasicSitePrompt(this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      this.geminiService.AddBasicSitePrompt(this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          console.log('AI Response:', response.body);
           this.prompt!.prompt = (response.body as any).prompt
           this.prompt!.promptId = (response.body as any).promptId
           this.aiData = this.prompt!.prompt;
           this.formData.userDescreption = this.prompt!.promptId;
-          console.log(this.aiData)
-          console.log(this.prompt)
         },
         error: (error) => {
           this.messageService.add({
@@ -321,9 +319,8 @@ export class BasicSite implements OnInit {
     }
   }
   handleEdit() {
-    this.geminiServise.updateBasicSitePrompt(this.prompt!.promptId, this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.geminiService.updateBasicSitePrompt(this.prompt!.promptId, this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
-        console.log('AI Response:', response.body);
         if (this.prompt!.prompt === response.body!.prompt) {
           this.messageService.add({
             severity: 'error',
@@ -353,13 +350,13 @@ export class BasicSite implements OnInit {
   handleDelete() {
     this.isSubmitted = false;
     this.aiData = '';
-    this.geminiServise.deletePrompt(this.prompt!.promptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.geminiService.deletePrompt(this.prompt!.promptId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.prompt = new geminiPromptModel();
+        this.prompt = new GeminiPromptModel();
       this.formData.userDescreption = undefined;
       },
       error: (error) => {
-        console.log("it not deleted" + this.prompt!.promptId)
+        console.error('Failed to delete prompt', error);
       }
     });
   }

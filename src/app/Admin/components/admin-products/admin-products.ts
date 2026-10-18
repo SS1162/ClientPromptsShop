@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { ProductModel } from '../../../Models/ProductModel';
-import { ProductServise } from '../../../Servises/ProductServise/product-servise';
+import { ProductService } from '../../../Services/product/product.service';
 import { environment } from '../../../../environments/environment';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -45,12 +45,12 @@ export class AdminProducts implements OnInit {
   loading: boolean = true;
   totalRecords: number = 0;
 
-  private productServise = inject(ProductServise);
+  private productService = inject(ProductService);
   private messageService = inject(MessageService);
 
   ngOnInit() {
     this.loading = true;
-    this.productServise.getAllProducts().subscribe({
+    this.productService.getAllProducts().subscribe({
       next: (data) => {
         this.products = data;
         this.totalRecords = data.length;
@@ -87,7 +87,7 @@ export class AdminProducts implements OnInit {
     }
 
     if (this.selectedProduct.ProductsID) {
-      this.productServise.updateProduct(this.selectedProduct.ProductsID, this.selectedProduct).subscribe({
+      this.productService.updateProduct(this.selectedProduct.ProductsID, this.selectedProduct).subscribe({
         next: (data) => {
           const index = this.products.findIndex(p => p.ProductsID === data.ProductsID);
           if (index !== -1) {
@@ -101,7 +101,7 @@ export class AdminProducts implements OnInit {
         }
       });
     } else {
-      this.productServise.createProduct(this.selectedProduct).subscribe({
+      this.productService.createProduct(this.selectedProduct).subscribe({
         next: (data) => {
           this.products.push(data);
           this.totalRecords++;
@@ -117,7 +117,7 @@ export class AdminProducts implements OnInit {
 
   deleteProduct(product: ProductModel) {
     if (confirm(`Delete ${product.ProductsName}?`)) {
-      this.productServise.deleteProduct(product.ProductsID).subscribe({
+      this.productService.deleteProduct(product.ProductsID).subscribe({
         next: () => {
           this.products = this.products.filter(p => p.ProductsID !== product.ProductsID);
           this.totalRecords--;

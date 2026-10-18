@@ -9,17 +9,17 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
 import { Route, Router, RouterLink } from "@angular/router";
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { UserService } from '../../Services/user/user.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
-import { CartServise, SessionCartItem } from '../../Servises/cartServise/cart-servise';
+import { CartService, SessionCartItem } from '../../Services/cart/cart.service';
 import { CartItemModel } from '../../Models/CartItemModel';
 import { CardModule } from 'primeng/card';
 import { UserModel } from '../../Models/UserModel';
 import { BasicSiteModel } from '../../Models/BasicSiteModel';
-import { BasicSiteService } from '../../Servises/BasicSiteServise/basic-site.service';
-import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
+import { BasicSiteService } from '../../Services/basic-site/basic-site.service';
+import { CurrencyService } from '../../Services/currency/currency.service';
 import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-full-screen-cart',
@@ -37,8 +37,8 @@ export class FullScreenCart implements OnInit {
   sessionItems: SessionCartItem[] = []
   isGuest: boolean = false
   displayReviewDialog: boolean = false;
-  cartServise: CartServise = inject(CartServise)
-  userServise: UserServise = inject(UserServise)
+  cartService: CartService = inject(CartService)
+  userService: UserService = inject(UserService)
   private messageService = inject(MessageService);
   router: Router = inject(Router)
   userID!: number | null
@@ -48,34 +48,34 @@ export class FullScreenCart implements OnInit {
   totalPrice: number = 0  
   sessionTotal: number = 0
   basicSite?: BasicSiteModel
-  basicSiteServise: BasicSiteService = inject(BasicSiteService)
-  currencyServise: CurrencyServise = inject(CurrencyServise)
+  basicSiteService: BasicSiteService = inject(BasicSiteService)
+  currencyService: CurrencyService = inject(CurrencyService)
   currencyCode: string = 'USD';
   currencyRate: number = 1;
   BASIC_IMG = environment.staticFilesUrl;
   private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+    this.currencyService.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
       this.currencyCode = c.code;
     });
 
-    this.currencyServise.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
+    this.currencyService.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
       this.currencyRate = r;
     });
 
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.error = ""
         if (data !== null) {
           this.isGuest = false
           this.userID = data.userID
-          this.cartServise.getUserCart(this.userID)
+          this.cartService.getUserCart(this.userID)
           this.user = data
 
           if (this.user.basicID) {
-            this.basicSiteServise.getBasicSites(this.user.basicID)
-            this.basicSiteServise.basicSites$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+            this.basicSiteService.getBasicSites(this.user.basicID)
+            this.basicSiteService.basicSites$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
               next: (siteData) => { if (siteData) { this.basicSite = siteData } },
               error: () => { this.error = "Failed to load site data"; this.showError() }
             })
@@ -91,7 +91,7 @@ export class FullScreenCart implements OnInit {
       }
     })
 
-    this.cartServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.cartService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
         if (err !== null) {
           this.error = "An error occurred while trying to load the product. Please try again later"
@@ -104,7 +104,7 @@ export class FullScreenCart implements OnInit {
       }
     })
 
-    this.cartServise.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.cartService.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.error = ""
         if (data === null) {
@@ -121,7 +121,7 @@ export class FullScreenCart implements OnInit {
       }
     })
 
-    this.cartServise.sessionCart$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(items => {
+    this.cartService.sessionCart$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(items => {
       this.sessionItems = items
       this.sessionTotal = items.reduce((sum, i) => sum + i.price, 0)
     })
@@ -136,18 +136,18 @@ export class FullScreenCart implements OnInit {
   }
 
 changeProductToValid(cartId:number){
-  this.cartServise.changeProductToValid(cartId,this.user.userID)
+  this.cartService.changeProductToValid(cartId,this.user.userID)
 }
 changeProductToInValid(cartId:number){
-  this.cartServise.changeProductToInValid(cartId,this.user.userID)
+  this.cartService.changeProductToInValid(cartId,this.user.userID)
 }
   
 removeProduct(cartId:number){
-  this.cartServise.removeCartItem(cartId,this.user.userID)
+  this.cartService.removeCartItem(cartId,this.user.userID)
 }
 
 removeSessionItem(index: number) {
-  this.cartServise.removeSessionItem(index)
+  this.cartService.removeSessionItem(index)
 }
 
 goToLogin() {

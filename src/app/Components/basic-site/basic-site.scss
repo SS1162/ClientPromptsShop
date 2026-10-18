@@ -208,10 +208,10 @@ $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
 
 
 ::ng-deep {
-  /* עבור הגרסאות החדשות */
+  /* for newer PrimeNG versions */
   .p-select-option:hover {
-      background: #a85ed3 !important; /* צבע הרקע במעבר עכבר */
-      color: #ffffff !important;      /* צבע הטקסט במעבר עכבר */
+      background: #a85ed3 !important; /* hover background */
+      color: #ffffff !important;      /* hover text color */
   }
 
   /* Platform search filter input - override green with purple */
@@ -238,18 +238,18 @@ $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
 
 .ai-input-row {
   display: flex;
-  align-items: flex-end; /* מבטיח שהכפתורים יהיו בגובה ה-input */
+  align-items: flex-end; /* keeps the buttons aligned with the input */
   gap: 1rem;
   width: 100%;
 
   .input-container {
-    flex: 1; /* ה-input יתפוס את כל המקום הפנוי */
+    flex: 1; /* input takes the remaining space */
   }
 
   .buttons-container {
     display: flex;
     align-items: center;
-    height: 52px; /* תואם לגובה שהגדרנו ל-input */
+    height: 52px; /* matches the input height */
 
     .action-group {
       display: flex;
@@ -257,23 +257,23 @@ $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
     }
   }
 }
- /* עיצוב הכפתור במצב רגיל */
+ /* Button default state */
 :host ::ng-deep .update-btn-custom.p-button.p-button-outlined {
-    border: 2px solid $primary-purple !important; /* צבע מסגרת סגול-כחול */
+    border: 2px solid $primary-purple !important; /* purple-blue border */
     background-color: transparent !important;
-    color: $primary-purple !important; /* צבע טקסט ואייקון */
+    color: $primary-purple !important; /* text and icon color */
 }
 
-/* עיצוב במעבר עכבר (Hover) */
+/* Hover state */
 :host ::ng-deep .update-btn-custom.p-button.p-button-outlined:hover {
      background: $grad !important;
-    color: #ffffff !important; /* טקסט הופך ללבן */
+    color: #ffffff !important; /* white text */
     // border-color: #6366f1 !important;
 }
 
-/* עיצוב האייקון בתוך הכפתור */
+/* Icon inside the button */
 :host ::ng-deep .update-btn-custom .p-button-icon {
-    color: inherit; /* יירש את הצבע מהכפתור (סגול ברגיל, לבן ב-hover) */
+    color: inherit; /* inherits the button color (purple, white on hover) */
 }
 
 

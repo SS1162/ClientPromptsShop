@@ -13,14 +13,13 @@ import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { OrderServise } from '../../Servises/orderServise/order-servise';
-import { ReviewServise } from '../../Servises/ReviewServise/review-servise';
-import { UserServise } from '../../Servises/UserServise/User-servise';
-import { OrderDetailsModel } from '../../Models/OrderDetailsModel ';
+import { OrderService } from '../../Services/order/order.service';
+import { ReviewService } from '../../Services/review/review.service';
+import { UserService } from '../../Services/user/user.service';
+import { OrderDetailsModel } from '../../Models/OrderDetailsModel';
 import { AddReviewModel } from '../../Models/AddReviewModel';
 import { environment } from '../../../environments/environment';
 import { UserModel } from '../../Models/UserModel';
-import { jsPDF } from "jspdf";
 @Component({
   selector: 'app-orders',
   imports: [
@@ -32,9 +31,9 @@ import { jsPDF } from "jspdf";
   styleUrl: './orders.scss',
 })
 export class Orders implements OnInit {
-  private orderService: OrderServise = inject(OrderServise);
-  private reviewServise: ReviewServise = inject(ReviewServise);
-  private userServise: UserServise = inject(UserServise);
+  private orderService: OrderService = inject(OrderService);
+  private reviewService: ReviewService = inject(ReviewService);
+  private userService: UserService = inject(UserService);
   private messageService: MessageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
 
@@ -47,7 +46,7 @@ export class Orders implements OnInit {
   newReview: { stars: number; text: string; image: File | null } = { stars: 5, text: '', image: null };
 
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.user = data;
@@ -89,7 +88,7 @@ export class Orders implements OnInit {
       }
     });
 
-    this.reviewServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.reviewService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
         if (err) {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to save review.', life: 3000 });
@@ -97,7 +96,7 @@ export class Orders implements OnInit {
       }
     });
 
-    this.reviewServise.reviewSaved$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.reviewService.reviewSaved$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.displayReviewDialog = false;
         this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Review saved successfully', life: 3000 });
@@ -180,11 +179,13 @@ export class Orders implements OnInit {
   }
 
  
-   private triggerDownloadPDF(promptText: string, siteName: string) {
+  private async triggerDownloadPDF(promptText: string, siteName: string) {
+    // Loaded on demand so jsPDF stays out of the initial bundle.
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 20; // שוליים
+    const margin = 20; // page margin
     const maxLineWidth = pageWidth - (margin * 2);
 
     const logoImg = new Image();
@@ -192,13 +193,13 @@ export class Orders implements OnInit {
 
     logoImg.onload = () => {
         
-        // פונקציה להוספת הרקע והסימן מים - נקרא לה בכל עמוד חדש
+        // Draws the background and watermark - called for every new page
         const applyPageTemplate = () => {
-            // רקע סגול כהה (בהתאם לעיצוב של Busy-4u)
+            // Dark purple background (matches the Busy-4u branding)
             doc.setFillColor(45, 10, 80);
             doc.rect(0, 0, pageWidth, pageHeight, 'F');
 
-            // הוספת הלוגו כסימן מים בשקיפות נמוכה
+            // Logo as a low-opacity watermark
             const imgSize = 100;
             doc.saveGraphicsState();
             doc.setGState(new (doc as any).GState({ opacity: 0.07 }));
@@ -206,7 +207,7 @@ export class Orders implements OnInit {
             doc.restoreGraphicsState();
         };
 
-        // --- עמוד 1: עמוד שער ---
+        // --- Page 1: cover page ---
         applyPageTemplate();
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(40);
@@ -215,7 +216,7 @@ export class Orders implements OnInit {
         doc.setFontSize(20);
         doc.text("Website Design Prompt", pageWidth / 2, 100, { align: "center" });
 
-        // --- עמוד 2 והלאה: תוכן הפרומפט ---
+        // --- Page 2 onward: prompt content ---
         doc.addPage();
         applyPageTemplate();
 
@@ -225,19 +226,19 @@ export class Orders implements OnInit {
         doc.setFontSize(12);
         doc.setFont("helvetica", "normal");
 
-        // פיצול הטקסט לשורות שמתאימות לרוחב הדף
+        // Split the text into lines that fit the page width
         const splitLines = doc.splitTextToSize(promptText, maxLineWidth);
         
-        let cursorY = 50; // מיקום התחלה אנכי
-        const lineHeight = 7; // רווח בין שורות
+        let cursorY = 50; // vertical start position
+        const lineHeight = 7; // line spacing
 
         splitLines.forEach((line: string) => {
-            // בדיקה האם השורה הבאה תחרוג מהעמוד (משאירים מרווח ביטחון של 20 מהקצה)
+            // Start a new page if the next line would overflow (keeps a 20pt bottom margin)
             if (cursorY > pageHeight - 20) {
                 doc.addPage();
                 applyPageTemplate();
-                doc.setTextColor(255, 255, 255); // החזרת צבע לבן לאחר פתיחת עמוד
-                cursorY = 30; // איפוס מיקום אנכי בעמוד החדש
+                doc.setTextColor(255, 255, 255); // restore white text after adding a page
+                cursorY = 30; // reset vertical position on the new page
             }
             doc.text(line, margin, cursorY);
             cursorY += lineHeight;
@@ -257,21 +258,16 @@ export class Orders implements OnInit {
 
    private async sendEmail(promptText: string, siteName: string) {
   try {
-    // אלו המשתנים שיכנסו לתוך ה-{{ }} שהגדרת בתבנית
+    // Values for the {{ }} placeholders in the EmailJS template
     const templateParams = {
-      to_email: this.user!.userName,      // מתאים ל-{{to_email}} בשדה הנמען
-      name: siteName,                    // מתאים ל-{{name}} שהגדרת בגוף המייל
-      message: promptText,               // מתאים ל-{{message}} שהגדרת בתוכן ובנושא
-      from_email: this.user!.userName,   // מייל המשתמש
- // טלפון המשתמש (אם תרצי להוסיף לתבנית)
+      to_email: this.user!.userName,      // {{to_email}} - recipient
+      name: siteName,                    // {{name}} - used in the email body
+      message: promptText,               // {{message}} - used in the body and subject
+      from_email: this.user!.userName,   // user's email
     };
 
-    await emailjs.send(
-      'service_jwf0j1g',      // ה-Service ID מהתמונה הראשונה שלך
-      'template_dw51v6n',     // ה-Template ID (שימי לב: ודאי שזה ה-ID של התבנית החדשה ששמרת)
-      templateParams,
-      'aW3nRdKhDr4xwyblv'     // ה-Public Key שלך
-    );
+    const { serviceId, templateId, publicKey } = environment.emailJs.orders;
+    await emailjs.send(serviceId, templateId, templateParams, publicKey);
 
     this.messageService.add({ 
       severity: 'success', 
@@ -320,7 +316,7 @@ export class Orders implements OnInit {
       Note: this.newReview.text,
       ReviewImg: this.newReview.image ?? undefined
     };
-    this.reviewServise.saveOrderReview(
+    this.reviewService.saveOrderReview(
       this.selectedOrder.orderID,
       reviewData,
       () => this.orderService.getUserOrders(this.user.userID)

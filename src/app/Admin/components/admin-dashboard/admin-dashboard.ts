@@ -2,10 +2,10 @@ import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { UserServise } from '../../../Servises/UserServise/User-servise';
-import { OrderServise } from '../../../Servises/orderServise/order-servise';
+import { UserService } from '../../../Services/user/user.service';
+import { OrderService } from '../../../Services/order/order.service';
 import { UserModel } from '../../../Models/UserModel';
-import { FullOrderModel } from '../../../Models/FullOrderModet';
+import { FullOrderModel } from '../../../Models/FullOrderModel';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -15,8 +15,8 @@ import { FullOrderModel } from '../../../Models/FullOrderModet';
   styleUrls: ['./admin-dashboard.scss']
 })
 export class AdminDashboard implements OnInit {
-  private userServise: UserServise = inject(UserServise);
-  private orderServise: OrderServise = inject(OrderServise);
+  private userService: UserService = inject(UserService);
+  private orderService: OrderService = inject(OrderService);
   private router: Router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
@@ -26,18 +26,18 @@ export class AdminDashboard implements OnInit {
   public recentOrders = signal<any[]>([]);
 
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (user) => {
         if (!user) {
           this.router.navigate(['/login']);
           return;
         }
         this.user = user;
-        this.orderServise.getAllOrders();
+        this.orderService.getAllOrders();
       }
     });
 
-    this.orderServise.orders$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.orderService.orders$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (orders) => {
         if (!orders) return;
         this.buildStats(orders);
@@ -46,7 +46,7 @@ export class AdminDashboard implements OnInit {
       }
     });
 
-    this.orderServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.orderService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
         if (err) {
           console.error('Error loading dashboard data:', err);

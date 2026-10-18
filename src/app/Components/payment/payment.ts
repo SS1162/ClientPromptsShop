@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule, CurrencyPipe } from '@angular/common';
@@ -8,15 +8,17 @@ import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { MessageService } from 'primeng/api';
-import { CartServise } from '../../Servises/cartServise/cart-servise';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { CartService } from '../../Services/cart/cart.service';
+import { UserService } from '../../Services/user/user.service';
 import { CartItemModel } from '../../Models/CartItemModel';
 import { UserModel } from '../../Models/UserModel';
-import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
+import { CurrencyService } from '../../Services/currency/currency.service';
 import { environment } from '../../../environments/environment';
-import { PaymentServise } from '../../Servises/paymentServise/payment-servise';
+import { PaymentService } from '../../Services/payment/payment.service';
 
 declare var paypal: any;
+
+const PAYPAL_SCRIPT_ID = 'paypal-sdk';
 
 @Component({
   selector: 'app-payment',
@@ -36,30 +38,32 @@ export class Payment implements OnInit {
   currencyCode: string = 'USD';
   currencyRate: number = 1;
   staticFilesUrl = environment.staticFilesUrl;
+  /** Currency the PayPal SDK is currently loaded with (null = not loaded). */
+  private paypalCurrency: string | null = null;
 
-  private cartServise = inject(CartServise);
-  private userServise = inject(UserServise);
+  private cartService = inject(CartService);
+  private userService = inject(UserService);
   private messageService = inject(MessageService);
   private router = inject(Router);
-  private currencyServise = inject(CurrencyServise);
+  private currencyService = inject(CurrencyService);
   private destroyRef = inject(DestroyRef);
-  private paymentServise = inject(PaymentServise);
+  private paymentService = inject(PaymentService);
 
   ngOnInit() {
-    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
-    this.currencyCode = c.code;
-      // אם הכפתור כבר קיים, נצטרך לרנדר אותו מחדש בשינוי מטבע (אופציונלי)
+    this.currencyService.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+      this.currencyCode = c.code;
+      this.ensurePayPalButtons();
     });
 
-    this.currencyServise.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
+    this.currencyService.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
       this.currencyRate = r;
     });
 
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data !== null) {
           this.user = data;
-          this.cartServise.getUserCart(data.userID);
+          this.cartService.getUserCart(data.userID);
         } else {
           this.router.navigate(['/login']);
         }
@@ -69,17 +73,13 @@ export class Payment implements OnInit {
       }
     });
 
-    this.cartServise.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.cartService.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.cartItems = data;
           this.validItems = data.filter(i => !!i.valid);
           this.totalPrice = this.validItems.reduce((sum, i) => sum + i.price, 0);
-          
-          // ברגע שיש לנו מחיר ופריטים, נטען את פייפאל
-          if (this.totalPrice > 0 && !this.isProcessing) {
-            this.loadPayPalScript();
-          }
+          this.ensurePayPalButtons();
         }
         this.loaded = true;
       },
@@ -90,13 +90,29 @@ export class Payment implements OnInit {
     });
   }
 
-  // טעינה דינמית של הסקריפט כדי להשתמש ב-Client ID מה-environment
-  private loadPayPalScript() {
+  /**
+   * Loads the PayPal SDK once per currency. The SDK URL is bound to a currency,
+   * so it is reloaded only when the selected currency changes; cart updates reuse
+   * the rendered buttons (they read the current cart when clicked).
+   */
+  private ensurePayPalButtons() {
+    if (this.totalPrice <= 0 || this.paypalCurrency === this.currencyCode) return;
+    this.paypalCurrency = this.currencyCode;
     this.isProcessing = true;
+
+    document.getElementById(PAYPAL_SCRIPT_ID)?.remove();
+    delete (window as any).paypal;
+    const container = document.getElementById('paypal-button-container');
+    if (container) container.innerHTML = '';
+
     const script = document.createElement('script');
+    script.id = PAYPAL_SCRIPT_ID;
     script.src = `https://www.paypal.com/sdk/js?client-id=${environment.paypalClientId}&currency=${this.currencyCode}`;
-    script.onload = () => {
-      this.renderPayPalButtons();
+    script.onload = () => this.renderPayPalButtons();
+    script.onerror = () => {
+      this.isProcessing = false;
+      this.paypalCurrency = null;
+      this.messageService.add({ severity: 'error', summary: 'PayPal Error', detail: 'Could not load PayPal. Please try again.' });
     };
     document.head.appendChild(script);
   }
@@ -117,7 +133,7 @@ export class Payment implements OnInit {
           platformsID: i.platformID,
           userDescription: i.userDescreptionID ?? null
         }));
-        return firstValueFrom(this.paymentServise.createOrder(finalAmount, this.currencyCode, products))
+        return firstValueFrom(this.paymentService.createOrder(finalAmount, this.currencyCode, products))
           .then(res => res.id);
       },
       onApprove: (data: any) => {
@@ -134,7 +150,7 @@ export class Payment implements OnInit {
           }))
         };
 
-        this.paymentServise.captureOrder(data.orderID, orderPayload).subscribe({
+        this.paymentService.captureOrder(data.orderID, orderPayload).subscribe({
           next: (createdOrder) => {
             this.messageService.add({
               severity: 'success',

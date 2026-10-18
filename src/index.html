@@ -1,23 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<meta name="google-signin-client_id" content="80499258556-ammd46estcfl1e50i9ee7hs61v1vqe0k.apps.googleusercontent.com">
-<script>
-    // פונקציה גלובלית פשוטה שגוגל תזהה
-    function handleCredentialResponse(response) {
-      // שליחת האירוע לאנגולר (הקומפוננטה תאזין לזה)
-      const event = new CustomEvent('google-login-success', { detail: response });
-      window.dispatchEvent(event);
-    }
-  </script>
-
   <meta charset="utf-8">
-  <title>Client</title>
+  <title>PromptStore</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image" href="assets/images/logo.png">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <app-root></app-root>

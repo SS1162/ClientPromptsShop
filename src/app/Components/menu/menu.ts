@@ -7,17 +7,17 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
 import { MainCategoriesModel } from '../../Models/MainCategoriesModel';
-import { MainCategoryServise } from '../../Servises/MainCategoriesServise/main-category';
+import { MainCategoryService } from '../../Services/main-category/main-category.service';
 import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
-import { UserServise } from '../../Servises/UserServise/User-servise';
-import { CartServise } from '../../Servises/cartServise/cart-servise';
+import { UserService } from '../../Services/user/user.service';
+import { CartService } from '../../Services/cart/cart.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink ,RouterModule} from '@angular/router';
 import { routes } from '../../app.routes';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
-import { CurrencyServise, CurrencyOption } from '../../Servises/currencyServise/currency-servise';
+import { CurrencyService, CurrencyOption } from '../../Services/currency/currency.service';
 
 @Component({
   selector: 'app-menu',
@@ -35,21 +35,21 @@ export class Menu implements OnInit {
   ]
   private router = inject(Router);
   private DestroyRef = inject(DestroyRef);
-  private mainCategoryServise = inject(MainCategoryServise);
-  private cartServise = inject(CartServise);
-  currencyServise = inject(CurrencyServise);
+  private mainCategoryService = inject(MainCategoryService);
+  private cartService = inject(CartService);
+  currencyService = inject(CurrencyService);
   mainCategories: MainCategoriesModel[] | null = [];
-  userServise = inject(UserServise);
+  userService = inject(UserService);
   cartCount = 0;
   currencies: CurrencyOption[] = [];
   selectedCurrency: CurrencyOption = { code: 'USD', name: 'United States Dollar' };
   itemsForProfile: MenuItem[] | undefined;
   ngOnInit() {
-     this.currencyServise.loadCurrencies();
-    this.currencyServise.currencies$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data => {
+     this.currencyService.loadCurrencies();
+    this.currencyService.currencies$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data => {
       this.currencies = data;
     });
-    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(c => {
+    this.currencyService.selectedCurrency$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(c => {
       this.selectedCurrency = c;
     });
     this.itemsForProfile = [
@@ -91,16 +91,16 @@ export class Menu implements OnInit {
         ]
       }
     ];
-    this.cartServise.cartItems$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(items => {
+    this.cartService.cartItems$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(items => {
       this.cartCount = items ? items.length : 0;
     });
 
-    this.userServise.user$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(user => {
-      if (user) this.cartServise.getUserCart(user.userID);
+    this.userService.user$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(user => {
+      if (user) this.cartService.getUserCart(user.userID);
     });
 
-    this.mainCategoryServise.getMainCategory();
-    this.mainCategoryServise.mainCategories$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data => {
+    this.mainCategoryService.getMainCategory();
+    this.mainCategoryService.mainCategories$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data => {
       if(data!==null)
       {
          this.mainCategories=data
@@ -114,7 +114,6 @@ export class Menu implements OnInit {
          for (let i = 0; i < (this.mainCategories?.length ?? 0); i++) {
           this.items[2].items![0][0].items!.push({ label: this.mainCategories![i].mainCategoryName, icon: 'pi pi-star', id: this.mainCategories![i].mainCategoryID as unknown as string })
         }
-        console.log(this.items)
 
         this.items = [...this.items]
       }
@@ -122,10 +121,9 @@ export class Menu implements OnInit {
      
     })
 
-this.mainCategoryServise.error$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data=>{
+this.mainCategoryService.error$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data=>{
   if(data!==null)
   {
-    console.log(data)
   }
 
 })
@@ -133,11 +131,11 @@ this.mainCategoryServise.error$.pipe(takeUntilDestroyed(this.DestroyRef)).subscr
    
   }
   onCurrencyChange(currency: CurrencyOption): void {
-    this.currencyServise.selectCurrency(currency);
+    this.currencyService.selectCurrency(currency);
   }
 
   logOut() {
-    this.userServise.LogOut();
+    this.userService.LogOut();
 
   }
 }

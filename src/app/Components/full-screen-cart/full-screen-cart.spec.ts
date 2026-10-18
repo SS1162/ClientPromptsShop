@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { FullScreenCart } from './full-screen-cart';
 
@@ -8,7 +9,8 @@ describe('FullScreenCart', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FullScreenCart]
+      imports: [FullScreenCart],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

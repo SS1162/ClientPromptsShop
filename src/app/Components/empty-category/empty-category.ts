@@ -7,12 +7,12 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { GeminiServise } from '../../Servises/geminiServise/gemini-servise';
-import { CartServise } from '../../Servises/cartServise/cart-servise';
-import { UserServise } from '../../Servises/UserServise/User-servise';
-import { PlatformServise } from '../../Servises/PlatformServise/platform-servise';
-import { ProductServise } from '../../Servises/ProductServise/product-servise';
-import { geminiPromptModel } from '../../Models/geminiPromptModel';
+import { GeminiService } from '../../Services/gemini/gemini.service';
+import { CartService } from '../../Services/cart/cart.service';
+import { UserService } from '../../Services/user/user.service';
+import { PlatformService } from '../../Services/platform/platform.service';
+import { ProductService } from '../../Services/product/product.service';
+import { GeminiPromptModel } from '../../Models/GeminiPromptModel';
 import { PlatformsModel } from '../../Models/PlatformsModel';
 import { UserModel } from '../../Models/UserModel';
 import { Router } from '@angular/router';
@@ -27,17 +27,17 @@ type Step = 'input' | 'generating' | 'generated' | 'adding' | 'updating';
   styleUrl: './empty-category.scss',
 })
 export class EmptyCategory implements OnInit, OnDestroy {
-  private geminiServise = inject(GeminiServise);
-  private cartServise = inject(CartServise);
-  private userServise = inject(UserServise);
-  private platformServise = inject(PlatformServise);
-  private productServise = inject(ProductServise);
+  private geminiService = inject(GeminiService);
+  private cartService = inject(CartService);
+  private userService = inject(UserService);
+  private platformService = inject(PlatformService);
+  private productService = inject(ProductService);
   private messageService = inject(MessageService);
   private router = inject(Router);
 
   step: Step = 'input';
   userInput = '';
-  prompt: geminiPromptModel | null = null;
+  prompt: GeminiPromptModel | null = null;
   editablePromptText = '';
   platforms: PlatformsModel[] = [];
   selectedPlatform: PlatformsModel | null = null;
@@ -52,12 +52,12 @@ export class EmptyCategory implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userServise.user$.subscribe({
+    this.userService.user$.subscribe({
       next: (u) => (this.user = u),
       error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load user. Try again.', life: 3000 }); }
     });
-    this.platformServise.getPlatforms();
-    this.platformServise.platforms$.subscribe({
+    this.platformService.getPlatforms();
+    this.platformService.platforms$.subscribe({
       next: (p) => { if (p) this.platforms = p; },
       error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load platforms. Try again.', life: 3000 }); }
     });
@@ -65,7 +65,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
 
   loadEmptyProductId(page = 1) {
     if (!this.catId) return;
-    this.productServise.getProduct(this.catId, page, 50).subscribe({
+    this.productService.getProduct(this.catId, page, 50).subscribe({
       next: (resp) => {
         const products = resp.body?.data ?? [];
         const emptyOne = products.find(p => ((p as any).productsName ?? p.ProductsName)?.trim() === 'Empty');
@@ -87,7 +87,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
     if (!this.userInput.trim()) return;
     this.step = 'generating';
     if (!this.prompt) {
-      this.geminiServise.AddCategoryPrompt(this.userInput, this.catId).subscribe({
+      this.geminiService.AddCategoryPrompt(this.userInput, this.catId).subscribe({
         next: (resp) => {
           this.prompt = resp.body;
           this.editablePromptText = this.prompt?.prompt ?? '';
@@ -100,7 +100,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.geminiServise.updateCategoryPrompt(this.prompt.promptId, this.userInput).subscribe({
+      this.geminiService.updateCategoryPrompt(this.prompt.promptId, this.userInput).subscribe({
         next: (resp) => {
           this.prompt = resp.body;
           this.editablePromptText = this.prompt?.prompt ?? '';
@@ -118,7 +118,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
   updatePrompt() {
     if (!this.prompt || !this.editablePromptText.trim()) return;
     this.step = 'updating';
-    this.geminiServise.updateCategoryPrompt(this.prompt.promptId, this.editablePromptText).subscribe({
+    this.geminiService.updateCategoryPrompt(this.prompt.promptId, this.editablePromptText).subscribe({
       next: (resp) => {
         this.prompt = resp.body;
         this.editablePromptText = this.prompt?.prompt ?? '';
@@ -135,7 +135,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
   addToCart() {
     if (!this.user || !this.prompt || !this.selectedPlatform || !this.emptyProductId) return;
     this.step = 'adding';
-    this.cartServise.addCartItem({
+    this.cartService.addCartItem({
       userID: this.user.userID,
       productsID: this.emptyProductId,
       userDescription: this.prompt.promptId,
@@ -155,7 +155,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
 
   deleteAndReset() {
     if (this.prompt) {
-      this.geminiServise.deletePrompt(this.prompt.promptId).subscribe({
+      this.geminiService.deletePrompt(this.prompt.promptId).subscribe({
         next: () => {},
         error: () => { this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete prompt. Try again.', life: 3000 }); }
       });
@@ -174,9 +174,9 @@ export class EmptyCategory implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.prompt && !this.addedToCart) {
-      this.geminiServise.deletePrompt(this.prompt.promptId).subscribe({
+      this.geminiService.deletePrompt(this.prompt.promptId).subscribe({
         next: () => {},
-        error: (err) => { console.log(err); }
+        error: (err) => { console.error(err); }
       });
     }
   }

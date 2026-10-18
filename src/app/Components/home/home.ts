@@ -4,7 +4,7 @@ import { ChartModule } from 'primeng/chart';
 import { ButtonModule } from 'primeng/button';
 import { AnimateOnScrollModule } from 'primeng/animateonscroll';
 import { AccordionModule } from 'primeng/accordion';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { RouterModule } from '@angular/router';
 
 @Component({

@@ -15,10 +15,10 @@ import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { UpdateUserModel } from '../../Models/UpdateUserModel';
-import { PasswordServise } from '../../Servises/passwordServise/password-servise';
+import { PasswordService } from '../../Services/password/password.service';
 import { RegisterUserModel } from '../../Models/RegisterUserModel';
-import { PasswardModel } from '../../Models/PasswardModel';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { PasswordModel } from '../../Models/PasswordModel';
+import { UserService } from '../../Services/user/user.service';
 import { CheckVertifictionPassword } from '../../Validators/passwords';
 import { checkIfThePhoneValid } from '../../Validators/phone';
 import { UserModel } from '../../Models/UserModel';
@@ -36,7 +36,7 @@ import { CheckboxModule } from 'primeng/checkbox';
   styleUrl: './register.scss',
 })
 export class Register implements OnInit {
-  userServise: UserServise = inject(UserServise)
+  userService: UserService = inject(UserService)
   private destroyRef = inject(DestroyRef)
   user$?: UserModel | null
   error$?: HttpErrorResponse | null
@@ -44,7 +44,7 @@ export class Register implements OnInit {
 
   ngOnInit() {
 
-    this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+    this.userService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.error$ = data
       if (data !== null && data !== undefined) {
         this.messageService.add({
@@ -56,7 +56,7 @@ export class Register implements OnInit {
       }
     })
 
-    this.userServise.sucssesToRegister.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.sucssesToRegister.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data === true) {
           this.messageService.add({
@@ -80,7 +80,7 @@ export class Register implements OnInit {
 
   }
 
-  passwordServise: PasswordServise = inject(PasswordServise);
+  passwordService: PasswordService = inject(PasswordService);
   RegisterForm = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     password: new FormControl(null, [Validators.required]),
@@ -102,7 +102,7 @@ export class Register implements OnInit {
       this.registerUser.lastName = this.RegisterForm.get('secondName')?.value || '';
       this.registerUser.phone = this.RegisterForm.get('Phone')?.value || '';
       this.RegisterForm.reset()
-      this.userServise.RegisterUser(this.registerUser)
+      this.userService.RegisterUser(this.registerUser)
       
 
       
@@ -110,17 +110,17 @@ export class Register implements OnInit {
 
   }
    
-  password: PasswardModel = new PasswardModel()
+  password: PasswordModel = new PasswordModel()
   passordStrength: number = 0
   checkPasswordStrength() {
     this.password.UserPassward = this.RegisterForm.get('password')?.value || '';
     if (this.password.UserPassward !== '') {
-      this.passwordServise.postPassword(this.password).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      this.passwordService.postPassword(this.password).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
           this.passordStrength = response.body || 0
         }
         , error: (err) => {
-          console.log(err)
+          console.error(err)
         }
       })
     }

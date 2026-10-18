@@ -16,7 +16,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { environment } from '../../../environments/environment';
 import { LoginModel } from '../../Models/LoginModel';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { UserService } from '../../Services/user/user.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserModel } from '../../Models/UserModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -24,7 +24,7 @@ import { take } from 'rxjs';
 import { Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { RegisterUserModel } from '../../Models/RegisterUserModel';
-import { CartServise } from '../../Servises/cartServise/cart-servise';
+import { CartService } from '../../Services/cart/cart.service';
 
 declare var google: any;
 
@@ -41,8 +41,8 @@ declare var google: any;
 
 
 export class Login implements OnInit, AfterViewInit {
-  userServise: UserServise = inject(UserServise)
-  cartServise: CartServise = inject(CartServise)
+  userService: UserService = inject(UserService)
+  cartService: CartService = inject(CartService)
   destroyRef = inject(DestroyRef)
   router = inject(Router);
   messageService = inject(MessageService);
@@ -65,7 +65,7 @@ export class Login implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       if (data !== null && this.flag) {
         this.flag = false;
         this.messageService.add({
@@ -78,14 +78,14 @@ export class Login implements OnInit, AfterViewInit {
         if (pending.length > 0) {
           sessionStorage.removeItem('pendingCartItems');
           for (const item of pending) {
-            this.cartServise.addCartItem(
+            this.cartService.addCartItem(
               { userID: data.userID, productsID: item.productsID, platformsID: item.platformsID },
               data.userID
             ).subscribe();
           }
         }
         setTimeout(() => {
-          this.userServise.isAdmin$.pipe(take(1)).subscribe(isAdmin => {
+          this.userService.isAdmin$.pipe(take(1)).subscribe(isAdmin => {
             if (isAdmin) {
               this.router.navigate(['/admin']);
             } else if (window.history.length > 1) {
@@ -98,7 +98,7 @@ export class Login implements OnInit, AfterViewInit {
       }
     });
 
-    this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+    this.userService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.error$ = data
       if (data !== null && data !== undefined) {
         this.messageService.add({
@@ -128,15 +128,15 @@ google.accounts.id.initialize({
   client_id: this.googleClientId,
   callback: (window as any).handleCredentialResponse,
   ux_mode: 'popup',
-  use_fedcm_for_prompt: true // זה משתמש במנגנון החדש של הדפדפן לעקיפת חסימות Cross-Origin
+  use_fedcm_for_prompt: true // uses the browser's FedCM flow to avoid cross-origin blocking
 });
 
     const btnEl = document.getElementById("googleBtn");
     
-    // שינוי 3: הגנה מפני רוחב לא תקין (גוגל לא מקבלת אחוזים או ערכים קטנים מדי)
+    // Google only accepts a pixel width between 200 and 400
     let btnWidth = btnEl ? btnEl.offsetWidth : 250;
     if (btnWidth < 200 || btnWidth > 400) {
-      btnWidth = 250; // ערך בטוח שגוגל תמיד מאשרת
+      btnWidth = 250; // safe default width
     }
 
     google.accounts.id.renderButton(
@@ -144,7 +144,7 @@ google.accounts.id.initialize({
       { 
         theme: "outline", 
         size: "large", 
-        width: btnWidth // כאן נשלח מספר נקי
+        width: btnWidth // plain number in pixels
       }
     );
   } else {
@@ -158,7 +158,7 @@ google.accounts.id.initialize({
     user.userName = payload.email
     user.firstName=payload.name
     user.GoogleId=payload.sub
-    this.userServise.signInWithGoogle(user)
+    this.userService.signInWithGoogle(user)
     this.flag=true
   }
 
@@ -168,7 +168,7 @@ google.accounts.id.initialize({
       this.isproper = true;
       this.loginUser.userName = this.loginForm.value.email || ''
       this.loginUser.userPassward = this.loginForm.value.password || ''
-      this.userServise.LoginUser(this.loginUser)
+      this.userService.LoginUser(this.loginUser)
       this.loginForm.reset()
       this.flag = true
     }

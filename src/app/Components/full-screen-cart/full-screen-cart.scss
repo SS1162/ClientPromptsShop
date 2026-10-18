@@ -7,7 +7,7 @@ $accent-purple: #F6E8FE;
 $shadow-color: rgba(157, 88, 245, 0.2);
 $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
 
-/* עיצוב הדיאלוג */
+/* Dialog */
 ::ng-deep .custom-dialog {
   .p-dialog-header {
     background: $light-purple;
@@ -77,7 +77,7 @@ $grad: linear-gradient(135deg, $primary-purple 0%, #bd00cb 100%);
     display: flex;
   }
 
-  /* כפתור שליחה סגול */
+  /* Purple submit button */
   .submit-btn {
     width: 100%;
     background: $primary-purple !important;
@@ -516,12 +516,12 @@ $text-dark: #312639;
 
 
 $purp-main: #8139eb;
-$purp-dark: #2d004d; // סגול עמוק מאוד לטקסט
-$text-black: #1a1a1a; // שחור כמעט מוחלט
+$purp-dark: #2d004d; // very deep purple for text
+$text-black: #1a1a1a; // near black
 
 .foundation-container {
 
-  /* גובה זהה לחלק התשלום */
+  /* same height as the payment section */
   margin-bottom: 30px;
   zoom: 0.8;
 }
@@ -572,11 +572,11 @@ $text-black: #1a1a1a; // שחור כמעט מוחלט
     font-size: 2.4rem;
     font-weight: 900;
     color: $text-black;
-    /* סגול עמוק */
+    /* deep purple */
     margin: 0;
   }
 
-  /* כפתור עריכה בולט */
+  /* prominent edit button */
   .primary-edit-btn {
     background: white;
     border: 2px solid $purp-main;
@@ -596,12 +596,12 @@ $text-black: #1a1a1a; // שחור כמעט מוחלט
     }
   }
 
-  /* שינוי צבעי הטקסט מאפור לשחור/סגול */
+  /* text colors: black/purple instead of gray */
   .main-desc {
     font-size: 1.3rem;
     line-height: 1.5;
     color: $text-black;
-    /* שחור בולט */
+    /* strong black */
     margin: 0;
     font-weight: 500;
   }
@@ -618,7 +618,7 @@ $text-black: #1a1a1a; // שחור כמעט מוחלט
     .type-desc {
       font-size: 1.1rem;
       color: $purp-dark;
-      /* סגול במקום אפור */
+      /* purple instead of gray */
       margin-top: 10px;
     }
   }
@@ -632,7 +632,7 @@ $purple-light: #f3ebff;
 $purple-border: #d8b4fe;
 
 .foundation-wrapper {
-  margin-top: 50px; // הנמכת ה-div מהחלק העליון
+  margin-top: 50px; // push the block down from the top
   margin-bottom: 40px;
   width: 100%;
 }
@@ -643,29 +643,29 @@ $purple-border: #d8b4fe;
   box-shadow: 0 15px 35px rgba(129, 57, 235, 0.1);
   transition: all 0.3s ease;
   font-size: 2rem;
-  // או לחלופין, אם את רוצה שהגובה יהיה קבוע:
+  // alternatively, for a fixed height:
   height: 350px;
   zoom: 0.9;
-  // חשוב להקטין גם את ה-padding הפנימי כדי שהתוכן לא יחרוג:
+  // also reduce inner padding so content does not overflow:
   padding: 20px 40px !important;
 
  
 
-  // עיצוב כרטיס השגיאה המוגדל
+  // Enlarged error card
   &.error-site {
     background-color: #ffffff;
     border: 3px solid $purple-main;
     text-align: center;
 
     .error-title-large {
-      font-size: 2.2rem; // כתב גדול לכותרת
+      font-size: 2.2rem; // large title text
       color: #312639;
       margin: 20px 0;
       font-weight: 900;
     }
 
     .error-text-large {
-      font-size: 1.4rem; // כתב גדול להודעה
+      font-size: 1.4rem; // large message text
       color: #555;
       max-width: 700px;
       margin: 0 auto 30px auto;
@@ -695,7 +695,7 @@ $purple-border: #d8b4fe;
   }
 }
 
-// אנימציה קטנה לאייקון האזהרה
+// small animation for the warning icon
 .pulse {
   color: $hover-purple;
   animation: pulse-warn 2s infinite;

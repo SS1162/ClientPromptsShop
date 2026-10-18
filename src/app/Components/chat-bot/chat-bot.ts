@@ -1,8 +1,8 @@
 import { Component, inject, ElementRef, ViewChild, AfterViewChecked, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChatServise, ChatMessageDto } from '../../Servises/chatServise/chat-servise';
-import { CartServise } from '../../Servises/cartServise/cart-servise';
+import { ChatService, ChatMessageDto } from '../../Services/chat/chat.service';
+import { CartService } from '../../Services/cart/cart.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -21,16 +21,16 @@ export class ChatBot implements OnInit, AfterViewChecked {
   isLoading = false;
   private shouldScroll = false;
 
-  private chatServise = inject(ChatServise);
-  private cartServise = inject(CartServise);
+  private chatService = inject(ChatService);
+  private cartService = inject(CartService);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    const saved = this.chatServise.loadSession();
+    const saved = this.chatService.loadSession();
     if (saved.length > 0) {
       this.messages = saved;
     }
-    this.cartServise.popupOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(open => {
+    this.cartService.popupOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(open => {
       this.cartOpen = open;
     });
   }
@@ -43,7 +43,7 @@ export class ChatBot implements OnInit, AfterViewChecked {
         text: "Hi! I'm your PromptStore assistant 👋 How can I help you today?"
       };
       this.messages.push(greeting);
-      this.chatServise.saveSession(this.messages);
+      this.chatService.saveSession(this.messages);
     }
   }
 
@@ -60,16 +60,16 @@ export class ChatBot implements OnInit, AfterViewChecked {
     // then the last message as newMessage — matching the server's ChatRequestDto
     const history = this.messages.slice(0, -1);
 
-    this.chatServise.sendMessage(history, text).subscribe({
+    this.chatService.sendMessage(history, text).subscribe({
       next: (response) => {
         this.messages.push({ role: 'model', text: response });
-        this.chatServise.saveSession(this.messages);
+        this.chatService.saveSession(this.messages);
         this.isLoading = false;
         this.shouldScroll = true;
       },
       error: () => {
         this.messages.push({ role: 'model', text: 'Sorry, something went wrong. Please try again.' });
-        this.chatServise.saveSession(this.messages);
+        this.chatService.saveSession(this.messages);
         this.isLoading = false;
         this.shouldScroll = true;
       }

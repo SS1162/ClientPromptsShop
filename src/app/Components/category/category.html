@@ -39,11 +39,13 @@
 
   <!-- ── Category Hero ─────────────────────────────────── -->
   <div class="category-hero">
-    <img class="hero-img" alt="{{ categoryModel.categoryName }}"
-      src="{{ staticFilesURL + categoryModel.imgUrl }}" />
+    @if (categoryModel) {
+      <img class="hero-img" alt="{{ categoryModel.categoryName }}"
+        src="{{ staticFilesURL + categoryModel.imgUrl }}" />
+    }
     <div class="hero-overlay">
-      <h1 class="hero-title">{{ categoryModel.categoryName }}</h1>
-      <p class="hero-desc">{{ categoryModel.categoryDescreption }}</p>
+      <h1 class="hero-title">{{ categoryModel?.categoryName }}</h1>
+      <p class="hero-desc">{{ categoryModel?.categoryDescreption }}</p>
     </div>
   </div>
 

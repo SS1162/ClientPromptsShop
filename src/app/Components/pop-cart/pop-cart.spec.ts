@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { PopCart } from './pop-cart';
 
@@ -8,7 +9,8 @@ describe('PopCart', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PopCart]
+      imports: [PopCart],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

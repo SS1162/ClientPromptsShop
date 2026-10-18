@@ -7,7 +7,7 @@ import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
-import { ReviewServise } from '../../Servises/ReviewServise/review-servise';
+import { ReviewService } from '../../Services/review/review.service';
 import { ReviewModel } from '../../Models/ReviewModel';
 import { environment } from '../../../environments/environment';
 
@@ -27,7 +27,7 @@ export class Reviews implements OnInit, AfterViewInit, OnDestroy {
   allLoaded = false;
   averageScore = 0;
 
-  private reviewService = inject(ReviewServise);
+  private reviewService = inject(ReviewService);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
   private observer!: IntersectionObserver;

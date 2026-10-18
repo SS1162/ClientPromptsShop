@@ -3,11 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { CartServise, SessionCartItem } from '../../Servises/cartServise/cart-servise';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { CartService, SessionCartItem } from '../../Services/cart/cart.service';
+import { UserService } from '../../Services/user/user.service';
 import { CartItemModel } from '../../Models/CartItemModel';
 import { UserModel } from '../../Models/UserModel';
-import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
+import { CurrencyService } from '../../Services/currency/currency.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -17,10 +17,10 @@ import { environment } from '../../../environments/environment';
   styleUrl: './pop-cart.scss',
 })
 export class PopCart implements OnInit {
-  cartServise: CartServise = inject(CartServise);
-  userServise: UserServise = inject(UserServise);
+  cartService: CartService = inject(CartService);
+  userService: UserService = inject(UserService);
   router: Router = inject(Router);
-  currencyServise: CurrencyServise = inject(CurrencyServise);
+  currencyService: CurrencyService = inject(CurrencyService);
   private destroyRef = inject(DestroyRef);
 
   isOpen: boolean = false;
@@ -34,29 +34,29 @@ export class PopCart implements OnInit {
   BASIC_IMAGE_URL:string=environment.staticFilesUrl 
 
   ngOnInit() {
-    this.cartServise.popupOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(open => {
+    this.cartService.popupOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(open => {
       this.isOpen = open;
     });
 
-    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+    this.currencyService.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
       this.currencyCode = c.code;
     });
 
-    this.currencyServise.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
+    this.currencyService.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
       this.currencyRate = r;
     });
 
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       if (data) {
         this.isGuest = false;
         this.user = data;
-        this.cartServise.getUserCart(data.userID);
+        this.cartService.getUserCart(data.userID);
       } else {
         this.isGuest = true;
       }
     });
 
-    this.cartServise.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+    this.cartService.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       if (data) {
         this.cartItems = data;
         this.totalPrice = data.reduce((sum, item) => sum + item.price, 0);
@@ -66,7 +66,7 @@ export class PopCart implements OnInit {
       }
     });
 
-    this.cartServise.sessionCart$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(items => {
+    this.cartService.sessionCart$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(items => {
       this.sessionItems = items;
       if (this.isGuest) {
         this.totalPrice = items.reduce((sum, i) => sum + i.price, 0);
@@ -75,23 +75,23 @@ export class PopCart implements OnInit {
   }
 
   close() {
-    this.cartServise.closePopup();
+    this.cartService.closePopup();
   }
 
   removeProduct(cartId: number) {
-    this.cartServise.removeCartItem(cartId, this.user.userID);
+    this.cartService.removeCartItem(cartId, this.user.userID);
   }
 
   removeSessionItem(index: number) {
-    this.cartServise.removeSessionItem(index);
+    this.cartService.removeSessionItem(index);
   }
 
   changeProductToValid(cartId: number) {
-    this.cartServise.changeProductToValid(cartId, this.user.userID);
+    this.cartService.changeProductToValid(cartId, this.user.userID);
   }
 
   changeProductToInValid(cartId: number) {
-    this.cartServise.changeProductToInValid(cartId, this.user.userID);
+    this.cartService.changeProductToInValid(cartId, this.user.userID);
   }
 
   goToFullCart() {
