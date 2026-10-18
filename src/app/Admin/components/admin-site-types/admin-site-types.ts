@@ -12,8 +12,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ToastModule } from 'primeng/toast';
-import { SiteTypeService } from '../../../Servises/SiteTypeService/site-type.service';
-import { UserServise } from '../../../Servises/UserServise/User-servise';
+import { SiteTypeService } from '../../../Services/site-type/site-type.service';
+import { UserService } from '../../../Services/user/user.service';
 import { SiteTypeModel } from '../../../Models/SiteTypeModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -38,8 +38,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './admin-site-types.scss',
 })
 export class AdminSiteTypes implements OnInit {
-  private siteTypeServise: SiteTypeService = inject(SiteTypeService);
-  private userServise: UserServise = inject(UserServise);
+  private siteTypeService: SiteTypeService = inject(SiteTypeService);
+  private userService: UserService = inject(UserService);
   private router = inject(Router);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
@@ -51,7 +51,7 @@ export class AdminSiteTypes implements OnInit {
   loading = true;
 
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (user) => {
         if (!user) {
           this.router.navigate(['/login']);
@@ -59,7 +59,7 @@ export class AdminSiteTypes implements OnInit {
       }
     });
 
-    this.siteTypeServise.siteTypes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.siteTypeService.siteTypes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.siteTypes = data;
@@ -72,7 +72,7 @@ export class AdminSiteTypes implements OnInit {
       }
     });
 
-    this.siteTypeServise.getSiteTypes();
+    this.siteTypeService.getSiteTypes();
   }
 
   openNew() {
@@ -96,7 +96,7 @@ export class AdminSiteTypes implements OnInit {
     if (this.selectedSiteType.siteTypeName?.trim()) {
       this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Save functionality to be implemented' });
       this.siteTypeDialog = false;
-      this.siteTypeServise.getSiteTypes();
+      this.siteTypeService.getSiteTypes();
     }
   }
 

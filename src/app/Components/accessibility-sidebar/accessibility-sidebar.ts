@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { AccessibilityService, FontScale } from '../../Servises/accessibilityServise/accessibility-servise';
+import { AccessibilityService, FontScale } from '../../Services/accessibility/accessibility.service';
 
 @Component({
   selector: 'app-accessibility-sidebar',

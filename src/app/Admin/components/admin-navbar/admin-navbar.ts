@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { UserServise } from '../../../Servises/UserServise/User-servise';
+import { UserService } from '../../../Services/user/user.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
@@ -15,7 +15,7 @@ import { ToastModule } from 'primeng/toast';
   styleUrls: ['./admin-navbar.scss']
 })
 export class AdminNavbar {
-  public userServise = inject(UserServise);
+  public userService = inject(UserService);
   private router = inject(Router);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
@@ -43,7 +43,7 @@ export class AdminNavbar {
 
 
       accept: () => {
-        this.userServise.LogOut();
+        this.userService.LogOut();
         this.messageService.add({
           severity: 'success',
           summary:'You have been logged out',

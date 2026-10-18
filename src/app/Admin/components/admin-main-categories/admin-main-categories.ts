@@ -8,8 +8,8 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
-import { MainCategoryServise } from '../../../Servises/MainCategoriesServise/main-category';
-import { UserServise } from '../../../Servises/UserServise/User-servise';
+import { MainCategoryService } from '../../../Services/main-category/main-category.service';
+import { UserService } from '../../../Services/user/user.service';
 import { MainCategoriesModel } from '../../../Models/MainCategoriesModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -30,8 +30,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './admin-main-categories.scss',
 })
 export class AdminMainCategories implements OnInit {
-  private mainCategoriesServise: MainCategoryServise = inject(MainCategoryServise);
-  private userServise: UserServise = inject(UserServise);
+  private mainCategoriesService: MainCategoryService = inject(MainCategoryService);
+  private userService: UserService = inject(UserService);
   private router = inject(Router);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
@@ -43,7 +43,7 @@ export class AdminMainCategories implements OnInit {
   loading = true;
 
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (user) => {
         if (!user) {
           this.router.navigate(['/login']);
@@ -51,7 +51,7 @@ export class AdminMainCategories implements OnInit {
       }
     });
 
-    this.mainCategoriesServise.mainCategories$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.mainCategoriesService.mainCategories$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.mainCategories = data;
@@ -64,7 +64,7 @@ export class AdminMainCategories implements OnInit {
       }
     });
 
-    this.mainCategoriesServise.getMainCategory();
+    this.mainCategoriesService.getMainCategory();
   }
 
   openNew() {
@@ -85,45 +85,38 @@ export class AdminMainCategories implements OnInit {
 
   saveCategory() {
     this.submitted = true;
-<<<<<<< HEAD
     if (!this.selectedCategory.mainCategoryName?.trim()) {
       return;
     }
 
     if (this.selectedCategory.mainCategoryID) {
-      this.mainCategoriesServise.updateMainCategory(this.selectedCategory.mainCategoryID, this.selectedCategory).subscribe({
+      this.mainCategoriesService.updateMainCategory(this.selectedCategory.mainCategoryID, this.selectedCategory).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Main category updated successfully' });
           this.categoryDialog = false;
-          this.mainCategoriesServise.getMainCategory();
+          this.mainCategoriesService.getMainCategory();
         },
         error: () => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update main category' });
         }
       });
     } else {
-      this.mainCategoriesServise.addMainCategory({ mainCategoryName: this.selectedCategory.mainCategoryName }).subscribe({
+      this.mainCategoriesService.addMainCategory({ mainCategoryName: this.selectedCategory.mainCategoryName }).subscribe({
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Main category created successfully' });
           this.categoryDialog = false;
-          this.mainCategoriesServise.getMainCategory();
+          this.mainCategoriesService.getMainCategory();
         },
         error: () => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create main category' });
         }
       });
-=======
-    if (this.selectedCategory.mainCategoryName?.trim()) {
-      this.messageService.add({ severity: 'info', summary: 'Info', detail: 'Save functionality to be implemented' });
-      this.categoryDialog = false;
-      
->>>>>>> 337b76aea4d0e26ab893c1a8dad5b7dee7927501
     }
   }
 
   deleteCategory(category: MainCategoriesModel) {
     if (confirm(`Delete ${category.mainCategoryName}?`)) {
-      this.mainCategoriesServise.deleteMainCategory(category.mainCategoryID).subscribe({
+      this.mainCategoriesService.deleteMainCategory(category.mainCategoryID).subscribe({
         next: () => {
           this.mainCategories = this.mainCategories.filter(c => c.mainCategoryID !== category.mainCategoryID);
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Main category deleted successfully' });

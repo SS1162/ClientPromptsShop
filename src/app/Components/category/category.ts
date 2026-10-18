@@ -2,8 +2,8 @@ import { Component, Input, OnInit, inject, signal, DestroyRef } from '@angular/c
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SplitterModule } from 'primeng/splitter';
 import { ProductModel } from '../../Models/ProductModel';
-import { ProductServise } from '../../Servises/ProductServise/product-servise';
-import { CategoryModel } from '../../Models/categoryModel';
+import { ProductService } from '../../Services/product/product.service';
+import { CategoryModel } from '../../Models/CategoryModel';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Checkbox } from 'primeng/checkbox';
@@ -12,7 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
 import { CheckboxModule } from 'primeng/checkbox';
-import { CategoryServise } from '../../Servises/categoryServise/category-servise';
+import { CategoryService } from '../../Services/category/category.service';
 import { SliderModule } from 'primeng/slider';
 import { environment } from '../../../environments/environment';
 import { SelectModule } from 'primeng/select';
@@ -23,16 +23,16 @@ import { InputTextModule } from 'primeng/inputtext';
 import { EmptyProduct } from '../empty-product/empty-product';
 import { EmptyCategory } from '../empty-category/empty-category';
 import { PlatformsModel } from '../../Models/PlatformsModel';
-import { geminiPromptModel } from '../../Models/geminiPromptModel';
-import { PlatformServise } from '../../Servises/PlatformServise/platform-servise';
-import { CartServise } from '../../Servises/cartServise/cart-servise';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { GeminiPromptModel } from '../../Models/GeminiPromptModel';
+import { PlatformService } from '../../Services/platform/platform.service';
+import { CartService } from '../../Services/cart/cart.service';
+import { UserService } from '../../Services/user/user.service';
 import { UserModel } from '../../Models/UserModel';
 import { MessageService } from 'primeng/api';
 import { AddToCartModel } from '../../Models/AddToCartModel';
-import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
+import { CurrencyService } from '../../Services/currency/currency.service';
 import { ToastModule } from 'primeng/toast';
-import { SessionCartItem } from '../../Servises/cartServise/cart-servise';
+import { SessionCartItem } from '../../Services/cart/cart.service';
 
 @Component({
   selector: 'app-category',
@@ -49,10 +49,10 @@ export class Category implements OnInit {
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
   productModel!: ProductModel[]
-  productService: ProductServise = inject(ProductServise)
-  categoryService: CategoryServise = inject(CategoryServise)
-  cartServise: CartServise = inject(CartServise)
-  userServise: UserServise = inject(UserServise)
+  productService: ProductService = inject(ProductService)
+  categoryService: CategoryService = inject(CategoryService)
+  cartService: CartService = inject(CartService)
+  userService: UserService = inject(UserService)
   sum: number = 0;
   chosenProducts: boolean[] = [];
   user?: UserModel;
@@ -83,13 +83,13 @@ export class Category implements OnInit {
   emptyProductPrice: number = 0
   emptyProductResetTick: number = 0
   geminiPromptConsumed: boolean = false
-  pendingGeminiPrompt: geminiPromptModel | null = null
+  pendingGeminiPrompt: GeminiPromptModel | null = null
   rangeValues: number[] = [0, 100];
   platforms: PlatformsModel[] | null = null
   optionForSorting: string[] | undefined;
   selectedSorted: string | undefined;
-  platformServise: PlatformServise = inject(PlatformServise)
-  currencyServise: CurrencyServise = inject(CurrencyServise)
+  platformService: PlatformService = inject(PlatformService)
+  currencyService: CurrencyService = inject(CurrencyService)
   currencyCode: string = 'USD';
   currencyRate: number = 1;
 
@@ -99,7 +99,7 @@ export class Category implements OnInit {
       'price from high to low'
     ];
 
-    this.cartServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.cartService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
         if(!err)
         {
@@ -110,8 +110,8 @@ console.log(err)
         console.log(err)
       }
     })
-    this.platformServise.getPlatforms()
-    this.platformServise.platforms$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.platformService.getPlatforms()
+    this.platformService.platforms$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.platforms = data
       },
@@ -120,7 +120,7 @@ console.log(err)
       }
     })
 
-    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.currencyService.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (c) => {
         this.currencyCode = c.code;
       },
@@ -129,7 +129,7 @@ console.log(err)
       }
     });
 
-    this.currencyServise.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.currencyService.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (r) => {
         this.currencyRate = r;
       },
@@ -138,7 +138,7 @@ console.log(err)
       }
     });
 
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next:(data)=>{
         if (data) { this.user = data; }
       }
@@ -164,16 +164,16 @@ console.log(err)
           imgUrl:       (item as any).imgUrl ?? item.ImgUrl ?? '',
           categoryID:   (item as any).categoryID ?? item.CategoryID,
         };
-        this.cartServise.addSessionItem(sessionItem);
+        this.cartService.addSessionItem(sessionItem);
       }
-      this.cartServise.openPopup();
+      this.cartService.openPopup();
       this.messageService.add({ severity: 'success', summary: 'Added to cart', detail: 'Selected items have been added to your cart successfully', life: 3000 });
       this.clearChoose()
     }
     else{
     const selectedItems = this.productModel.filter((_, i) => this.chosenProducts[i]);
     for (const item of selectedItems) {
-      this.cartServise.addCartItem(
+      this.cartService.addCartItem(
         {
           userID: this.user.userID,
           productsID: (item as any).productsID,
@@ -183,7 +183,7 @@ console.log(err)
       ).subscribe();
     }
     if (this.pendingGeminiPrompt && this.emptyProductId) {
-      this.cartServise.addCartItem(
+      this.cartService.addCartItem(
         {
           userID: this.user.userID,
           productsID: this.emptyProductId,
@@ -197,7 +197,7 @@ console.log(err)
       setTimeout(() => this.geminiPromptConsumed = false, 0);
     }
     // Open the cart drawer immediately — don't wait for HTTP response
-    this.cartServise.openPopup();
+    this.cartService.openPopup();
     this.messageService.add({ severity: 'success', summary: 'Added to cart', detail: 'Selected items have been added to your cart successfully', life: 3000 });
     this.clearChoose()
   }
@@ -211,7 +211,7 @@ console.log(err)
     this.pendingGeminiPrompt = null;
     this.emptyProductResetTick++;
   }
-  handleGeminiPrompt(prompt: geminiPromptModel | null) {
+  handleGeminiPrompt(prompt: GeminiPromptModel | null) {
     this.pendingGeminiPrompt = prompt;
   }
 

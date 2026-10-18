@@ -16,9 +16,9 @@ import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { UpdateUserModel } from '../../Models/UpdateUserModel';
-import { PasswordServise } from '../../Servises/passwordServise/password-servise';
-import { PasswardModel } from '../../Models/PasswardModel';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { PasswordService } from '../../Services/password/password.service';
+import { PasswordModel } from '../../Models/PasswordModel';
+import { UserService } from '../../Services/user/user.service';
 import { UserModel } from '../../Models/UserModel';
 import { CheckVertifictionPassword } from '../../Validators/passwords';
 import { checkIfThePhoneValid } from '../../Validators/phone';
@@ -38,13 +38,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export class UpdateUser implements OnInit {
 
-  userServise: UserServise = inject(UserServise)
+  userService: UserService = inject(UserService)
   private destroyRef = inject(DestroyRef)
   user$: UserModel | null = null
   error$: HttpErrorResponse | null = null
   errorMessege: string = ''
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.user$ = data
 
       this.UpdateForm.patchValue({
@@ -54,7 +54,7 @@ export class UpdateUser implements OnInit {
       console.log(this.user$?.userName)
     })
 
-    this.userServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
+    this.userService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
       this.error$ = data
       if (data === null) {
         this.errorMessege = ''
@@ -64,7 +64,7 @@ export class UpdateUser implements OnInit {
       }
     })
   }
-  passwordServise: PasswordServise = inject(PasswordServise);
+  passwordService: PasswordService = inject(PasswordService);
   UpdateForm = new FormGroup({
     email: new FormControl({ value: `${this.user$?.userName}`, disabled: true }, Validators.required),
     password: new FormControl(null, [Validators.required]),
@@ -87,19 +87,19 @@ export class UpdateUser implements OnInit {
         this.updateUser.firstName = this.UpdateForm.get('firstName')?.value || '';
         this.updateUser.lastName = this.UpdateForm.get('secondName')?.value || '';
         this.updateUser.phone = this.UpdateForm.get('Phone')?.value || '';
-        this.userServise.UpdaterUser(this.updateUser, this.user$.userID)
+        this.userService.UpdaterUser(this.updateUser, this.user$.userID)
       }
 
     }
   }
 
 
-  password: PasswardModel = new PasswardModel()
+  password: PasswordModel = new PasswordModel()
   passordStrength: number = 0
   checkPasswordStrength() {
     this.password.UserPassward = this.UpdateForm.get('password')?.value || '';
     if (this.password.UserPassward !== '') {
-      this.passwordServise.postPassword(this.password).subscribe({
+      this.passwordService.postPassword(this.password).subscribe({
         next: (response) => {
           this.passordStrength = response.body || 0
         }

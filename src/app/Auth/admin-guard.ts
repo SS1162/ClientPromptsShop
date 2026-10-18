@@ -1,21 +1,21 @@
 import { inject } from '@angular/core';
 import { CanMatchFn, Router } from '@angular/router';
 import { map, take, switchMap } from 'rxjs';
-import { UserServise } from '../Servises/UserServise/User-servise';
+import { UserService } from '../Services/user/user.service';
 
 
 export const adminGuard: CanMatchFn = (route, segments) => {
-  const userServise = inject(UserServise);
+  const userService = inject(UserService);
   const router = inject(Router);
 
-  return userServise.user$.pipe(
+  return userService.user$.pipe(
     take(1),
     switchMap(user => {
       if (!user) {
         router.navigate(['/login']);
         return [false];
       }
-      return userServise.isAdmin$.pipe(
+      return userService.isAdmin$.pipe(
         take(1),
         map(isAdmin => {
           if (isAdmin) return true;

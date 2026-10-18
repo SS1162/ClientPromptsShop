@@ -8,13 +8,13 @@ import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { MessageService } from 'primeng/api';
-import { CartServise } from '../../Servises/cartServise/cart-servise';
-import { UserServise } from '../../Servises/UserServise/User-servise';
+import { CartService } from '../../Services/cart/cart.service';
+import { UserService } from '../../Services/user/user.service';
 import { CartItemModel } from '../../Models/CartItemModel';
 import { UserModel } from '../../Models/UserModel';
-import { CurrencyServise } from '../../Servises/currencyServise/currency-servise';
+import { CurrencyService } from '../../Services/currency/currency.service';
 import { environment } from '../../../environments/environment';
-import { PaymentServise } from '../../Servises/paymentServise/payment-servise';
+import { PaymentService } from '../../Services/payment/payment.service';
 
 declare var paypal: any;
 
@@ -37,29 +37,29 @@ export class Payment implements OnInit {
   currencyRate: number = 1;
   staticFilesUrl = environment.staticFilesUrl;
 
-  private cartServise = inject(CartServise);
-  private userServise = inject(UserServise);
+  private cartService = inject(CartService);
+  private userService = inject(UserService);
   private messageService = inject(MessageService);
   private router = inject(Router);
-  private currencyServise = inject(CurrencyServise);
+  private currencyService = inject(CurrencyService);
   private destroyRef = inject(DestroyRef);
-  private paymentServise = inject(PaymentServise);
+  private paymentService = inject(PaymentService);
 
   ngOnInit() {
-    this.currencyServise.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
+    this.currencyService.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
     this.currencyCode = c.code;
       // אם הכפתור כבר קיים, נצטרך לרנדר אותו מחדש בשינוי מטבע (אופציונלי)
     });
 
-    this.currencyServise.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
+    this.currencyService.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
       this.currencyRate = r;
     });
 
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data !== null) {
           this.user = data;
-          this.cartServise.getUserCart(data.userID);
+          this.cartService.getUserCart(data.userID);
         } else {
           this.router.navigate(['/login']);
         }
@@ -69,7 +69,7 @@ export class Payment implements OnInit {
       }
     });
 
-    this.cartServise.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.cartService.cartItems$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.cartItems = data;
@@ -117,7 +117,7 @@ export class Payment implements OnInit {
           platformsID: i.platformID,
           userDescription: i.userDescreptionID ?? null
         }));
-        return firstValueFrom(this.paymentServise.createOrder(finalAmount, this.currencyCode, products))
+        return firstValueFrom(this.paymentService.createOrder(finalAmount, this.currencyCode, products))
           .then(res => res.id);
       },
       onApprove: (data: any) => {
@@ -134,7 +134,7 @@ export class Payment implements OnInit {
           }))
         };
 
-        this.paymentServise.captureOrder(data.orderID, orderPayload).subscribe({
+        this.paymentService.captureOrder(data.orderID, orderPayload).subscribe({
           next: (createdOrder) => {
             this.messageService.add({
               severity: 'success',

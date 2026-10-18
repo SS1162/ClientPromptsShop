@@ -13,10 +13,10 @@ import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { OrderServise } from '../../Servises/orderServise/order-servise';
-import { ReviewServise } from '../../Servises/ReviewServise/review-servise';
-import { UserServise } from '../../Servises/UserServise/User-servise';
-import { OrderDetailsModel } from '../../Models/OrderDetailsModel ';
+import { OrderService } from '../../Services/order/order.service';
+import { ReviewService } from '../../Services/review/review.service';
+import { UserService } from '../../Services/user/user.service';
+import { OrderDetailsModel } from '../../Models/OrderDetailsModel';
 import { AddReviewModel } from '../../Models/AddReviewModel';
 import { environment } from '../../../environments/environment';
 import { UserModel } from '../../Models/UserModel';
@@ -32,9 +32,9 @@ import { jsPDF } from "jspdf";
   styleUrl: './orders.scss',
 })
 export class Orders implements OnInit {
-  private orderService: OrderServise = inject(OrderServise);
-  private reviewServise: ReviewServise = inject(ReviewServise);
-  private userServise: UserServise = inject(UserServise);
+  private orderService: OrderService = inject(OrderService);
+  private reviewService: ReviewService = inject(ReviewService);
+  private userService: UserService = inject(UserService);
   private messageService: MessageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
 
@@ -47,7 +47,7 @@ export class Orders implements OnInit {
   newReview: { stars: number; text: string; image: File | null } = { stars: 5, text: '', image: null };
 
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.user = data;
@@ -89,7 +89,7 @@ export class Orders implements OnInit {
       }
     });
 
-    this.reviewServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.reviewService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
         if (err) {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to save review.', life: 3000 });
@@ -97,7 +97,7 @@ export class Orders implements OnInit {
       }
     });
 
-    this.reviewServise.reviewSaved$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.reviewService.reviewSaved$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.displayReviewDialog = false;
         this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Review saved successfully', life: 3000 });
@@ -320,7 +320,7 @@ export class Orders implements OnInit {
       Note: this.newReview.text,
       ReviewImg: this.newReview.image ?? undefined
     };
-    this.reviewServise.saveOrderReview(
+    this.reviewService.saveOrderReview(
       this.selectedOrder.orderID,
       reviewData,
       () => this.orderService.getUserOrders(this.user.userID)

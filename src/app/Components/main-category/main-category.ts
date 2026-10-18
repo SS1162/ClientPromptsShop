@@ -6,8 +6,8 @@ import { ButtonModule } from 'primeng/button';
 import { SelectButton } from 'primeng/selectbutton';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CategoryModel } from '../../Models/categoryModel';
-import { CategoryServise } from '../../Servises/categoryServise/category-servise';
+import { CategoryModel } from '../../Models/CategoryModel';
+import { CategoryService } from '../../Services/category/category.service';
 import { CardModule } from 'primeng/card';
 import { CascadeSelect } from 'primeng/cascadeselect';
 import { InputIcon } from 'primeng/inputicon';
@@ -33,7 +33,7 @@ import { RouterLink } from '@angular/router';
     InputMaskModule,
     PaginatorModule,
      InputIcon, IconField, InputTextModule, IconFieldModule, InputIconModule,RouterLink],
-  providers: [CategoryServise],
+  providers: [CategoryService],
   templateUrl: './main-category.html',
   styleUrl: './main-category.scss',
 })
@@ -41,7 +41,7 @@ import { RouterLink } from '@angular/router';
 export class MainCategory {
   //  orderByArray: string[] =['name','description'];
   //  selectedOrder: any;
-  categoryServise = inject(CategoryServise)
+  categoryService = inject(CategoryService)
   //  layout: 'list' | 'grid' = 'list';
   // options = ['list', 'grid'];
   categoryModel?: CategoryModel[] = []
@@ -63,7 +63,7 @@ export class MainCategory {
  staticFilesURL:string=environment.staticFilesUrl
 
  getCategories(){
-   this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize).subscribe({
+   this.categoryService.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize).subscribe({
       next: (data) => {
         if (data.status===204) {
            this.categoryModel=[]
@@ -90,7 +90,7 @@ export class MainCategory {
   changeSearch() {
     if(this.searchTerm==="")
       this.searchTerm=undefined
- this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize,this.searchTerm).subscribe({
+ this.categoryService.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize,this.searchTerm).subscribe({
       next: (data) => {
         if (data.status===204) {
           this.categoryModel=[]
@@ -116,7 +116,7 @@ export class MainCategory {
     this.numberOfPages= event?.page ? event?.page + 1 : 1;
     if(this.searchTerm ==="")
       this.searchTerm=undefined
- this.categoryServise.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize,this.searchTerm).subscribe({
+ this.categoryService.getcategory(this.numberOfPages, this.mainCategoryID, this.pageSize,this.searchTerm).subscribe({
       next: (data) => {
         if (data.status===204) {
           this.categoryModel=[]

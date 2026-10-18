@@ -10,10 +10,10 @@ import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
-import { OrderServise } from '../../../Servises/orderServise/order-servise';
-import { UserServise } from '../../../Servises/UserServise/User-servise';
-import { OrderDetailsModel } from '../../../Models/OrderDetailsModel ';
-import { FullOrderModel } from '../../../Models/FullOrderModet';
+import { OrderService } from '../../../Services/order/order.service';
+import { UserService } from '../../../Services/user/user.service';
+import { OrderDetailsModel } from '../../../Models/OrderDetailsModel';
+import { FullOrderModel } from '../../../Models/FullOrderModel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -34,8 +34,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './admin-orders.scss',
 })
 export class AdminOrders implements OnInit {
-  private orderServise: OrderServise = inject(OrderServise);
-  private userServise: UserServise = inject(UserServise);
+  private orderService: OrderService = inject(OrderService);
+  private userService: UserService = inject(UserService);
   private router = inject(Router);
   private messageService = inject(MessageService);
   private destroyRef = inject(DestroyRef);
@@ -56,17 +56,17 @@ export class AdminOrders implements OnInit {
   ];
 
   ngOnInit() {
-    this.userServise.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (user) => {
         if (user) {
-          this.orderServise.getAllOrders();
+          this.orderService.getAllOrders();
         } else {
           this.router.navigate(['/login']);
         }
       }
     });
 
-    this.orderServise.orders$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.orderService.orders$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         if (data) {
           this.orders = data;
@@ -76,7 +76,7 @@ export class AdminOrders implements OnInit {
       }
     });
 
-    this.orderServise.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.orderService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
         if (err) {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load orders' });
@@ -97,7 +97,7 @@ export class AdminOrders implements OnInit {
   }
 
   viewOrderDetails(order: FullOrderModel) {
-    this.orderServise.orderDetails$.pipe(
+    this.orderService.orderDetails$.pipe(
       skip(1),
       take(1)
     ).subscribe({
@@ -111,7 +111,7 @@ export class AdminOrders implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load order details' });
       }
     });
-    this.orderServise.getOrderDetails(order.orderID);
+    this.orderService.getOrderDetails(order.orderID);
   }
 
   hideDialog() {
