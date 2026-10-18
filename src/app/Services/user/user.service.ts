@@ -1,20 +1,16 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 import { UserModel } from '../../Models/UserModel';
 import { environment } from '../../../environments/environment';
 import { LoginModel } from '../../Models/LoginModel';
 import { UpdateUserModel } from '../../Models/UpdateUserModel';
 import { RegisterUserModel } from '../../Models/RegisterUserModel';
 
-
-
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  //  loginUser:LoginModel=new LoginModel();
-
   http: HttpClient = inject(HttpClient);
   BASIC_URL: string = `${environment.apiUrl}/users`;
   private userSubject = new BehaviorSubject<UserModel | null>(null)
@@ -38,18 +34,18 @@ export class UserService {
   LoginUser(loginData: LoginModel) {
     this.http.post<UserModel>(`${this.BASIC_URL}/loginFunction`, loginData)
       .subscribe({
-        next: (data) => {
-          this.userSubject.next(data)
-          this.errorSubject.next(null)
-          sessionStorage.setItem('user', JSON.stringify(data))
-          this.checkIsAdmin(data.userID)
-        }
-        ,
+        next: (data) => this.onSignedIn(data),
         error: (err) => {
           this.errorSubject.next(err)
         }
       })
+  }
 
+  private onSignedIn(data: UserModel) {
+    this.userSubject.next(data)
+    this.errorSubject.next(null)
+    sessionStorage.setItem('user', JSON.stringify(data))
+    this.checkIsAdmin(data.userID)
   }
 
   GetByID(id: number) {
@@ -109,29 +105,32 @@ export class UserService {
 
 
   signInWithGoogle(registerData: RegisterUserModel) {
-
     this.http.post<UserModel>(`${this.BASIC_URL}/signInWithGoogle`, registerData)
-
+      .subscribe({
+        next: (data) => this.onSignedIn(data),
+        error: (err) => {
+          this.errorSubject.next(err)
+        }
+      })
   }
-
 
   checkIsAdmin(userID: number): void {
-    this.http.get<boolean>(`${this.BASIC_URL}/isAdmin/${userID}`).subscribe({
-      next: (data) => {
+    this.verifyIsAdmin(userID).subscribe()
+  }
+
+  /** Asks the server whether the user is an admin and caches the answer for the UI. */
+  verifyIsAdmin(userID: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.BASIC_URL}/isAdmin/${userID}`).pipe(
+      tap((data) => {
         this.isAdminSubject.next(data)
         sessionStorage.setItem('isAdmin', String(data))
-      },
-      error: () => {
+      }),
+      catchError(() => {
         this.isAdminSubject.next(false)
         sessionStorage.removeItem('isAdmin')
-      }
-    })
+        return of(false)
+      })
+    )
   }
-
-  isAdmin(userID: number): void {
-    this.checkIsAdmin(userID)
-  }
-
-
 }
 

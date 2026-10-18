@@ -266,12 +266,8 @@ export class Orders implements OnInit {
  // טלפון המשתמש (אם תרצי להוסיף לתבנית)
     };
 
-    await emailjs.send(
-      'service_jwf0j1g',      // ה-Service ID מהתמונה הראשונה שלך
-      'template_dw51v6n',     // ה-Template ID (שימי לב: ודאי שזה ה-ID של התבנית החדשה ששמרת)
-      templateParams,
-      'aW3nRdKhDr4xwyblv'     // ה-Public Key שלך
-    );
+    const { serviceId, templateId, publicKey } = environment.emailJs.orders;
+    await emailjs.send(serviceId, templateId, templateParams, publicKey);
 
     this.messageService.add({ 
       severity: 'success', 

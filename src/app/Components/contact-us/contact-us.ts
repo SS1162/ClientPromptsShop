@@ -8,6 +8,8 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import emailjs from '@emailjs/browser';
+import { environment } from '../../../environments/environment';
+
 @Component({
   selector: 'app-contact-us',
   imports: [
@@ -40,15 +42,11 @@ export class ContactUs {
       from_phone: this.formData.phone,
       subject: this.formData.subject,
       message: this.formData.message,
-      to_email: '3609eli7@gmail.com' 
+      to_email: environment.emailJs.contact.toEmail
     };
 
-    await emailjs.send(
-      'gmail_service', 
-      'template_5ypz4em', 
-      templateParams, 
-      'Jxe0Vhystdvy0tqUk'
-    );
+    const { serviceId, templateId, publicKey } = environment.emailJs.contact;
+    await emailjs.send(serviceId, templateId, templateParams, publicKey);
 
     this.messageService.add({ severity: 'success', summary: 'Sent!', detail: 'Your message has been sent successfully' , life: 3000 });
     this.formData = { name: '', email: '', phone: '', subject: '', message: '' };

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule, CurrencyPipe } from '@angular/common';
@@ -18,6 +18,8 @@ import { PaymentService } from '../../Services/payment/payment.service';
 
 declare var paypal: any;
 
+const PAYPAL_SCRIPT_ID = 'paypal-sdk';
+
 @Component({
   selector: 'app-payment',
   standalone: true,
@@ -36,6 +38,8 @@ export class Payment implements OnInit {
   currencyCode: string = 'USD';
   currencyRate: number = 1;
   staticFilesUrl = environment.staticFilesUrl;
+  /** Currency the PayPal SDK is currently loaded with (null = not loaded). */
+  private paypalCurrency: string | null = null;
 
   private cartService = inject(CartService);
   private userService = inject(UserService);
@@ -47,8 +51,8 @@ export class Payment implements OnInit {
 
   ngOnInit() {
     this.currencyService.selectedCurrency$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(c => {
-    this.currencyCode = c.code;
-      // אם הכפתור כבר קיים, נצטרך לרנדר אותו מחדש בשינוי מטבע (אופציונלי)
+      this.currencyCode = c.code;
+      this.ensurePayPalButtons();
     });
 
     this.currencyService.rate$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(r => {
@@ -75,11 +79,7 @@ export class Payment implements OnInit {
           this.cartItems = data;
           this.validItems = data.filter(i => !!i.valid);
           this.totalPrice = this.validItems.reduce((sum, i) => sum + i.price, 0);
-          
-          // ברגע שיש לנו מחיר ופריטים, נטען את פייפאל
-          if (this.totalPrice > 0 && !this.isProcessing) {
-            this.loadPayPalScript();
-          }
+          this.ensurePayPalButtons();
         }
         this.loaded = true;
       },
@@ -90,13 +90,29 @@ export class Payment implements OnInit {
     });
   }
 
-  // טעינה דינמית של הסקריפט כדי להשתמש ב-Client ID מה-environment
-  private loadPayPalScript() {
+  /**
+   * Loads the PayPal SDK once per currency. The SDK URL is bound to a currency,
+   * so it is reloaded only when the selected currency changes; cart updates reuse
+   * the rendered buttons (they read the current cart when clicked).
+   */
+  private ensurePayPalButtons() {
+    if (this.totalPrice <= 0 || this.paypalCurrency === this.currencyCode) return;
+    this.paypalCurrency = this.currencyCode;
     this.isProcessing = true;
+
+    document.getElementById(PAYPAL_SCRIPT_ID)?.remove();
+    delete (window as any).paypal;
+    const container = document.getElementById('paypal-button-container');
+    if (container) container.innerHTML = '';
+
     const script = document.createElement('script');
+    script.id = PAYPAL_SCRIPT_ID;
     script.src = `https://www.paypal.com/sdk/js?client-id=${environment.paypalClientId}&currency=${this.currencyCode}`;
-    script.onload = () => {
-      this.renderPayPalButtons();
+    script.onload = () => this.renderPayPalButtons();
+    script.onerror = () => {
+      this.isProcessing = false;
+      this.paypalCurrency = null;
+      this.messageService.add({ severity: 'error', summary: 'PayPal Error', detail: 'Could not load PayPal. Please try again.' });
     };
     document.head.appendChild(script);
   }

@@ -196,7 +196,7 @@ export class BasicSite implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-    if (!this.formData.siteName || !this.formData.platformID || (!this.formData.siteTypeID && !this.aiData && this.aiData.trim() === "")) {
+    if (!this.formData.siteName || !this.formData.platformID || (!this.formData.siteTypeID && !this.aiData.trim())) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
@@ -293,8 +293,9 @@ export class BasicSite implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   handleAiSubmit() {
-      if (!this.user) {
-      this.router.navigate(['/login'])
+    if (!this.user) {
+      this.router.navigate(['/login']);
+      return;
     }
     if (this.aiData && this.aiData.trim() !== '') {
       this.isSubmitted = true;

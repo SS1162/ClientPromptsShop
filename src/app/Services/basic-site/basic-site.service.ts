@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AddBasicSiteModel } from '../../Models/AddBasicSiteModel';
 import { BasicSiteModel } from '../../Models/BasicSiteModel';
@@ -20,19 +20,10 @@ export class BasicSiteService {
   public error$: Observable<HttpErrorResponse | null> = this.errorSubject.asObservable();
 
   addBasicSite(basicSite: AddBasicSiteModel): Observable<BasicSiteModel> {
-    return new Observable((observer) => {
-      this.http.post<BasicSiteModel>(this.BASIC_URL, basicSite).subscribe({
-        next: (result) => {
-          this.errorSubject.next(null);
-          observer.next(result);
-
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorSubject.next(error);
-          observer.error(error);
-        },
-      });
-    });
+    return this.http.post<BasicSiteModel>(this.BASIC_URL, basicSite).pipe(
+      tap(() => this.errorSubject.next(null)),
+      catchError((error: HttpErrorResponse) => this.fail(error)),
+    );
   }
 
   getBasicSites(basicSiteId:number): void {
@@ -46,19 +37,17 @@ export class BasicSiteService {
   }
 
   updateBasicSite(basicSite: UpdateBasicSiteModel): Observable<void> {
-    return new Observable((observer) => {
-      this.http.put<void>(`${this.BASIC_URL}/${basicSite.basicSiteID}`, basicSite).subscribe({
-        next: () => {
-          this.errorSubject.next(null);
-          this.getBasicSites(basicSite.basicSiteID);
-          observer.next();
-          observer.complete();
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorSubject.next(error);
-          observer.error(error);
-        },
-      });
-    });
+    return this.http.put<void>(`${this.BASIC_URL}/${basicSite.basicSiteID}`, basicSite).pipe(
+      tap(() => {
+        this.errorSubject.next(null);
+        this.getBasicSites(basicSite.basicSiteID);
+      }),
+      catchError((error: HttpErrorResponse) => this.fail(error)),
+    );
+  }
+
+  private fail(error: HttpErrorResponse): Observable<never> {
+    this.errorSubject.next(error);
+    return throwError(() => error);
   }
 }
