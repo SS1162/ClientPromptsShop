@@ -40,7 +40,7 @@ generation through its `/Gemini` endpoints.
 
 **Orders & reviews**
 - Order history with lazily loaded order details.
-- Generate the final prompt for an order and download it as a branded **PDF** (jsPDF);
+- Generate the final prompt for an order and download it as a branded **PDF** (jsPDF, loaded on demand);
   a copy is also sent by email through EmailJS.
 - Star-rating reviews with optional image upload (`multipart/form-data`); public reviews page with paging.
 
@@ -51,8 +51,9 @@ generation through its `/Gemini` endpoints.
 
 **Admin area** (`/admin`, lazy-loaded, protected by a `canMatch` guard)
 - Dashboard: total revenue, total / pending / open orders, and the 5 most recent orders.
-- Product and sub-category management (create, update, delete; sub-categories support image upload).
-- Main-category management, site-type list, and all-orders view with status filter.
+- Product, main-category and sub-category management (create, update, delete; sub-categories support image upload).
+- Site-type list and all-orders view with status filter.
+- The guard re-checks admin status with the server on every navigation into `/admin`.
 
 **Cross-cutting**
 - AI chat assistant widget (`/Chat` endpoint) with conversation kept in `sessionStorage`.
@@ -123,7 +124,7 @@ src/
     ├── Components/             # Storefront pages and widgets (cart, chat bot, menu, ...)
     ├── Interceptors/           # rate-limit (HTTP 429) retry interceptor
     ├── Models/                 # DTO classes
-    ├── Servises/               # One service per API resource
+    ├── Services/               # One service per API resource (<name>/<name>.service.ts)
     └── Validators/             # Custom reactive-form validators
 ```
 
@@ -138,11 +139,8 @@ src/
 ### 1. Install dependencies
 
 ```bash
-npm install --legacy-peer-deps
+npm ci
 ```
-
-`--legacy-peer-deps` is currently needed because `@angular/animations` and `@angular/core` are pinned to
-different minor versions.
 
 ### 2. Configure environment
 
@@ -160,6 +158,10 @@ export const environment = {
   reviewImageBaseUrl: '', // Base URL for uploaded review images
   googleClientId: '',     // Google Identity Services OAuth client ID
   paypalClientId: '',     // PayPal REST app client ID
+  emailJs: {
+    contact: { serviceId: '', templateId: '', publicKey: '', toEmail: '' }, // Contact form
+    orders: { serviceId: '', templateId: '', publicKey: '' },               // Order prompt email
+  },
 };
 ```
 
@@ -170,6 +172,8 @@ export const environment = {
 | `reviewImageBaseUrl` | Reviews page, home page, order reviews |
 | `googleClientId` | Google sign-in on the login page |
 | `paypalClientId` | PayPal SDK on the payment page |
+| `emailJs.contact` | Contact-us form (EmailJS service, template, public key, recipient) |
+| `emailJs.orders` | Email copy of a downloaded order prompt |
 
 ### 3. Run the dev server
 
@@ -261,14 +265,18 @@ Response (`geminiPromptModel`):
 
 ## Running Tests
 
-The project contains Jasmine unit-test specs (`*.spec.ts`) run by Karma:
+Unit tests use Jasmine and run in Karma. Besides component/service smoke tests, the suite covers:
+
+- `adminGuard` – anonymous users, confirmed admins, a forged `isAdmin` flag in `sessionStorage`, server errors.
+- `rateLimitInterceptor` – exponential backoff, `Retry-After` handling, non-429 errors, retry limit.
 
 ```bash
-npm test                                          # watch mode, opens Chrome
+npm test                                              # watch mode, opens Chrome
 npx ng test --watch=false --browsers=ChromeHeadless   # single headless run (CI)
 ```
 
 Karma needs a local Chrome/Chromium installation (set `CHROME_BIN` if it is not on the default path).
+The test build also imports `src/environments/environment.ts`, so create it first (see above).
 
 ## Available Scripts
 
