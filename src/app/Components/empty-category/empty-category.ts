@@ -176,7 +176,7 @@ export class EmptyCategory implements OnInit, OnDestroy {
     if (this.prompt && !this.addedToCart) {
       this.geminiService.deletePrompt(this.prompt.promptId).subscribe({
         next: () => {},
-        error: (err) => { console.log(err); }
+        error: (err) => { console.error(err); }
       });
     }
   }

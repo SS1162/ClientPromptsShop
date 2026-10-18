@@ -1,25 +1,3 @@
-// import { inject, Injectable } from '@angular/core';
-// import { CategoryModel } from '../../Models/CategoryModel';
-// import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-// import { environment } from '../../../environments/environment';
-// import { Observable } from 'rxjs';
-// import { ProductModel } from '../../Models/ProductModel';
-// import { ResponsePageModel } from '../../Models/ResponsePageModel';
-
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class CategoryService {
-//   categoryModel: CategoryModel[] = []
-//   private http: HttpClient = inject(HttpClient)
-//   BASIC_URL: string = `${environment.apiUrl}/Categories`;
-
-
-// getCategoryByID(id:number):Observable<HttpResponse<CategoryModel>>{
-// return this.http.get<CategoryModel>(`${this.BASIC_URL}/${id}`,{observe:'response'})
-// }
-// }
 import { HttpClient, HttpParams,HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
@@ -34,7 +12,7 @@ export class CategoryService {
  private http = inject(HttpClient);
  private readonly BASIC_URL: string = `${environment.apiUrl}/Categories`;
 
- // GET: api/Categories (קבלת דף קטגוריות לפי קטגוריה ראשית)
+ // GET: api/Categories (page of categories for a main category)
    getcategory(numberOfPages: number, mainCategoryID: number, pageSize: number, search?: string): Observable<HttpResponse<ResponsePageModel<CategoryModel>>> {
     let params = new HttpParams()
       .set('numberOfPages', numberOfPages)
@@ -45,7 +23,7 @@ export class CategoryService {
     return this.http.get<ResponsePageModel<CategoryModel>>(this.BASIC_URL, { params: params, observe: 'response' })
   }
 
- // GET: api/Categories/{id} (לפי מזהה ספציפי)
+ // GET: api/Categories/{id} (by id)
 getCategoryByID(id:number):Observable<HttpResponse<CategoryModel>>{
 return this.http.get<CategoryModel>(`${this.BASIC_URL}/${id}`,{observe:'response'})
 }

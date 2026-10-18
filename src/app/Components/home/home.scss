@@ -65,7 +65,7 @@ $text-main: #4a4a4a;
   min-height: 100vh;
   padding: 40px 20px;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  direction: ltr; /* שונה מ-rtl ל-ltr */
+  direction: ltr; /* changed from rtl to ltr */
   overflow-x: hidden;
 
   .reveal-up,
@@ -149,8 +149,8 @@ $text-main: #4a4a4a;
   h2 {
     color: $primary-purple;
     font-size: 1.7rem;
-    border-left: 4px solid $primary-purple; /* שונה מ-border-right */
-    padding-left: 15px; /* שונה מ-padding-right */
+    border-left: 4px solid $primary-purple; /* was border-right */
+    padding-left: 15px; /* was padding-right */
     margin: 35px 0 20px;
   }
 

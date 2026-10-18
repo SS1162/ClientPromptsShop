@@ -120,7 +120,7 @@ export class Register implements OnInit {
           this.passordStrength = response.body || 0
         }
         , error: (err) => {
-          console.log(err)
+          console.error(err)
         }
       })
     }

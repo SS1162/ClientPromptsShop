@@ -63,7 +63,7 @@ export class EmptyProduct implements OnInit, OnDestroy {
     if (this.prompt && !this.promptWasUsedInCart) {
       this.geminiService.deletePrompt(this.prompt.promptId).subscribe({
         error:(err)=>{
-        console.log(err)
+        console.error(err)
       }});
     }
   }

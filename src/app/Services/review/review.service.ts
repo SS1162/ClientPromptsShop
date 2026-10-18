@@ -39,18 +39,6 @@ export class ReviewService {
     });
   }
 
-  // addReview(review: ReviewModel) {
-  //   this.http.post<ReviewModel>(this.BASIC_URL, review).subscribe({
-  //     next: () => {
-  //       this.errorSubject.next(null);
-  //       this.getReviews();
-  //     },
-  //     error: (err) => {
-  //       this.errorSubject.next(err);
-  //     }
-  //   });
-  // }
-
   saveOrderReview(orderId: number, review: AddReviewModel, refreshOrders: () => void) {
     const formData = new FormData();
     formData.append('OrderId', review.orderId.toString());

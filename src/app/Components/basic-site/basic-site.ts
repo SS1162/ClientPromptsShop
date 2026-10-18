@@ -151,7 +151,7 @@ export class BasicSite implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
+          console.error(err);
         }
       });
 
@@ -170,7 +170,7 @@ export class BasicSite implements OnInit {
           }
         },
         error: (err) => {
-          console.log(err);
+          console.error(err);
         }
       });
 
@@ -301,13 +301,10 @@ export class BasicSite implements OnInit {
       this.isSubmitted = true;
       this.geminiService.AddBasicSitePrompt(this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-          console.log('AI Response:', response.body);
           this.prompt!.prompt = (response.body as any).prompt
           this.prompt!.promptId = (response.body as any).promptId
           this.aiData = this.prompt!.prompt;
           this.formData.userDescreption = this.prompt!.promptId;
-          console.log(this.aiData)
-          console.log(this.prompt)
         },
         error: (error) => {
           this.messageService.add({
@@ -324,7 +321,6 @@ export class BasicSite implements OnInit {
   handleEdit() {
     this.geminiService.updateBasicSitePrompt(this.prompt!.promptId, this.aiData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
-        console.log('AI Response:', response.body);
         if (this.prompt!.prompt === response.body!.prompt) {
           this.messageService.add({
             severity: 'error',
@@ -360,7 +356,7 @@ export class BasicSite implements OnInit {
       this.formData.userDescreption = undefined;
       },
       error: (error) => {
-        console.log("it not deleted" + this.prompt!.promptId)
+        console.error('Failed to delete prompt', error);
       }
     });
   }

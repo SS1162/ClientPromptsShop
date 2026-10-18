@@ -114,7 +114,6 @@ export class Menu implements OnInit {
          for (let i = 0; i < (this.mainCategories?.length ?? 0); i++) {
           this.items[2].items![0][0].items!.push({ label: this.mainCategories![i].mainCategoryName, icon: 'pi pi-star', id: this.mainCategories![i].mainCategoryID as unknown as string })
         }
-        console.log(this.items)
 
         this.items = [...this.items]
       }
@@ -125,7 +124,6 @@ export class Menu implements OnInit {
 this.mainCategoryService.error$.pipe(takeUntilDestroyed(this.DestroyRef)).subscribe(data=>{
   if(data!==null)
   {
-    console.log(data)
   }
 
 })

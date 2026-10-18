@@ -39,11 +39,7 @@ import { RouterLink } from '@angular/router';
 })
 
 export class MainCategory {
-  //  orderByArray: string[] =['name','description'];
-  //  selectedOrder: any;
   categoryService = inject(CategoryService)
-  //  layout: 'list' | 'grid' = 'list';
-  // options = ['list', 'grid'];
   categoryModel?: CategoryModel[] = []
   searchTerm?: string 
   numberOfPages: number =1
@@ -72,14 +68,13 @@ export class MainCategory {
         }
         else {
           this.categoryModel = data.body?.data;
-          console.log(this.categoryModel)
            this.totalRecords=data.body?.totalItems??0
         }
       }
       , error: (error) => {
         this.categoryModel=[]
         this.errorMessegeBadRequest = "faild to load product try again later"
-        console.log(error)
+        console.error(error)
       }
 
     })
@@ -105,7 +100,7 @@ export class MainCategory {
       , error: (error) => {
         this.categoryModel=[]
         this.errorMessegeBadRequest = "faild to load product try again later"
-        console.log(error)
+        console.error(error)
       }
 
     })
@@ -133,7 +128,7 @@ export class MainCategory {
       , error: (error) => {
         this.categoryModel=[]
         this.errorMessegeBadRequest = "faild to load product try again later"
-        console.log(error)
+        console.error(error)
       }
 
     })

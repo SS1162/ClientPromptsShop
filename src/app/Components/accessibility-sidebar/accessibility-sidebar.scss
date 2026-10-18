@@ -1,3 +1,4 @@
+@use 'sass:color';
 $purple: #8139eb;
 $purple-light: #f3e8ff;
 $grad: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
@@ -24,7 +25,7 @@ $grad: linear-gradient(135deg, #8139eb 0%, #bd00cb 100%);
   transition: width 0.2s, background 0.2s;
 
   &:hover {
-    background: darken($purple, 8%);
+    background: color.adjust($purple, $lightness: -8%);
     width: 50px;
   }
 

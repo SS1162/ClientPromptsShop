@@ -103,11 +103,11 @@ export class Category implements OnInit {
       next: (err) => {
         if(!err)
         {
-console.log(err)
+console.error(err)
         }
       },
       error:(err)=>{
-        console.log(err)
+        console.error(err)
       }
     })
     this.platformService.getPlatforms()

@@ -128,15 +128,15 @@ google.accounts.id.initialize({
   client_id: this.googleClientId,
   callback: (window as any).handleCredentialResponse,
   ux_mode: 'popup',
-  use_fedcm_for_prompt: true // זה משתמש במנגנון החדש של הדפדפן לעקיפת חסימות Cross-Origin
+  use_fedcm_for_prompt: true // uses the browser's FedCM flow to avoid cross-origin blocking
 });
 
     const btnEl = document.getElementById("googleBtn");
     
-    // שינוי 3: הגנה מפני רוחב לא תקין (גוגל לא מקבלת אחוזים או ערכים קטנים מדי)
+    // Google only accepts a pixel width between 200 and 400
     let btnWidth = btnEl ? btnEl.offsetWidth : 250;
     if (btnWidth < 200 || btnWidth > 400) {
-      btnWidth = 250; // ערך בטוח שגוגל תמיד מאשרת
+      btnWidth = 250; // safe default width
     }
 
     google.accounts.id.renderButton(
@@ -144,7 +144,7 @@ google.accounts.id.initialize({
       { 
         theme: "outline", 
         size: "large", 
-        width: btnWidth // כאן נשלח מספר נקי
+        width: btnWidth // plain number in pixels
       }
     );
   } else {

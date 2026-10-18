@@ -50,8 +50,6 @@ export class UpdateUser implements OnInit {
       this.UpdateForm.patchValue({
         email: this.user$?.userName
       });
-      console.log(this.user$)
-      console.log(this.user$?.userName)
     })
 
     this.userService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(data => {
@@ -104,7 +102,7 @@ export class UpdateUser implements OnInit {
           this.passordStrength = response.body || 0
         }
         , error: (err) => {
-          console.log(err)
+          console.error(err)
         }
       })
     }

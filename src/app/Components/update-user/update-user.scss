@@ -16,7 +16,7 @@
 .titele{
     font-size: 1.7rem;
 }
-/* הרווח בין השורות צומצם לחצי */
+/* row gap reduced by half */
 .form-grid {
     display: flex;
     flex-direction: column;
@@ -31,7 +31,7 @@
     width: 100%;
 }
 
-/* הכרטיס נשאר גבוה ומעוצב */
+/* card keeps its full height and styling */
 ::ng-deep .custom-card .p-card {
     width: 30rem;
     min-height: 500px; 
@@ -54,7 +54,7 @@
 
 
 
-/* צבעי פוקוס וסגול */
+/* focus and purple colors */
 ::ng-deep .p-floatlabel label {
     color: #9D58F5 !important;
 }
@@ -68,21 +68,21 @@
     width: 100% !important;
 }
 
-/* --- עיצוב שדות הקלט - מסגרת סגולה תמיד --- */
+/* --- Input fields - always a purple border --- */
 ::ng-deep .p-inputtext {
-    border: 1px solid #9D58F5 !important; /* מסגרת סגולה דקה תמיד */
+    border: 1px solid #9D58F5 !important; /* thin purple border */
     border-radius: 8px !important;
-    transition: all 0.2s ease; /* אנימציה חלקה לשינוי העובי */
+    transition: all 0.2s ease; /* smooth transition when the border changes */
 }
 
-/* --- בזמן לחיצה (Focus) - המסגרת נראית עבה יותר --- */
+/* --- On focus - the border looks thicker --- */
 ::ng-deep .p-inputtext:enabled:focus {
     border-color: #9D58F5 !important;
-    /* שימוש ב-box-shadow יוצר מראה עבה יותר בלי להזיז את האלמנטים בדף */
+    /* box-shadow makes it look thicker without shifting the layout */
     box-shadow: 0 0 0 2px #9D58F5 !important; 
 }
 
-/* --- הגדרה ספציפית לשדה סיסמה --- */
+/* --- Password field --- */
 ::ng-deep p-password .p-inputtext {
     border: 1px solid #9D58F5 !important;
 }
@@ -91,7 +91,7 @@
     box-shadow: 0 0 0 2px #9D58F5 !important;
 }
 
-/* --- שאר הקוד שלך ללא שינוי --- */
+/* --- Remaining styles --- */
 .register-container {
     display: flex;
     justify-content: center;
@@ -113,21 +113,21 @@
 
 
 
-/* 1. מסגרת סגולה דקה לשדה הסיסמה במצב רגיל */
+/* 1. Thin purple border on the password field */
 ::ng-deep p-password .p-inputtext {
     border: 1px solid #9D58F5 !important;
     transition: all 0.1s ease-in-out;
 }
 
-/* 2. הגדרה של מסגרת דקה בזמן לחיצה (Focus) על הסיסמה */
+/* 2. Thin border on password focus */
 ::ng-deep p-password .p-inputwrapper-focus .p-inputtext {
     border-color: #9D58F5 !important;
-    /* עובי דק מאוד בזמן לחיצה */
+    /* very thin on focus */
     box-shadow: 0 0 0 0.2px #9D58F5 !important; 
     outline: none !important;
 }
 
-/* 3. ביטול שינוי הצבע במעבר עכבר על הסיסמה */
+/* 3. No color change on password hover */
 ::ng-deep p-password .p-inputtext:enabled:hover {
     border-color: #9D58F5 !important;
 }
@@ -135,15 +135,6 @@
 .buttom{
     margin-top: 18px;
 }
-
-// .message{
-//     color:  #9D58F5;
-// }
-
-
-// .message2{
-//       color:  #9D58F5; 
-// }
 
 ::-webkit-progress-value{
  color:  #9D58F5; 
