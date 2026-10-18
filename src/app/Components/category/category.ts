@@ -57,7 +57,7 @@ export class Category implements OnInit {
   chosenProducts: boolean[] = [];
   user?: UserModel;
 
-  categoryModel!: CategoryModel
+  categoryModel?: CategoryModel
 
   categoryID!: number
 
@@ -101,9 +101,8 @@ export class Category implements OnInit {
 
     this.cartService.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (err) => {
-        if(!err)
-        {
-console.error(err)
+        if (err) {
+          console.error(err)
         }
       },
       error:(err)=>{
@@ -219,7 +218,7 @@ console.error(err)
     this.categoryService.getCategoryByID(this.categoryID).subscribe({
       next: (data => {
         if (data.body === null) {
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load user' });
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load category' });
 
         } else {
           this.categoryModel = data.body
@@ -229,7 +228,7 @@ console.error(err)
 
       }),
       error: (err) => {
-               this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load user' });
+               this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load category' });
 
       }
     })
@@ -256,7 +255,7 @@ console.error(err)
       },
       error: (err) => {
         this.productModel = []
-       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load user' });
+       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load products' });
 
 
       }
@@ -300,7 +299,7 @@ console.error(err)
       },
       error: (err) => {
         this.productModel = []
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load user' });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load products' });
 
       }
 

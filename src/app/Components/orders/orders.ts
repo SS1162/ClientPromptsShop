@@ -20,7 +20,6 @@ import { OrderDetailsModel } from '../../Models/OrderDetailsModel';
 import { AddReviewModel } from '../../Models/AddReviewModel';
 import { environment } from '../../../environments/environment';
 import { UserModel } from '../../Models/UserModel';
-import { jsPDF } from "jspdf";
 @Component({
   selector: 'app-orders',
   imports: [
@@ -180,7 +179,9 @@ export class Orders implements OnInit {
   }
 
  
-   private triggerDownloadPDF(promptText: string, siteName: string) {
+  private async triggerDownloadPDF(promptText: string, siteName: string) {
+    // Loaded on demand so jsPDF stays out of the initial bundle.
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
